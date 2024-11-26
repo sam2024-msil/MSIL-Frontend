@@ -1,0 +1,23 @@
+.sideMenu-bg {
+    background-color: #171C8F;
+    padding: 50% 0;
+}
+
+.side-menu-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-left: 3px solid transparent;
+    transition: background-color 0.3s, border-left-color 0.3s;
+    color: #fff;
+    margin-bottom: 12px;
+}
+
+.side-menu-item.active {
+    border-left-color: #FF9800;
+    // background-color: #e9ecef;
+}
+
+.side-menu-item:hover {
+    background-color: #f8f9fa;
+}
