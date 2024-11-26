@@ -1,0 +1,30 @@
+.navbarBg {
+    background-color: #fff;
+    height: 60px;
+}
+
+.headerLogo {
+    padding: 12px 0;
+    img {
+        width: 25%;
+    }
+}
+
+.avatarProfileSection {
+    text-align: right;
+    .avatarImg {
+        width: 40px;
+        background-color: #fff;
+        padding: 5px;
+        border-radius: 50%;
+        border: 1px solid #ccc;
+    }
+    .avatarText {
+        font: normal normal 300 13px/58px Poppins;
+        letter-spacing: 1.08px;
+        color: #5E6061;
+        text-transform: uppercase;
+        opacity: 1;
+        margin-left: 8px;
+    }
+}

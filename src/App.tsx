@@ -1,15 +1,37 @@
-import { useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css'
+import { MsalProvider } from '@azure/msal-react';
+import { IPublicClientApplication } from '@azure/msal-browser';
 import Login from './components/Login/Login'
+import { Route, Routes } from 'react-router-dom';
+import { ToastProvider } from './context/ToastContext';
+import AuthLayout from './AuthLayout/AuthLayout';
+import { AuthProvider } from './context/AuthContext';
+import UserList from './components/UserManagement/UserList';
 
-function App() {
-  const [count, setCount] = useState(0)
+
+type AppProps = {
+  pca: IPublicClientApplication;
+};
+
+function App({ pca }: AppProps) {
+
 
   return (
+    // <MsalProvider instance={pca}>
+    //   <AuthProvider>
+    //   <ToastProvider>
+    //     <AuthLayout>
+    //       <Routes>
+    //         {/* <Login /> */}
+    //       </Routes>
+    //     </AuthLayout>
+    //   </ToastProvider>
+    //   </AuthProvider>
+    // </MsalProvider>
     <>
-      <Login />
+    <UserList />    
     </>
   )
 }
