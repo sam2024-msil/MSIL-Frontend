@@ -9,6 +9,7 @@ import { ToastProvider } from './context/ToastContext';
 import AuthLayout from './AuthLayout/AuthLayout';
 import { AuthProvider } from './context/AuthContext';
 import UserList from './components/UserManagement/UserList';
+import DocumentListing from './components/DocumentUpload/DocumentListing';
 
 
 type AppProps = {
@@ -24,14 +25,15 @@ function App({ pca }: AppProps) {
     //   <ToastProvider>
     //     <AuthLayout>
     //       <Routes>
-    //         {/* <Login /> */}
+    //         <Route path="/user-management" element={<UserList />} /> 
     //       </Routes>
     //     </AuthLayout>
     //   </ToastProvider>
     //   </AuthProvider>
     // </MsalProvider>
     <>
-    <UserList />    
+    {/* <UserList />     */}
+    <DocumentListing />
     </>
   )
 }

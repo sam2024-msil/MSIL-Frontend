@@ -1,16 +1,17 @@
 .sideMenu-bg {
     background-color: #171C8F;
     padding: 50% 0;
+    width: 70%;
 }
 
 .side-menu-item {
     display: flex;
     align-items: center;
-    padding: 10px;
+    padding: 10px 20px;
     border-left: 3px solid transparent;
     transition: background-color 0.3s, border-left-color 0.3s;
     color: #fff;
-    margin-bottom: 12px;
+    margin-bottom: 28px;
 }
 
 .side-menu-item.active {
@@ -19,5 +20,43 @@
 }
 
 .side-menu-item:hover {
-    background-color: #f8f9fa;
+    background-color: #171C8F;
+}
+
+
+
+.popoverCustom {
+    background-color: #92005a;
+    color: #fff;
+    padding: 0;
+    height: 40px;
+    line-height: 10px;
+
+    .popover-content {
+        color: #ffffff !important;
+    }
+
+    .popover-arrow {
+        &::before {
+            left: 0;
+            border-right-color: rgba(0, 0, 0, 0.75);
+        }
+
+        &::after {
+            left: 1px;
+            border-right-color: #fff;
+        }
+    }
+}
+
+.popover-arrow {
+    &::before {
+        left: 0;
+        border-right-color: rgba(0, 0, 0, 0.75);
+    }
+
+    &::after {
+        left: 1px;
+        border-right-color: #fff;
+    }
 }
