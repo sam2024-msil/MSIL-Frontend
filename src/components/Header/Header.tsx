@@ -1,8 +1,8 @@
 import React from 'react';
-import { Navbar, Container } from 'react-bootstrap';
+import { Navbar } from 'react-bootstrap';
 import styles from './Header.module.scss';
 import headerLogo from '../../assets/MSIL-Logo.png';
-import avatarimg from '../../assets/person.png';
+import avatarimg from '../../assets/person_icon.svg';
 
 const Header: React.FC = () => {
     return (

@@ -1,3 +1,4 @@
+
 .form-check-input:checked { 
   background-color: #171C8F !important;
   border-color: #171C8F !important;
@@ -15,19 +16,32 @@
   }
 }
 
+.login-left {
+  position: relative;
+  .login-left-bg-img {
+    width: 100%;
+    position: absolute;
+    top: -45px;
+    left: -60px;
+  }
+}
+
+.login-right {
+  position: relative;
+  .login-right-bg-img {
+    width: 100%;
+    position: absolute;
+    top: -100%;
+    right: -100px;
+  }
+}
+
 .login-card {
-  margin-top: 26%;
-  background: url('../../assets/login-page-left-card-background.svg');
-  background-position: bottom left;
-  background-repeat: no-repeat;
+  margin-top: 20%;
 }
 
 .sso-login-card {
-  margin-top: 26%;
-
-  background: url('../../assets/login-page-right-card-background.svg');
-  background-position: top right;
-  background-repeat: no-repeat;
+  margin-top: 20%;
   
 
   .sso-login-content {
@@ -36,10 +50,6 @@
 }
 
 .left-form {
-  
-  
-  
-  
   .login-btn {
       background: #171C8F 0% 0% no-repeat padding-box;
       border-radius: 5px;
@@ -55,7 +65,7 @@
   width: 2px;
   height: 20vw;
   background-color: #ccc;
-  top: 56px;
+  top: 30px;
 }
 
 .divider-text {
