@@ -1,1 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ACACAC"><path d="M240-400h320v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM480-80 373-240H160q-33 0-56.5-23.5T80-320v-480q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H587L480-80Zm0-144 64-96h256v-480H160v480h256l64 96Zm0-336Z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="21" height="19.5" viewBox="0 0 21 19.5">
+  <g id="Component_20_1" data-name="Component 20 – 1" transform="translate(0.75 0.75)">
+    <path id="Path_11364" data-name="Path 11364" d="M7.5,8.25h9m-9,3H12M2.25,12.76a3.219,3.219,0,0,0,2.707,3.227q1.693.249,3.423.379a1.142,1.142,0,0,1,.865.5L12,21l2.755-4.133a1.14,1.14,0,0,1,.865-.5q1.718-.128,3.423-.379a3.218,3.218,0,0,0,2.707-3.228V6.741a3.218,3.218,0,0,0-2.707-3.228,48.6,48.6,0,0,0-14.086,0A3.219,3.219,0,0,0,2.25,6.741v6.018Z" transform="translate(-2.25 -3)" fill="none" stroke="#acacac" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+  </g>
+</svg>

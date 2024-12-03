@@ -208,7 +208,7 @@ const DataTable = <D extends object>({ columns, fetchData, searchString, trigger
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {!data.length && (<tr><td>No Documents found</td></tr>)}
+          {!data.length && (<tr><td className={`${styles['NoDocsfoundtext']}`}>No Documents found</td></tr>)}
           {loading ? (
             <tr>
               <td colSpan={columns.length}>Loading...</td>
@@ -233,7 +233,7 @@ const DataTable = <D extends object>({ columns, fetchData, searchString, trigger
         {SHOWING.showing} {((controlledPageIndex+1) - 1) * pageSize + 1} {TO.to} {Math.min((controlledPageIndex+1) * pageSize, totalRecord)} {OF.of} {totalRecord} {PROJECTS.projects}
       </span>
     }
-      <div className={`${styles.paginationCustom}`}>
+      <div className={`${styles.paginationCustom} mt-3`}>
         <nav>
           <ul className={styles.pagination}>
             <li className={`${styles["page-item"]} ${controlledPageIndex === 0 ? styles.disabled : ''}`} onClick={() => controlledPageIndex > 0 && previousPage()}>

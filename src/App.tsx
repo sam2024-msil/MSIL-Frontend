@@ -3,13 +3,14 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css'
 import { MsalProvider } from '@azure/msal-react';
 import { IPublicClientApplication } from '@azure/msal-browser';
-import Login from './components/Login/Login'
 import { Route, Routes } from 'react-router-dom';
 import { ToastProvider } from './context/ToastContext';
 import AuthLayout from './AuthLayout/AuthLayout';
 import { AuthProvider } from './context/AuthContext';
 import UserList from './components/UserManagement/UserList';
 import DocumentListing from './components/DocumentUpload/DocumentListing';
+import ModuleList from './components/ModuleManagement/ModuleList';
+import Chat from './components/ChatInterface/Chat';
 
 
 type AppProps = {
@@ -20,21 +21,20 @@ function App({ pca }: AppProps) {
 
 
   return (
-    // <MsalProvider instance={pca}>
-    //   <AuthProvider>
-    //   <ToastProvider>
-    //     <AuthLayout>
-    //       <Routes>
-    //         <Route path="/user-management" element={<UserList />} /> 
-    //       </Routes>
-    //     </AuthLayout>
-    //   </ToastProvider>
-    //   </AuthProvider>
-    // </MsalProvider>
-    <>
-    {/* <UserList />     */}
-    <DocumentListing />
-    </>
+    <MsalProvider instance={pca}>
+      <AuthProvider>
+        <ToastProvider>
+          <AuthLayout>
+            <Routes>
+              <Route path="/document-management" element={<DocumentListing />} />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/user-management" element={<UserList />} />
+              <Route path="/module-management" element={<ModuleList />} />
+            </Routes>
+          </AuthLayout>
+        </ToastProvider>
+      </AuthProvider>
+    </MsalProvider>
   )
 }
 
