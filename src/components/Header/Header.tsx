@@ -8,7 +8,7 @@ const Header: React.FC = () => {
     return (
         <Navbar variant="dark" expand="lg" className={`${styles['navbarBg']}`}>
             <div className='container-fluid'>
-                <Navbar.Brand href="#home" className='w-100'>
+                <Navbar.Brand href="" className='w-100'>
                     <div className='row'>
                         <div className='col-md-9'>
                             <div className={`${styles['headerLogo']}`}>

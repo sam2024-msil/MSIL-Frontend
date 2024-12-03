@@ -8,6 +8,7 @@ import Login from "../components/Login/Login";
 import SideMenu from "../components/SideMenus/SideMenu";
 import Header from "../components/Header/Header";
 import styles from './AuthLayout.module.scss';
+import AppStateUtil from "../utils/AppStateUtil";
 
 
 type Props = {
@@ -31,7 +32,6 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
                 if (response) {
                     await handleResponse(response);
                 } else if (accounts.length > 0) {
-                    alert('No token');
                     await getAccessToken(); // Get token silently for logged-in users
                 }
             } catch (error) {
@@ -41,12 +41,6 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
         };
 
         checkAuth();
-
-        // if (instance && accounts.length > 0) {
-        //     instance.handleRedirectPromise().then(handleResponse).catch((e) => {
-        //         console.error("Error handling redirect promise: ", e);
-        //     });
-        // }
     }, [instance, accounts]);
 
     const getAccessToken = async (): Promise<void> => {
@@ -57,7 +51,8 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
                 account: account,
                 scopes: loginRequest.scopes,
             });
-            //navigateToProjectList()
+            AppStateUtil.storeAuthToken(response.idToken)
+            navigate("/document-management");
         } catch (error) {
             console.error("Error acquiring token:", error);
         }
@@ -67,8 +62,7 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
     const handleResponse = async (response: any) => {
 
         if (response) {
-            // await getAccessToken();
-            navigate("/user-management");
+            await getAccessToken();  
         }
     };
 

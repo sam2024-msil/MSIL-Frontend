@@ -1,16 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Nav, OverlayTrigger, Popover } from 'react-bootstrap';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './SideMenu.module.scss';
+import ListingIcon from '../../assets/SideMenuIcons/listing_icon.svg';
 import ListingIconActive from '../../assets/SideMenuIcons/listing-active.svg';
-// import ListingIcon from '../../assets/sidemenu_icon/listing_icon.svg';
-// import CahtIconActive from '../../assets/sidemenu_icon/chat-active.svg';
 import chatIcon from '../../assets/SideMenuIcons/chat_icon.svg';
+import chatIconActive from '../../assets/SideMenuIcons/chat-active.svg';
 import moduleIcon from '../../assets/SideMenuIcons/module_icon.svg';
+import moduleIconActive from '../../assets/SideMenuIcons/module-active.svg';
 import userManagementIcon from '../../assets/SideMenuIcons/user_management_icon.svg';
+import userManagementIconActive from '../../assets/SideMenuIcons/user_management-active.svg';
 import logoutIcon from '../../assets/SideMenuIcons/logout_icon.svg';
+import logoutIconActive from '../../assets/SideMenuIcons/logout-active.svg';
+import AppStateUtil from '../../utils/AppStateUtil';
+import { useMsal } from "@azure/msal-react";
 
 const SideMenu: React.FC = () => {
-  const [activeKey, setActiveKey] = useState<string>('/listing');
+
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { instance } = useMsal();
+  const [activeKey, setActiveKey] = useState<string>(location.pathname);
+  const [hoverKey, setHoverKey] = useState<string | null>(null);
   const [showPopover, setShowPopover] = useState<{ [key: string]: boolean }>({
     listing: false,
     chat: false,
@@ -19,19 +31,27 @@ const SideMenu: React.FC = () => {
     logout: false
   });
 
+  useEffect(() => {
+    setActiveKey(location.pathname);
+  }, [location.pathname]);
+
   const handleSelect = (selectedKey: string | null) => {
     if (selectedKey) {
-      setActiveKey(selectedKey);
+      setActiveKey(selectedKey); // Set the active key to the selected menu item
+      setHoverKey(null); // Reset hover key when an item is selected
+      navigate(selectedKey); // Navigate to the selected key
     }
   };
 
   const handleMouseEnter = (key: string) => {
     if (key !== activeKey) {
+      setHoverKey(key);
       setShowPopover((prev) => ({ ...prev, [key]: true }));
     }
   };
 
   const handleMouseLeave = (key: string) => {
+    setHoverKey(null);
     setShowPopover((prev) => ({ ...prev, [key]: false }));
   };
 
@@ -44,6 +64,18 @@ const SideMenu: React.FC = () => {
       </Popover.Body>
     </Popover>
   );
+
+  const getIcon = (key: string, defaultIcon: string, activeIcon: string) => {
+    return activeKey === key || hoverKey === key ? activeIcon : defaultIcon;
+  };
+
+  const handleLogout = (logoutType: string) => {
+
+    if (logoutType === "redirect") {
+        AppStateUtil.removeAuthToken();
+        instance.logoutRedirect();
+    }
+}
 
   return (
     <Nav
@@ -59,13 +91,14 @@ const SideMenu: React.FC = () => {
         overlay={activeKey !== '/listing' ? renderTooltip('Listing') : <></>}
       >
         <Nav.Link
-          href="/listing"
-          eventKey="/listing"
+          eventKey="/document-management"
+          onClick={() => handleSelect('/document-management')}
           onMouseEnter={() => handleMouseEnter('listing')}
           onMouseLeave={() => handleMouseLeave('listing')}
-          className={`${styles['side-menu-item']} ${activeKey === '/listing' ? styles['active'] : ''}`}
+          className={`${styles['side-menu-item']} ${activeKey === '/document-management' ? styles['active'] : ''}`}
         >
-          <img src={ListingIconActive} alt="Listing Icon" className={`${styles['side-menu-icon']}`} />
+          <img src={getIcon('/document-management', ListingIcon, ListingIconActive)} alt="Listing Icon" className={`${styles['side-menu-icon']}`} />
+          <img src={ListingIconActive} alt="ListingIconActive" className={`${styles['side-menu-icon-active']}`} />
         </Nav.Link>
       </OverlayTrigger>
       <OverlayTrigger
@@ -75,13 +108,14 @@ const SideMenu: React.FC = () => {
         overlay={activeKey !== '/chat' ? renderTooltip('Chat') : <></>}
       >
         <Nav.Link
-          href="/chat"
           eventKey="/chat"
+          onClick={() => handleSelect('/chat')}
           onMouseEnter={() => handleMouseEnter('chat')}
           onMouseLeave={() => handleMouseLeave('chat')}
           className={`${styles['side-menu-item']} ${activeKey === '/chat' ? styles['active'] : ''}`}
         >
-          <img src={chatIcon} alt="Chat Icon" className={`${styles['side-menu-icon']}`} />
+          <img src={getIcon('/chat', chatIcon, chatIconActive)} alt="Chat Icon" className={`${styles['side-menu-icon']}`} />
+          <img src={chatIconActive} alt="chatIconActive" className={`${styles['side-menu-icon-active']}`} />
         </Nav.Link>
       </OverlayTrigger>
 
@@ -89,16 +123,17 @@ const SideMenu: React.FC = () => {
         trigger={['hover', 'focus']}
         placement="right"
         show={showPopover.module}
-        overlay={activeKey !== '/module' ? renderTooltip('Module') : <></>}
+        overlay={activeKey !== '/module-management' ? renderTooltip('Module') : <></>}
       >
         <Nav.Link
-          href="/module"
-          eventKey="/module"
+          eventKey="/module-management"
+          onClick={() => handleSelect('/module-management')}
           onMouseEnter={() => handleMouseEnter('module')}
           onMouseLeave={() => handleMouseLeave('module')}
-          className={`${styles['side-menu-item']} ${activeKey === '/module' ? styles['active'] : ''}`}
+          className={`${styles['side-menu-item']} ${activeKey === '/module-management' ? styles['active'] : ''}`}
         >
-          <img src={moduleIcon} alt="Module Icon" className={`${styles['side-menu-icon']}`} />
+          <img src={getIcon('/module-management', moduleIcon, moduleIconActive)} alt="Module Icon" className={`${styles['side-menu-icon']}`} />
+          <img src={moduleIconActive} alt="moduleIconActive" className={`${styles['side-menu-icon-active']}`} />
         </Nav.Link>
       </OverlayTrigger>
 
@@ -106,16 +141,17 @@ const SideMenu: React.FC = () => {
         trigger={['hover', 'focus']}
         placement="right"
         show={showPopover.userManagement}
-        overlay={activeKey !== '/userManagement' ? renderTooltip('User Management') : <></>}
+        overlay={activeKey !== '/user-management' ? renderTooltip('User Management') : <></>}
       >
         <Nav.Link
-          href="/userManagement" 
-          eventKey="/userManagement"
+          eventKey="/user-management"
+          onClick={() => handleSelect('/user-management')}
           onMouseEnter={() => handleMouseEnter('userManagement')}
           onMouseLeave={() => handleMouseLeave('userManagement')}
-          className={`${styles['side-menu-item']} ${activeKey === '/userManagement' ? styles['active'] : ''}`}
+          className={`${styles['side-menu-item']} ${activeKey === '/user-management' ? styles['active'] : ''}`}
         >
-          <img src={userManagementIcon} alt="User Management Icon" className={`${styles['side-menu-icon']}`} />
+          <img src={getIcon('/user-management', userManagementIcon, userManagementIconActive)} alt="User Management Icon" className={`${styles['side-menu-icon']}`} />
+          <img src={userManagementIconActive} alt="userManagementIconActive" className={`${styles['side-menu-icon-active']}`} />
         </Nav.Link>
       </OverlayTrigger>
 
@@ -123,16 +159,17 @@ const SideMenu: React.FC = () => {
         trigger={['hover', 'focus']}
         placement="right"
         show={showPopover.logout}
-        overlay={activeKey !== '/logout' ? renderTooltip('Logout') : <></>}
+        overlay={activeKey !== '/' ? renderTooltip('Logout') : <></>}
       >
         <Nav.Link
-          href="/logout" 
-          eventKey="/logout"
+          eventKey="/"
+          onClick={() => handleLogout('redirect')}
           onMouseEnter={() => handleMouseEnter('logout')}
           onMouseLeave={() => handleMouseLeave('logout')}
           className={`${styles['side-menu-item']} ${activeKey === '/logout' ? styles['active'] : ''}`}
         >
-          <img src={logoutIcon} alt="User Management Icon" className={`${styles['side-menu-icon']}`} />
+          <img src={getIcon('/logout', logoutIcon, logoutIconActive)} alt="Logout Icon" className={`${styles['side-menu-icon']}`} />
+          <img src={logoutIconActive} alt="logoutIconActive" className={`${styles['side-menu-icon-active']}`} />
         </Nav.Link>
       </OverlayTrigger>
 

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, ReactNode } from 'react';
+import AppStateUtil from '../utils/AppStateUtil';
 
 
 type AuthContextType = {
@@ -15,7 +16,7 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
-    const token = '';
+    const token:any = AppStateUtil.getAuthToken();
 
   return (
     <AuthContext.Provider value={{ token }}>

@@ -12,7 +12,22 @@
     transition: background-color 0.3s, border-left-color 0.3s;
     color: #fff;
     margin-bottom: 28px;
+
+    &:hover {
+        .side-menu-icon-active {
+            display: block;
+        }
+        .side-menu-icon {
+            display: none;
+        }
+    }
+
+    .side-menu-icon-active {
+        display: none;
+    }
 }
+
+
 
 .side-menu-item.active {
     border-left-color: #FF9800;
@@ -24,39 +39,25 @@
 }
 
 
-
 .popoverCustom {
-    background-color: #92005a;
-    color: #fff;
+    --bs-popover-bg: #92005a;
+    background-color: var(--bs-popover-bg);
     padding: 0;
     height: 40px;
     line-height: 10px;
-
+    display: block;
+ 
     .popover-content {
         color: #ffffff !important;
     }
-
+ 
     .popover-arrow {
         &::before {
-            left: 0;
-            border-right-color: rgba(0, 0, 0, 0.75);
+            border-right-color: var(--bs-popover-bg) !important;
         }
-
+ 
         &::after {
-            left: 1px;
-            border-right-color: #fff;
+            border-right-color: var(--bs-popover-bg) !important;
         }
-    }
-}
-
-.popover-arrow {
-    &::before {
-        left: 0;
-        border-right-color: rgba(0, 0, 0, 0.75);
-    }
-
-    &::after {
-        left: 1px;
-        border-right-color: #fff;
     }
 }

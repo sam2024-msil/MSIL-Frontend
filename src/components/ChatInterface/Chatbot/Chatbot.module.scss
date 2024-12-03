@@ -1,0 +1,29 @@
+.chatWindow {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    height: 400px;
+    overflow-y: scroll;
+  }
+  
+  .message {
+    position: relative;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    max-width: 60%;
+  
+    &.question {
+      background-color: #007bff;
+      color: white;
+      align-self: flex-end;
+    }
+  
+    &.answer {
+      background-color: #f1f1f1;
+      align-self: flex-start;
+    }
+  
+    .text-muted {
+      font-size: 0.75rem;
+    }
+  }

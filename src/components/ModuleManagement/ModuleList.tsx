@@ -1,41 +1,38 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import styles from './UserList.module.scss'
+import styles from './moduleList.module.scss';
 import SideMenu from '../SideMenus/SideMenu';
 import Header from '../Header/Header';
+import TableComponent from '../../shared/Rtable';
 import eyeIcon from '../../assets/icon-eye.svg';
 import searchIcon from '../../assets/search_icon.svg';
 import uploadIcon from '../../assets/upload_icon.svg';
 import deleteIcon from '../../assets/delete-icon.svg';
 import DataTable from '../../shared/Rtable';
 import axiosInstance from '../../api/axios';
-import AddUserModal from './AddUserModal';
-import AddVendorModal from './AddVendorModal';
+import UploadModuleModal from './UploadModuleModal';
+
 
 interface DataItem {
   id: number;
   name: string;
 }
 
-const Listing: React.FC = () => {
+const ModuleList: React.FC = () => {
 
   const [showLoader, setShowLoader] = useState<boolean>(false);
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [triggerTableApi, setTriggerTableApi] = useState<number>(0);
 
-  const [showUserModal, setUserShowModal] = useState(false);
-  const [showVendorModal, setVendorShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
-  const handleUserShow = () => setUserShowModal(true);
-  const handleUserClose = () => setUserShowModal(false);
-
-  const handleVendorShow = () => setVendorShowModal(true);
-  const handleVendorClose = () => setVendorShowModal(false);
+  const handleShow = () => setShowModal(true);
+  const handleClose = () => setShowModal(false);
 
   const columns: any = useMemo(
     () => [
       {
-        Header: 'User Id',
+        Header: 'Module Id',
         Cell: ({ row }: any) => {
           return (
             <span
@@ -46,23 +43,13 @@ const Listing: React.FC = () => {
             </span>
           )
         },
-        accessor: 'userId',
+        accessor: 'moduleId',
         disableSortBy: true,
       },
       {
-        Header: 'Username',
-        accessor: 'userName',
+        Header: 'Module Name',
+        accessor: 'moduleName',
         disableSortBy: true,
-      },
-      {
-        Header: 'First Name',
-        accessor: 'firstName',
-        disableSortBy: true,
-      },
-      {
-        Header: 'Last Name',
-        accessor: 'lastName',
-
       },
       {
         Header: 'Created On',
@@ -82,13 +69,16 @@ const Listing: React.FC = () => {
         }
       },
       {
-        Header: 'Module',
-        accessor: 'module',
-        sortType: (rowA: any, rowB: any) => {
-          const a = new Date(rowA.values.dob);
-          const b = new Date(rowB.values.dob);
-          return a > b ? 1 : a < b ? -1 : 0;
-        }
+        Header: 'Status',
+        Cell: ({ row }: any) => {
+          return (
+            <span>
+              {row}
+            </span>
+          );
+        },
+        disableSortBy: true,
+
       },
       {
         Header: 'Action',
@@ -145,16 +135,17 @@ const Listing: React.FC = () => {
     }
     return { rows: [], totalPages: 0, totalRecords: 0 };
   }, []);
-
   return (
     <>
+
       <div className={`${styles['right-content-section']}`}>
         <div className={`${styles['right-main-heading']}`}>
-          <h5>User Mangement</h5>
+          <h5>Module</h5>
         </div>
         {/* <TableComponent /> */}
+        {/* <DataTable columns={columns} fetchData={fetchData} searchString={searchKeyword} triggerTableApi={triggerTableApi} startDate={''} endDate={''} /> */}
         <div className='row mb-3'>
-          <div className='col-md-7'>
+          <div className='col-md-9'>
             <div className={`${styles['search-section']}`}>
               <form>
 
@@ -168,13 +159,10 @@ const Listing: React.FC = () => {
               </form>
             </div>
           </div>
-          <div className='col-md-5'>
+          <div className='col-md-3'>
             <div className={`${styles['upload-button']}`}>
-              <button type='button' className='btn btn-primary btn-md' onClick={handleUserShow}>
-                Add New User
-              </button>
-              <button type='button' className='btn btn-primary btn-md ms-2' onClick={handleVendorShow}>
-                Add New Vendor
+              <button type='button' className='btn btn-primary btn-md' onClick={handleShow}>
+                Add Module
               </button>
             </div>
           </div>
@@ -187,10 +175,9 @@ const Listing: React.FC = () => {
           </div>
         </div>
       </div>
-      <AddUserModal show={showUserModal} handleClose={handleUserClose} />
-      <AddVendorModal show={showVendorModal} handleClose={handleVendorClose} />
+      <UploadModuleModal show={showModal} handleClose={handleClose} />
     </>
   );
 };
 
-export default Listing;
+export default ModuleList;

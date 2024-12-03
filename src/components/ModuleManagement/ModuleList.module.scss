@@ -1,6 +1,7 @@
 .right-content {
     margin-left: -30px;
 }
+
 .right-content-section {
     background-color: #F7F7F7;
     height: 39vw;
@@ -10,7 +11,7 @@
 .right-main-heading {
 
     margin-bottom: 30px;
-    
+
     h5 {
         text-align: left;
         font: normal normal 300 28px/24px Roboto;
@@ -21,7 +22,7 @@
 }
 
 .search-section {
-    width: 45%;
+    width: 35%;
 
     .searchIcon {
         width: 100%;
@@ -58,16 +59,42 @@
     border: 1px solid #DBDBDB;
     border-radius: 10px;
     opacity: 1;
+
     table {
         margin-bottom: 0;
         border: none;
     }
+
     .paginationCustom {
         margin-top: 16px;
     }
 }
 
-.form-switch .form-check-input:checked {
-    background-position: right center;
-    --bs-form-switch-bg: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%171c8f'/%3e%3c/svg%3e);
+.modal-dialog {
+
+    .modal-heading {
+        font: normal normal 500 22px / 26px Roboto;
+        letter-spacing: 1.83px;
+        color: #3C3C3C;
+        text-transform: capitalize;
+        opacity: 1;
+    }
+
+    .modal-body {
+        label {
+            text-align: left;
+            font: normal normal 500 15px/26px Roboto;
+            letter-spacing: 1.25px;
+            color: #3C3C3C;
+            text-transform: capitalize;
+            opacity: 1;
+        }
+
+        input {
+            background: #FFFFFF 0% 0% no-repeat padding-box;
+            border: 0.800000011920929px solid #CBC9C9;
+            border-radius: 5px;
+            opacity: 1;
+        }
+    }
 }
