@@ -77,7 +77,7 @@ const Login = () => {
                         <img
                             src={vendorGPTLogo} // Replace with Vendor GPT logo
                             alt="Vendor GPT Logo"
-                            style={{ width: "40%" }}
+                            style={{ width: "70%" }}
                         />
                     </div>
                     <div className='d-flex justify-content-center align-items-center'>

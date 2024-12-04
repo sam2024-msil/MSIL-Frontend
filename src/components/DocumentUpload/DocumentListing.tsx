@@ -38,22 +38,12 @@ const DocumentListing: React.FC = () => {
         () => [
             {
                 Header: 'Document Name',
-                Cell: ({ row }: any) => {
-                    return (
-                        <span
-                            className={styles.documentName}
-                        //   onClick={() => gotoProject(row)}
-                        >
-                            {row?.values.name}
-                        </span>
-                    )
-                },
+                accessor: 'doc_name',
                 disableSortBy: true,
-                accessor: 'name',
             },
             {
                 Header: 'Upload By',
-                accessor: 'description',
+                accessor: 'uploaded_by',
                 disableSortBy: true,
             },
             {
@@ -61,11 +51,11 @@ const DocumentListing: React.FC = () => {
                 Cell: ({ row }: any) => {
                     return (
                         <span>
-                            {row?.values.created_on}
+                            {row?.values.uploaded_dateTime}
                         </span>
                     )
                 },
-                accessor: 'created_on',
+                accessor: 'uploaded_dateTime',
                 sortType: (rowA: any, rowB: any) => {
                     const a = new Date(rowA.values.dob);
                     const b = new Date(rowB.values.dob);
@@ -74,7 +64,7 @@ const DocumentListing: React.FC = () => {
             },
             {
                 Header: 'Module',
-                accessor: 'module',
+                accessor: 'doc_category',
                 sortType: (rowA: any, rowB: any) => {
                     const a = new Date(rowA.values.dob);
                     const b = new Date(rowB.values.dob);
@@ -83,15 +73,16 @@ const DocumentListing: React.FC = () => {
             },
             {
                 Header: 'Status',
-                Cell: ({ row }: any) => {
-                    return (
-                        <span>
-                            {row}
-                        </span>
-                    );
-                },
+                // Cell: ({ row }: any) => {
+                //     return (
+                //         <span>
+                //             {row}
+                //         </span>
+                //     );
+                // },
                 sortType: 'basic',
                 disableSortBy: false,
+                accessor:'doc_status'
             },
             {
                 Header: 'Action',
@@ -103,12 +94,14 @@ const DocumentListing: React.FC = () => {
                         <img src={eyeIcon} />
                     </button>
                 ),
-                accessor: '',
                 disableSortBy: true,
             }
         ],
         []
     );
+    const handleEdit = (id:any) => {
+
+    }
     const fetchData = useCallback(async ({ pageIndex, pageSize, sortBy, searchString }: {
         pageIndex: number;
         pageSize: number;
@@ -129,14 +122,14 @@ const DocumentListing: React.FC = () => {
         //       queryParams.append('to_date', DateUtil.formatDateToISO(endDate));
         //   }
         try {
-            // const response = await axiosInstance.get(`/project/ListProjects/?page=${pageIndex + 1}&page_size=${pageSize}${sortParam}${searchParam}${dateParam}`);
-            const response = await axiosInstance.get(`/listOfDocs?token=${AppStateUtil.getAuthToken()}&${queryParams.toString()}`);
+            const response = await axiosInstance.get(`/listOfDocs?${queryParams.toString()}&sort_by=doc_status`);
             const data = response.data;
+            console.log(" data :: ", data)
             setShowLoader(false);
             return {
-                rows: data.projects,
-                totalPages: data.pages,
-                totalRecords: data.total
+                rows: data.data,
+                totalPages: 0,
+                totalRecords: data.data.length
             };
         }
         catch (error: any) {
@@ -166,7 +159,7 @@ const DocumentListing: React.FC = () => {
                                     <input type="text" className={`form-control ${styles.formControl}`} placeholder="Search" />
                                 </div>
                             </div>
-                            <div className={`input-group ms-2 ${styles.datePickerContainer}`}>
+                            <div className={`input-group ms-3 ${styles.datePickerContainer}`}>
                                 <DatePicker
                                     className={`form-control ${styles.datePickerBorder} w-100`}
                                     selectsRange={true}

@@ -18,9 +18,9 @@ const UploadModuleModal: React.FC<{ show: boolean; handleClose: () => void }> = 
         <Button variant="primary" className='mt-3 float-end'>
           Add
         </Button>
-        <Button variant="secondary" className='mt-3 float-end me-2'>
+        <button type="button" className='mt-3 float-end me-3 btn btn-outline-primary'>
           Cancel
-        </Button>
+        </button>
       </Modal.Body>
     </Modal>
   );

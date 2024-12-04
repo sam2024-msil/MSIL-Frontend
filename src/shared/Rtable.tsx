@@ -218,9 +218,11 @@ const DataTable = <D extends object>({ columns, fetchData, searchString, trigger
               prepareRow(row);
               return (
                 <tr {...row.getRowProps()} key={row.id}>
-                  {row.cells.map((cell:any) =>  (
-                    (cell.column.id === "description") ? <td {...cell.getCellProps()} title={cell.value} key={cell.column.id}>{cell.render('Cell')}</td> : (cell.column.id === 'name') ? <td {...cell.getCellProps()} title={cell.value} key={cell.column.id}>{cell.render('Cell')}</td> :  <td {...cell.getCellProps()} key={cell.column.id}>{cell.render('Cell')}</td>
-                  ))}
+                  {row.cells.map((cell:any) =>  { 
+                    return(
+                    <td {...cell.getCellProps()} key={cell.column.id}>{cell.render('Cell')}</td>
+                  )}
+                  )}
                 </tr>
               );
             })

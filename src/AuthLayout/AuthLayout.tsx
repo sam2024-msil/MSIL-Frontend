@@ -1,8 +1,8 @@
 import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useMsal } from "@azure/msal-react";
 import { Container, Row, Col } from 'react-bootstrap';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { loginRequest } from "../authconfig/authConfig";
 import Login from "../components/Login/Login";
 import SideMenu from "../components/SideMenus/SideMenu";
@@ -20,9 +20,6 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
 
     const { instance, accounts } = useMsal();
     const navigate = useNavigate();
-    const location = useLocation();
-
-    const [showLoader, setShowLoader] = useState<boolean>(false);
 
     useEffect(() => {
 
@@ -36,7 +33,6 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
                 }
             } catch (error) {
                 console.error("Error handling redirect promise:", error);
-                setShowLoader(false); // Stop loader if error occurs
             }
         };
 
