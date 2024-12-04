@@ -1,5 +1,5 @@
 @import './assets/styles/_fonts.scss';
-
+ 
 .btn-primary {
     background: #171C8F 0% 0% no-repeat padding-box;
     border: 1px solid #1A4E8A;
@@ -10,12 +10,34 @@
     letter-spacing: 1.25px;
     color: #FFFFFF;
     text-transform: capitalize;
-    opacity: 1;
 }
-
+ 
 .btn-primary:hover {
     background: #171C8F 0% 0% no-repeat padding-box;
     color: #FFFFFF;
+}
+ 
+.btn-outline-primary {
+    border: 1px solid #171C8F;
+    color: #171C8F;
+    border-radius: 5px;
+    text-align: left;
+    font: normal normal bold 15px/26px Roboto;
+    letter-spacing: 1.25px;
+    text-transform: capitalize;
+    opacity: 1;
+}
+ 
+.btn-outline-primary:hover {
+    border: 1px solid #171C8F;
+    border-radius: 5px;
+    text-align: left;
+    font: normal normal bold 15px/26px Roboto;
+    letter-spacing: 1.25px;
+    text-transform: capitalize;
+    opacity: 1;
+    color: #171C8F;
+    background-color: #FFFFFF;
 }
  
 .btn-secondary {

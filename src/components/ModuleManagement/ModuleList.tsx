@@ -32,21 +32,6 @@ const ModuleList: React.FC = () => {
   const columns: any = useMemo(
     () => [
       {
-        Header: 'Module Id',
-        Cell: ({ row }: any) => {
-          return (
-            <span
-              className={styles.documentName}
-            //   onClick={() => gotoProject(row)}
-            >
-              {row?.values.name}
-            </span>
-          )
-        },
-        accessor: 'moduleId',
-        disableSortBy: true,
-      },
-      {
         Header: 'Module Name',
         accessor: 'moduleName',
         disableSortBy: true,

@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ACACAC"><path d="m787-145 28-28-75-75v-112h-40v128l87 87Zm-587 25q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v268q-19-9-39-15.5t-41-9.5v-243H200v560h242q3 22 9.5 42t15.5 38H200Zm0-120v40-560 243-3 280Zm80-40h163q3-21 9.5-41t14.5-39H280v80Zm0-160h244q32-30 71.5-50t84.5-27v-3H280v80Zm0-160h400v-80H280v80ZM720-40q-83 0-141.5-58.5T520-240q0-83 58.5-141.5T720-440q83 0 141.5 58.5T920-240q0 83-58.5 141.5T720-40Z"/></svg>
+<svg id="Report" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <path id="Path_6159" data-name="Path 6159" d="M0,0H24V24H0Z" fill="none"/>
+  <path id="Path_6160" data-name="Path 6160" d="M8,5H6A2,2,0,0,0,4,7V19a2,2,0,0,0,2,2h5.7" fill="none" stroke="#a0afc4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+  <path id="Path_6161" data-name="Path 6161" d="M18,14v4h4" fill="none" stroke="#a0afc4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+  <path id="Path_6162" data-name="Path 6162" d="M18,11V7a2,2,0,0,0-2-2H14" fill="none" stroke="#a0afc4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+  <rect id="Rectangle_894" data-name="Rectangle 894" width="6" height="4" rx="2" transform="translate(8 3)" fill="none" stroke="#a0afc4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+  <circle id="Ellipse_44" data-name="Ellipse 44" cx="4" cy="4" r="4" transform="translate(14 14)" fill="none" stroke="#a0afc4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+  <path id="Path_6163" data-name="Path 6163" d="M8,11h4" fill="none" stroke="#a0afc4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+  <path id="Path_6164" data-name="Path 6164" d="M8,15h3" fill="none" stroke="#a0afc4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+</svg>
+ 
