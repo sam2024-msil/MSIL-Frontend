@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import "../Feedback/Feedback.scss";
 import SmileyOneIcon from '../../assets/SmileyIcons/SmileyOneIcon.svg';
 import SmileyTwoIcon from '../../assets/SmileyIcons/SmileyTwoIcon.svg';

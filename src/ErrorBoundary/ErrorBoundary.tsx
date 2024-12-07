@@ -5,7 +5,7 @@ interface ErrorBoundaryProps {
   fallback?: ReactNode; // Optional fallback UI
 }
 
-const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({ children, fallback }) => {
+const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({ children }) => {
   const [hasError, setHasError] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 

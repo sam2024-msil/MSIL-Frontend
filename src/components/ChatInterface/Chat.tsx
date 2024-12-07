@@ -1,8 +1,5 @@
 import React from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
-import styles from './chat.module.scss'
-import SideMenu from '../SideMenus/SideMenu';
-import Header from '../Header/Header';
+import styles from './chat.module.scss';
 import Chatbot from './Chatbot/Chatbot';
 
 const Chat: React.FC = () => {

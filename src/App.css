@@ -1,5 +1,9 @@
 @import './assets/styles/_fonts.scss';
- 
+
+body {
+    background-color: #F7F7F7;
+}
+
 .btn-primary {
     background: #171C8F 0% 0% no-repeat padding-box;
     border: 1px solid #1A4E8A;

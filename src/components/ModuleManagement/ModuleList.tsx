@@ -1,16 +1,13 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
 import styles from './moduleList.module.scss';
-import SideMenu from '../SideMenus/SideMenu';
-import Header from '../Header/Header';
-import TableComponent from '../../shared/Rtable';
-import eyeIcon from '../../assets/icon-eye.svg';
+import editIcon from '../../assets/edit-icon.svg';
 import searchIcon from '../../assets/search_icon.svg';
-import uploadIcon from '../../assets/upload_icon.svg';
 import deleteIcon from '../../assets/delete-icon.svg';
 import DataTable from '../../shared/Rtable';
 import axiosInstance from '../../api/axios';
 import UploadModuleModal from './UploadModuleModal';
+import DeleteConfimationModal from './DeleteConfirmationModal';
+import { useToast } from '../../context/ToastContext';
 
 
 interface DataItem {
@@ -18,22 +15,36 @@ interface DataItem {
   name: string;
 }
 
+interface moduleDetails {
+  ModuleName: string;
+  ModuleID: number;
+}
 const ModuleList: React.FC = () => {
 
+  const { showSuccess, showError } = useToast();
   const [showLoader, setShowLoader] = useState<boolean>(false);
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [triggerTableApi, setTriggerTableApi] = useState<number>(0);
+  const [moduleIdForEdit, setModuleIdForEdit] = useState<number>(0);
+  const [moduleNameForEdit, setModuleNameForEdit] = useState<string>('');
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const [moduleDeleteId, setModuleDeleteId] = useState<number>(0)
 
   const [showModal, setShowModal] = useState(false);
 
   const handleShow = () => setShowModal(true);
-  const handleClose = () => setShowModal(false);
-
+  const handleClose = () => {
+    setShowModal(false);
+    setModuleIdForEdit(0)
+    setModuleNameForEdit('');
+    setTriggerTableApi(triggerTableApi + 1);
+  }
+  console.log(showLoader)
   const columns: any = useMemo(
     () => [
       {
         Header: 'Module Name',
-        accessor: 'moduleName',
+        accessor: 'ModuleName',
         disableSortBy: true,
       },
       {
@@ -41,11 +52,11 @@ const ModuleList: React.FC = () => {
         Cell: ({ row }: any) => {
           return (
             <span>
-              {row?.values.created_on}
+              {row?.values.CreatedOn}
             </span>
           )
         },
-        accessor: 'created_on',
+        accessor: 'CreatedOn',
         disableSortBy: true,
         sortType: (rowA: any, rowB: any) => {
           const a = new Date(rowA.values.dob);
@@ -54,25 +65,14 @@ const ModuleList: React.FC = () => {
         }
       },
       {
-        Header: 'Status',
-        Cell: ({ row }: any) => {
-          return (
-            <span>
-              {row}
-            </span>
-          );
-        },
-        disableSortBy: true,
-
-      },
-      {
         Header: 'Action',
         Cell: ({ row }: any) => (
           <button
             className={styles.editButton}
             title='Edit Project'
           >
-            <img src={eyeIcon} />
+            <img src={editIcon} onClick={() => handleEdit(row.original)} />
+            <img src={deleteIcon} onClick={() => { setShowDeleteModal(true); setModuleDeleteId(row.original.ModuleID)}} /> 
           </button>
         ),
         accessor: '',
@@ -81,6 +81,12 @@ const ModuleList: React.FC = () => {
     ],
     []
   );
+
+  const handleEdit = (moduleDetails:moduleDetails) => {
+    setModuleIdForEdit(moduleDetails.ModuleID);
+    setModuleNameForEdit(moduleDetails.ModuleName);
+    setShowModal(true);
+  }
   const fetchData = useCallback(async ({ pageIndex, pageSize, sortBy, searchString }: {
     pageIndex: number;
     pageSize: number;
@@ -101,14 +107,13 @@ const ModuleList: React.FC = () => {
     //       queryParams.append('to_date', DateUtil.formatDateToISO(endDate));
     //   }
     try {
-      // const response = await axiosInstance.get(`/project/ListProjects/?page=${pageIndex + 1}&page_size=${pageSize}${sortParam}${searchParam}${dateParam}`);
-      const response = await axiosInstance.get(`/project/ListProjects/?${queryParams.toString()}`);
+      const response = await axiosInstance.get(`/modules/`);
       const data = response.data;
       setShowLoader(false);
       return {
-        rows: data.projects,
-        totalPages: data.pages,
-        totalRecords: data.total
+        rows: data,
+        totalPages: 1,
+        totalRecords: data.length
       };
     }
     catch (error: any) {
@@ -120,6 +125,24 @@ const ModuleList: React.FC = () => {
     }
     return { rows: [], totalPages: 0, totalRecords: 0 };
   }, []);
+
+  const closeConfirmModal = (decision:string) => {
+    if(decision == 'proceed') {
+      axiosInstance.delete(`/modules/${moduleDeleteId}`)
+      .then((res) => {
+        if(res) {
+          showSuccess('Module deleted successfully');
+          setShowDeleteModal(false);
+          setTriggerTableApi(triggerTableApi + 1);
+        }
+      }).catch((e) => {
+        console.error(e)
+        showError('Something went wrong')
+      })
+    } else {
+      setShowDeleteModal(false);
+    }
+  }
   return (
     <>
 
@@ -127,8 +150,6 @@ const ModuleList: React.FC = () => {
         <div className={`${styles['right-main-heading']}`}>
           <h5>Module</h5>
         </div>
-        {/* <TableComponent /> */}
-        {/* <DataTable columns={columns} fetchData={fetchData} searchString={searchKeyword} triggerTableApi={triggerTableApi} startDate={''} endDate={''} /> */}
         <div className='row mb-3'>
           <div className='col-md-9'>
             <div className={`${styles['search-section']}`}>
@@ -138,7 +159,7 @@ const ModuleList: React.FC = () => {
                   <span className={`${styles.formControlFeedback}`}>
                     <img src={searchIcon} alt="searchIcon" className={`${styles['searchIcon']}`} />
                   </span>
-                  <input type="text" className={`form-control ${styles.formControl}`} placeholder="Search" />
+                  <input type="text" className={`form-control ${styles.formControl}`} onChange={(e) => setSearchKeyword(e.target.value)} placeholder="Search" />
                 </div>
 
               </form>
@@ -160,7 +181,8 @@ const ModuleList: React.FC = () => {
           </div>
         </div>
       </div>
-      <UploadModuleModal show={showModal} handleClose={handleClose} />
+      <UploadModuleModal show={showModal} handleClose={handleClose} moduleId={moduleIdForEdit} moduleNameForEdit={moduleNameForEdit} />
+      <DeleteConfimationModal show={showDeleteModal} onClose={closeConfirmModal}/>
     </>
   );
 };

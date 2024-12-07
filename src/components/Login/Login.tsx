@@ -38,6 +38,7 @@ const Login = () => {
                         <div className={`d-flex h-auto ${styles['login-card']} w-75 ms-auto`}>
                             <Card className={`shadow-sm flex-grow-1`}>
                                 <Card.Body className={`${styles['left-form']}`}>
+                                <h4 className={`${styles['msil-login-text']} fw-bold text-center`}>Vendor Login</h4>
                                     <Form>
                                         <Form.Group className="mb-3" controlId="formEmail">
                                             <Form.Label>Email Address</Form.Label>
