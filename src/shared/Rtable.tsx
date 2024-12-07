@@ -183,7 +183,8 @@ const DataTable = <D extends object>({ columns, fetchData, searchString, trigger
   
   return (
     <>
-    <div className="table-responsive">
+    <div className={`${styles['table-section']}`}>
+    <div className={`table-responsive ${styles['custom-data-table']}`}>
       <table {...getTableProps()} className={`table ${styles.tableCustom} ${styles.list}`}>
         <thead>
           {headerGroups.map((headerGroup: any) => (
@@ -208,7 +209,7 @@ const DataTable = <D extends object>({ columns, fetchData, searchString, trigger
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {!data.length && (<tr><td className={`${styles['NoDocsfoundtext']}`}>No Documents found</td></tr>)}
+          {(!data.length && !loading) && (<tr><td className={`${styles['NoDocsfoundtext']}`} colSpan={columns.length}>No Records Found</td></tr>)}
           {loading ? (
             <tr>
               <td colSpan={columns.length}>Loading...</td>
@@ -230,12 +231,14 @@ const DataTable = <D extends object>({ columns, fetchData, searchString, trigger
         </tbody>
       </table>
     </div>
+    </div>
+    <div className={styles['pagination-section']}>
     {(data.length > 0) &&
-      <span className={styles.pageSizeRecords}>
+      <div className={styles.pageSizeRecords}>
         {SHOWING.showing} {((controlledPageIndex+1) - 1) * pageSize + 1} {TO.to} {Math.min((controlledPageIndex+1) * pageSize, totalRecord)} {OF.of} {totalRecord} {PROJECTS.projects}
-      </span>
+      </div>
     }
-      <div className={`${styles.paginationCustom} mt-3`}>
+      <div className={`${styles.paginationCustom}`}>
         <nav>
           <ul className={styles.pagination}>
             <li className={`${styles["page-item"]} ${controlledPageIndex === 0 ? styles.disabled : ''}`} onClick={() => controlledPageIndex > 0 && previousPage()}>
@@ -296,6 +299,7 @@ const DataTable = <D extends object>({ columns, fetchData, searchString, trigger
             </option>
           ))}
         </select>
+      </div>
       </div>
       </>
     

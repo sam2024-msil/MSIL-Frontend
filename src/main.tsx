@@ -1,6 +1,4 @@
 import ReactDOM from 'react-dom/client'
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router } from "react-router-dom";
 import { AuthenticationResult, EventMessage, EventType, PublicClientApplication } from '@azure/msal-browser'
 import App from './App.tsx'

@@ -4,7 +4,7 @@
  
 .right-content-section {
     background-color: #F7F7F7;
-    height: 39vw;
+    height: 38vw;
     padding: 25px 16px;
 }
  
@@ -99,22 +99,6 @@
     background: #EDEDED;
     border-radius: 50%;
     padding: 16px;
-}
- 
-.table-section {
-    background: #FFFFFF 0% 0% no-repeat padding-box;
-    border: 1px solid #DBDBDB;
-    border-radius: 10px;
-    opacity: 1;
- 
-    table {
-        margin-bottom: 0;
-        border: none;
-    }
- 
-    .paginationCustom {
-        margin-top: 16px;
-    }
 }
  
 .modal-heading {
@@ -213,6 +197,31 @@
                         img {
                             width: 20px;
                         }
+                    }
+                }
+            }
+        }
+    }
+}
+table {
+    thead {
+        position: sticky;
+        top: 0;
+        background-color: #fff;
+        z-index: 1;
+    }
+    tbody {
+        tr {
+            td {
+                button {
+                    border: none;
+                    background: none;
+                    padding: 0;
+                    img {
+                        margin-right: 12px;
+                    &:last-child {
+                        margin-right: 0;
+                    }
                     }
                 }
             }

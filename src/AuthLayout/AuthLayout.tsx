@@ -29,7 +29,7 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
                 if (response) {
                     await handleResponse(response);
                 } else if (accounts.length > 0) {
-                    await getAccessToken(); // Get token silently for logged-in users
+                    //await getAccessToken(); // Get token silently for logged-in users
                 }
             } catch (error) {
                 console.error("Error handling redirect promise:", error);

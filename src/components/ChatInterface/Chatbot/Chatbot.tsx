@@ -5,7 +5,7 @@ import SendIcon from '../../../assets/send-icon.svg';
 import pdfIcon from '../../../assets/pdfIcon.svg';
 import userIcon from '../../../assets/MSIL-icon.png';
 import styles from './Chatbot.module.scss';
-import { formatDate, formatTime } from '../../../utils/DateUtil';
+import DateUtil from '../../../utils/DateUtil';
  
 type MessageType = {
   text: string;
@@ -34,8 +34,8 @@ const Chatbot: React.FC = () => {
   const handleSend = () => {
     if (input.trim()) {
       const today = new Date();
-      const formattedDate = formatDate(today);
-      const formattedTime = formatTime(today);
+      const formattedDate = DateUtil.formatDate(today);
+      const formattedTime = DateUtil.formatTime(today);
  
       const newMessage: MessageType = {
         text: input,
@@ -53,7 +53,7 @@ const Chatbot: React.FC = () => {
       setTimeout(() => {
         const responseMessage: MessageType = {
           text: responseText,
-          time: formatTime(new Date()),
+          time: DateUtil.formatTime(new Date()),
           type: 'answer',
           date: formattedDate,
         };

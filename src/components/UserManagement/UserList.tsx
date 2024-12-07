@@ -1,12 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
-import styles from './UserList.module.scss'
-import SideMenu from '../SideMenus/SideMenu';
-import Header from '../Header/Header';
+import styles from './UserList.module.scss';
 import eyeIcon from '../../assets/icon-eye.svg';
 import searchIcon from '../../assets/search_icon.svg';
-import uploadIcon from '../../assets/upload_icon.svg';
-import deleteIcon from '../../assets/delete-icon.svg';
+// import uploadIcon from '../../assets/upload_icon.svg';
+// import deleteIcon from '../../assets/delete-icon.svg';
 import DataTable from '../../shared/Rtable';
 import axiosInstance from '../../api/axios';
 import AddUserModal from './AddUserModal';
@@ -30,8 +27,11 @@ const Listing: React.FC = () => {
   const handleUserClose = () => setUserShowModal(false);
 
   const handleVendorShow = () => setVendorShowModal(true);
-  const handleVendorClose = () => setVendorShowModal(false);
-
+  const handleVendorClose = () => {
+    setVendorShowModal(false);
+    setTriggerTableApi(triggerTableApi + 1);
+  }
+  console.log(showLoader);
   const columns: any = useMemo(
     () => [
       {
@@ -96,6 +96,7 @@ const Listing: React.FC = () => {
           <button
             className={styles.editButton}
             title='Edit Project'
+            onClick={() => handleEdit(row.value)}
           >
             <img src={eyeIcon} />
           </button>
@@ -106,6 +107,11 @@ const Listing: React.FC = () => {
     ],
     []
   );
+
+  const handleEdit = (id:string) => {
+    console.log(id);
+  }
+
   const fetchData = useCallback(async ({ pageIndex, pageSize, sortBy, searchString }: {
     pageIndex: number;
     pageSize: number;
@@ -162,7 +168,7 @@ const Listing: React.FC = () => {
                   <span className={`${styles.formControlFeedback}`}>
                     <img src={searchIcon} alt="searchIcon" className={`${styles['searchIcon']}`} />
                   </span>
-                  <input type="text" className={`form-control ${styles.formControl}`} placeholder="Search" />
+                  <input type="text" className={`form-control ${styles.formControl}`} onChange={(e) => setSearchKeyword(e.target.value)} placeholder="Search" />
                 </div>
 
               </form>

@@ -1,9 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
+import Select from "react-select";
 import { Modal, Button, Table, Form } from 'react-bootstrap';
 import uploadIcon from '../../assets/upload-icon.svg'
 import styles from './DocumentListing.module.scss';
 import DeleteIcon from '../../assets/delete-icon.svg';
+import pdfIcon from '../../assets/pdfIcon.svg';
 
 const UploadModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ show, handleClose }) => {
   const [files, setFiles] = useState<File[]>([]);
@@ -16,6 +18,22 @@ const UploadModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ sho
 
   const handleDelete = (index: number) => {
     setFiles(files.filter((_, i) => i !== index));
+  };
+
+  const options = [
+    { value: "apple", label: "Apple" },
+    { value: "banana", label: "Banana" },
+    { value: "cherry", label: "Cherry" },
+  ];
+
+  const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
+
+  const handleChange = (id:number,selected: any) => {
+    setSelectedOptions((prevState) => ({
+      ...prevState,
+      [id]: selected,
+    }));
+    console.log("Selected options:", selected);
   };
 
   return (
@@ -54,17 +72,24 @@ const UploadModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ sho
                       </td>
                     </tr>
                   ) : (
-                    files.map((file, index) => (
+                    files.map((file, index:number) => (
                       <tr key={index}>
                         <td><Form.Check type="checkbox" /></td>
-                        <td>{file.name}</td>
+                        <td><img src={pdfIcon} /> &nbsp; {file.name}</td>
                         <td>
-                        <Form.Select aria-label="Default select example">
+                        {/* <Form.Select aria-label="Default select example">
                           <option>Open this select menu</option>
                           <option value="1">One</option>
                           <option value="2">Two</option>
                           <option value="3">Three</option>
-                        </Form.Select>
+                        </Form.Select> */}
+                        <Select
+                          options={options}
+                          isMulti
+                          value={selectedOptions[index] || null}
+                          onChange={(options) => handleChange(index,options)}
+                          placeholder="Modules"
+                        />
                         </td>
                         <td><img src={DeleteIcon} alt="Delete Icon" onClick={() => handleDelete(index)} /></td>
                       </tr>

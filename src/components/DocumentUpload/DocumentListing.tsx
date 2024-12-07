@@ -1,19 +1,17 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 import "../../shared/ReactDatepicker.scss";
 import styles from './DocumentListing.module.scss'
-import SideMenu from '../SideMenus/SideMenu';
-import Header from '../Header/Header';
 import eyeIcon from '../../assets/icon-eye.svg';
 import searchIcon from '../../assets/search_icon.svg';
 import uploadIcon from '../../assets/upload_icon.svg';
 import deleteIcon from '../../assets/delete-icon.svg';
+import editIcon from '../../assets/edit-icon.svg';
 import CalendarIcon from '../../assets/calendarIcon.svg';
 import DataTable from '../../shared/Rtable';
 import axiosInstance from '../../api/axios';
 import UploadModal from './UploadModal';
-import AppStateUtil from '../../utils/AppStateUtil';
+import DateUtil from '../../utils/DateUtil';
 
 
 interface DataItem {
@@ -32,8 +30,11 @@ const DocumentListing: React.FC = () => {
     const [showModal, setShowModal] = useState(false);
 
     const handleShow = () => setShowModal(true);
-    const handleClose = () => setShowModal(false);
-
+    const handleClose = () => {
+        setShowModal(false);
+        setTriggerTableApi(triggerTableApi + 1);
+    }
+    console.log(showLoader)
     const columns: any = useMemo(
         () => [
             {
@@ -51,7 +52,7 @@ const DocumentListing: React.FC = () => {
                 Cell: ({ row }: any) => {
                     return (
                         <span>
-                            {row?.values.uploaded_dateTime}
+                            {DateUtil.convertToIST(row?.values.uploaded_dateTime)}
                         </span>
                     )
                 },
@@ -88,10 +89,11 @@ const DocumentListing: React.FC = () => {
                 Header: 'Action',
                 Cell: ({ row }: any) => (
                     <button
-                        className={styles.editButton}
-                        title='Edit Project'
+                        title='Edit Documents'
                     >
+                        <img src={editIcon} onClick={() => handleEdit(row?.values)} />
                         <img src={eyeIcon} />
+                        <img src={deleteIcon} /> 
                     </button>
                 ),
                 disableSortBy: true,
@@ -100,7 +102,7 @@ const DocumentListing: React.FC = () => {
         []
     );
     const handleEdit = (id:any) => {
-
+        console.log(id);
     }
     const fetchData = useCallback(async ({ pageIndex, pageSize, sortBy, searchString }: {
         pageIndex: number;
@@ -122,14 +124,13 @@ const DocumentListing: React.FC = () => {
         //       queryParams.append('to_date', DateUtil.formatDateToISO(endDate));
         //   }
         try {
-            const response = await axiosInstance.get(`/listOfDocs?${queryParams.toString()}&sort_by=doc_status`);
+            const response = await axiosInstance.get(`/listOfDocs?${queryParams.toString()}`);
             const data = response.data;
-            console.log(" data :: ", data)
             setShowLoader(false);
             return {
                 rows: data.data,
-                totalPages: 0,
-                totalRecords: data.data.length
+                totalPages: data.pages,
+                totalRecords: data.total_records
             };
         }
         catch (error: any) {
@@ -156,7 +157,7 @@ const DocumentListing: React.FC = () => {
                                     <span className={`${styles.formControlFeedback}`}>
                                         <img src={searchIcon} alt="searchIcon" className={`${styles['searchIcon']}`} />
                                     </span>
-                                    <input type="text" className={`form-control ${styles.formControl}`} placeholder="Search" />
+                                    <input type="text" className={`form-control ${styles.formControl}`} onChange={(e) => setSearchKeyword(e.target.value)} placeholder="Search" />
                                 </div>
                             </div>
                             <div className={`input-group ms-3 ${styles.datePickerContainer}`}>
