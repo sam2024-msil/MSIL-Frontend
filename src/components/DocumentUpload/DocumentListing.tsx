@@ -6,12 +6,14 @@ import eyeIcon from '../../assets/icon-eye.svg';
 import searchIcon from '../../assets/search_icon.svg';
 import uploadIcon from '../../assets/upload_icon.svg';
 import deleteIcon from '../../assets/delete-icon.svg';
+import menuIcon from '../../assets/menu_icon.svg';
 import editIcon from '../../assets/edit-icon.svg';
 import CalendarIcon from '../../assets/calendarIcon.svg';
 import DataTable from '../../shared/Rtable';
 import axiosInstance from '../../api/axios';
 import UploadModal from './UploadModal';
 import DateUtil from '../../utils/DateUtil';
+import { isMobileDevice } from '../../utils/BroswerUtil';
 
 
 interface DataItem {
@@ -28,6 +30,12 @@ const DocumentListing: React.FC = () => {
     const [startDate, endDate] = dateRange;
 
     const [showModal, setShowModal] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+ 
+    const isMobile = isMobileDevice();
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+    };
 
     const handleShow = () => setShowModal(true);
     const handleClose = () => {
@@ -146,9 +154,12 @@ const DocumentListing: React.FC = () => {
         <>
 
             <div className={`${styles['right-content-section']}`}>
-                <div className={`${styles['right-main-heading']}`}>
-                    <h5>Document Listing</h5>
-                </div>
+            <div className={`${styles['right-main-heading']}`}>
+                <button onClick={toggleMenu} className={styles.menuToggleButton}>
+                    <img src={menuIcon} alt="menuToggleIcon" className={styles.menuToggleIcon} />
+                </button>
+                <h5>Document Listing</h5>
+            </div>
                 <div className='row mb-3'>
                     <div className='col-md-9'>
                         <div className='d-flex'>
@@ -189,7 +200,7 @@ const DocumentListing: React.FC = () => {
                 <div className='row'>
                     <div className='col-md-12'>
                         <div className={`${styles['table-section']}`}>
-                            <DataTable columns={columns} fetchData={fetchData} searchString={searchKeyword} triggerTableApi={triggerTableApi} startDate={''} endDate={''} />
+                            <DataTable columns={columns} tableType={'documentList'} fetchData={fetchData} searchString={searchKeyword} triggerTableApi={triggerTableApi} startDate={''} endDate={''} />
                         </div>
                     </div>
                 </div>

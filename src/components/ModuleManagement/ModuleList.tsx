@@ -176,7 +176,7 @@ const ModuleList: React.FC = () => {
         <div className='row'>
           <div className='col-md-12'>
             <div className={`${styles['table-section']}`}>
-              <DataTable columns={columns} fetchData={fetchData} searchString={searchKeyword} triggerTableApi={triggerTableApi} startDate={''} endDate={''} />
+              <DataTable columns={columns} fetchData={fetchData} tableType={'moduleList'} searchString={searchKeyword} triggerTableApi={triggerTableApi} startDate={''} endDate={''} />
             </div>
           </div>
         </div>

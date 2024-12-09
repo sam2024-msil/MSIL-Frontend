@@ -5,6 +5,7 @@ import styles from './SideMenu.module.scss';
 import ListingIcon from '../../assets/SideMenuIcons/listing_icon.svg';
 import ListingIconActive from '../../assets/SideMenuIcons/listing-active.svg';
 import chatIcon from '../../assets/SideMenuIcons/chat_icon.svg';
+import crossIcon from '../../assets/close_icon.svg';
 import chatIconActive from '../../assets/SideMenuIcons/chat-active.svg';
 import moduleIcon from '../../assets/SideMenuIcons/module_icon.svg';
 import moduleIconActive from '../../assets/SideMenuIcons/module-active.svg';
@@ -15,7 +16,7 @@ import logoutIconActive from '../../assets/SideMenuIcons/logout-active.svg';
 import AppStateUtil from '../../utils/AppStateUtil';
 import { useMsal } from "@azure/msal-react";
 
-const SideMenu: React.FC = () => {
+const SideMenu: React.FC<{ isMobile: boolean; isMenuOpen: boolean; toggleMenu: () => void }> = ({ isMobile, isMenuOpen, toggleMenu }) => {
 
 
   const navigate = useNavigate();
@@ -78,12 +79,18 @@ const SideMenu: React.FC = () => {
 }
 
   return (
+    <div className={styles.sideMenuContainer}>
     <Nav
       defaultActiveKey="/listing"
       activeKey={activeKey}
       onSelect={handleSelect}
       className={`${styles['sideMenu-bg']} flex-column vh-100 px-0`}
     >
+      {isMobile && isMenuOpen && (
+          <button onClick={toggleMenu} className={`${styles.closeMenuButton} btn`}>
+            <img src={crossIcon} alt="closeMenuIcon" className={styles.closeMenuIcon} />
+          </button>
+        )}
       <OverlayTrigger
         trigger={['hover', 'focus']}
         placement="right"
@@ -174,6 +181,7 @@ const SideMenu: React.FC = () => {
       </OverlayTrigger>
 
     </Nav>
+    </div>
   );
 };
 

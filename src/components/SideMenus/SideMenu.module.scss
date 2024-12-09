@@ -2,8 +2,18 @@
     background-color: #171C8F;
     padding: 50% 0;
     width: 70%;
+ 
+    @media screen and (max-width: 992px) {
+        width: 100%;
+        padding: 10px;
+    }
 }
-
+ 
+.closeMenuButton {
+    text-align: right;
+    margin-bottom: 18px;
+}
+ 
 .side-menu-item {
     display: flex;
     align-items: center;
@@ -12,33 +22,38 @@
     transition: background-color 0.3s, border-left-color 0.3s;
     color: #fff;
     margin-bottom: 28px;
-
+ 
     &:hover {
         .side-menu-icon-active {
             display: block;
         }
-        .side-menu-icon {
-            display: none;
-        }
     }
-
+ 
+    .side-menu-text {
+        color: #fff;
+        font: normal normal normal 20px Roboto;
+    }
+ 
+ 
+ 
     .side-menu-icon-active {
         display: none;
     }
+ 
+    .side-menu-text {
+        display: none; // Hide text by default
+ 
+        @media screen and (max-width: 768px) {
+            display: inline; // Show text on mobile devices
+            margin-left: 10px;
+        }
+    }
 }
-
-
-
+ 
 .side-menu-item.active {
     border-left-color: #FF9800;
-    // background-color: #e9ecef;
 }
-
-.side-menu-item:hover {
-    background-color: #171C8F;
-}
-
-
+ 
 .popoverCustom {
     --bs-popover-bg: #92005a;
     background-color: var(--bs-popover-bg);

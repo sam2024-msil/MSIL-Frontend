@@ -1,5 +1,5 @@
 import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useMsal } from "@azure/msal-react";
 import { Container, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +9,7 @@ import SideMenu from "../components/SideMenus/SideMenu";
 import Header from "../components/Header/Header";
 import styles from './AuthLayout.module.scss';
 import AppStateUtil from "../utils/AppStateUtil";
+import { isMobileDevice } from "../utils/BroswerUtil";
 
 
 type Props = {
@@ -20,6 +21,14 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
 
     const { instance, accounts } = useMsal();
     const navigate = useNavigate();
+
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const isMobile = isMobileDevice() || false
+
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+    };
 
     useEffect(() => {
 
@@ -58,10 +67,10 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
     const handleResponse = async (response: any) => {
 
         if (response) {
-            await getAccessToken();  
+            await getAccessToken();
         }
     };
-
+    console.log(" isMobile ", isMobile)
     return (
         <>
             <UnauthenticatedTemplate>
@@ -71,10 +80,10 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
 
                 <Container fluid>
                     <Row>
-                        <Col xs={1} className='p-0'>
-                            <SideMenu />
+                        <Col xs={isMobile ? 12 : 1} className={`p-0 ${isMenuOpen ? styles.menuOpen : styles.menuClosed}`}>
+                            <SideMenu isMobile={isMobile} isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
                         </Col>
-                        <Col xs={11} className='p-0'>
+                        <Col xs={isMobile ? 12 : 11} className={`p-0 ${isMenuOpen ? styles.menuClosed : styles.menuOpen}`}>
                             <div className={`${styles['right-content']}`}>
                                 <Header />
                                 {children}
