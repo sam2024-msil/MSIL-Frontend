@@ -24,6 +24,7 @@ import { DOTS3, OF, ONE, PAGE, PAGINATION_OPTIONS, PROJECTS, SHOWING, SLASH, TO 
 
 interface DataTableProps<D extends object> {
   columns: Column<D>[];
+  tableType:string;
   fetchData: ({
     pageIndex,
     pageSize,
@@ -75,7 +76,7 @@ interface ExtendedTableOptions<D extends object> extends TableOptions<D> {
   initialState: Partial<PaginationTableState<D>>;
 }
 
-const DataTable = <D extends object>({ columns, fetchData, searchString, triggerTableApi, startDate, endDate }: DataTableProps<D>) => {
+const DataTable = <D extends object>({ columns, fetchData, searchString, triggerTableApi, startDate, endDate, tableType }: DataTableProps<D>) => {
   const [data, setData] = useState<D[]>([]);
   const [loading, setLoading] = useState(false);
   const [pageCount, setPageCount] = useState(0);
@@ -185,7 +186,7 @@ const DataTable = <D extends object>({ columns, fetchData, searchString, trigger
     <>
     <div className={`${styles['table-section']}`}>
     <div className={`table-responsive ${styles['custom-data-table']}`}>
-      <table {...getTableProps()} className={`table ${styles.tableCustom} ${styles.list}`}>
+      <table {...getTableProps()} className={`table ${styles.tableCustom} ${(tableType === 'moduleList') ? tableType :''} ${styles.list}`}>
         <thead>
           {headerGroups.map((headerGroup: any) => (
             <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>

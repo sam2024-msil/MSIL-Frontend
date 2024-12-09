@@ -228,3 +228,59 @@ table {
         }
     }
 }
+.menuOpen {
+    display: block;
+}
+ 
+.menuClosed {
+    display: none;
+}
+ 
+@media (min-width: 992px) {
+ 
+    .menuOpen,
+    .menuClosed {
+        display: block;
+    }
+}
+ 
+.rightMainHeading {
+    display: flex;
+    align-items: center;
+}
+ 
+.menuToggleButton {
+    margin-right: 10px;
+    background: none;
+    border: 1px solid #171C8F;
+    border-radius: 5px;
+}
+ 
+.menuToggleIcon {
+    width: 24px;
+    height: 24px;
+}
+ 
+@media (min-width: 992px) {
+    .menuToggleButton {
+        display: none;
+    }
+}
+ 
+.sideMenuContainer {
+    position: relative;
+}
+ 
+.closeMenuButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    z-index: 1000;
+}
+ 
+.closeMenuIcon {
+    width: 24px;
+    height: 24px;
+}

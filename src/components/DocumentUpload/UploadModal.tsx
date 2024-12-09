@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import Select from "react-select";
 import { Modal, Button, Table, Form } from 'react-bootstrap';
@@ -6,10 +6,21 @@ import uploadIcon from '../../assets/upload-icon.svg'
 import styles from './DocumentListing.module.scss';
 import DeleteIcon from '../../assets/delete-icon.svg';
 import pdfIcon from '../../assets/pdfIcon.svg';
+import axiosInstance from '../../api/axios';
+import { useToast } from '../../context/ToastContext';
 
+
+interface moduleDetails {
+  ModuleName: string;
+  ModuleID: number;
+  CreatedOn: string;
+}
 const UploadModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ show, handleClose }) => {
-  const [files, setFiles] = useState<File[]>([]);
 
+  const { showSuccess, showError } = useToast();
+  const [files, setFiles] = useState<File[]>([]);
+  const [moduleList, setModuleList] = useState();
+  
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
   }, []);
@@ -20,11 +31,6 @@ const UploadModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ sho
     setFiles(files.filter((_, i) => i !== index));
   };
 
-  const options = [
-    { value: "apple", label: "Apple" },
-    { value: "banana", label: "Banana" },
-    { value: "cherry", label: "Cherry" },
-  ];
 
   const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
 
@@ -33,8 +39,66 @@ const UploadModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ sho
       ...prevState,
       [id]: selected,
     }));
-    console.log("Selected options:", selected);
   };
+useEffect(() => {
+  getModules();
+},[])
+  const getModules = () => {
+    axiosInstance.get(`/modules/`)
+    .then((res) => {
+      if(res) {
+        const updatedArray = res.data.map((obj:moduleDetails) => {
+          return Object.keys(obj).reduce((acc:any, key) => {
+            if (key === 'ModuleID') {
+              acc['value'] = obj[key];
+            } else if(key === 'ModuleName'){
+              acc['label'] = obj[key];
+            }
+            return acc;
+          }, {});
+        });
+        setModuleList(updatedArray)
+      }
+    }).catch((e) => {
+      console.error(e)
+    })
+  }
+
+  const uploadDocument = () => {
+    let bodyFormData = new FormData();
+    files.forEach((file: any) => {
+      bodyFormData.append('files', file);
+    });
+    const selectedModues: any[] = []
+    for (let keyArray in selectedOptions) {
+        const arrayOfObjects = selectedOptions[keyArray];
+
+        const objj:any = [];
+        arrayOfObjects.forEach((obj:any) => {
+          Object.entries(obj).forEach(([propertyKey, propertyValue]) => {
+            if(propertyKey === 'value')
+            objj.push(propertyValue)
+          });
+          
+        });
+        selectedModues.push(objj)
+        
+    }
+    bodyFormData.append('file_catagory', JSON.stringify(selectedModues));
+
+    axiosInstance.post(`/upload`,bodyFormData,{
+      headers: {
+        'Content-Type': `multipart/form-data`
+      },
+      timeout: 60000
+    }).then((res) => {
+      if(res) {
+        showSuccess("Documents Uploaded successfully")
+      }
+    }).catch((e) => {
+      console.error(e)
+    })
+  }
 
   return (
     <Modal show={show} onHide={handleClose} size="xl">
@@ -84,7 +148,7 @@ const UploadModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ sho
                           <option value="3">Three</option>
                         </Form.Select> */}
                         <Select
-                          options={options}
+                          options={moduleList}
                           isMulti
                           value={selectedOptions[index] || null}
                           onChange={(options) => handleChange(index,options)}
@@ -100,7 +164,7 @@ const UploadModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ sho
             </div>
           </div>
         </div>
-        <Button variant="primary" className='mt-3 float-end'>
+        <Button variant="primary" className='mt-3 float-end' onClick={uploadDocument}>
           Upload
         </Button>
       </Modal.Body>
