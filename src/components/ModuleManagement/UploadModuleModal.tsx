@@ -19,7 +19,7 @@ const UploadModuleModal: React.FC<{ show: boolean; handleClose: () => void;modul
           }
         }).catch((e) => {
           console.error(e)
-          showError(e)
+          showError(e?.response?.data?.detail)
         })
     }
     if(moduleId && moduleName) {
@@ -31,6 +31,7 @@ const UploadModuleModal: React.FC<{ show: boolean; handleClose: () => void;modul
         }
       }).catch((e) => {
         console.error(e)
+        showError(e?.response?.data?.detail)
       })
     }
   }
@@ -42,7 +43,7 @@ const UploadModuleModal: React.FC<{ show: boolean; handleClose: () => void;modul
   },[moduleId])
 
   return (
-    <Modal show={show} onHide={handleClose} className={`${styles['modal-dialog']}`}>
+    <Modal show={show} onHide={() => {setModuleName(''); handleClose()}} className={`${styles['modal-dialog']}`}>
       <Modal.Header closeButton>
         <Modal.Title className={`${styles['modal-heading']}`}>Add Module</Modal.Title>
       </Modal.Header>
@@ -54,7 +55,7 @@ const UploadModuleModal: React.FC<{ show: boolean; handleClose: () => void;modul
         <Button variant="primary" className='mt-3 float-end' onClick={addModule}>
           Add
         </Button>
-        <button type="button" onClick={handleClose} className='mt-3 float-end me-3 btn btn-outline-primary'>
+        <button type="button" onClick={() => {setModuleName(''); handleClose()}} className='mt-3 float-end me-3 btn btn-outline-primary'>
           Cancel
         </button>
       </Modal.Body>

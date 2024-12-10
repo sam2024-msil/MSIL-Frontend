@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Modal } from 'react-bootstrap';
 import Feedback from '../../Feedback/Feedback';
 import SendIcon from '../../../assets/send-icon.svg';
 import pdfIcon from '../../../assets/pdfIcon.svg';
 import userIcon from '../../../assets/MSIL-icon.png';
 import styles from './Chatbot.module.scss';
 import DateUtil from '../../../utils/DateUtil';
+import PDFFile from '../../../assets/sample.pdf';
  
 type MessageType = {
   text: string;
@@ -29,6 +30,7 @@ const Chatbot: React.FC = () => {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [input, setInput] = useState('');
   const [lastDate, setLastDate] = useState<string>('');
+  const [showModal, setShowModal] = useState(false);
   const chatWindowRef = useRef<HTMLDivElement>(null);
  
   const handleSend = () => {
@@ -82,9 +84,9 @@ const Chatbot: React.FC = () => {
               <div key={index}>
                 {msg.date && (index === 0 || messages[index - 1].date !== msg.date) && (
                   <div className="d-flex align-items-center mb-4">
-                    <div className="flex-grow-1"><hr className={`${styles['hrBorderColor']}`}/></div>
+                    <div className="flex-grow-1"><hr className={`${styles['hrBorderColor']}`} /></div>
                     <h5 className={`${styles['dateSection']} mx-3`}>{msg.date}</h5>
-                    <div className="flex-grow-1"><hr className={`${styles['hrBorderColor']}`}/></div>
+                    <div className="flex-grow-1"><hr className={`${styles['hrBorderColor']}`} /></div>
                   </div>
                 )}
                 <div className={`d-flex px-3 ${msg.type === 'question' ? 'flex-column align-items-end' : 'flex-row align-items-start my-3'}`}>
@@ -103,7 +105,7 @@ const Chatbot: React.FC = () => {
                         <div className={`${styles.message} ${styles.answer} w-100`}>
                           <div>{msg.text}</div>
                           <div className="d-flex justify-content-start mt-2">
-                            <button className={`${styles['pdf-btn']} btn btn-outline-primary`}>
+                            <button className={`${styles['pdf-btn']} btn btn-outline-primary`} onClick={() => setShowModal(true)}>
                               <img src={pdfIcon} alt="PDF Icon" /><span className='ms-2'>SwiftDzire_OwnerManual_Volt.pdf</span>
                             </button>
                           </div>
@@ -135,6 +137,20 @@ const Chatbot: React.FC = () => {
           </Form>
         </Col>
       </Row>
+ 
+      <Modal show={showModal} onHide={() => setShowModal(false)} size="xl">
+        <Modal.Header closeButton>
+          <Modal.Title></Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <iframe
+            src={PDFFile}
+            width="100%"
+            height="450px"
+            title="PDF Viewer"
+          ></iframe>
+        </Modal.Body>
+      </Modal>
     </Container>
   );
 };
