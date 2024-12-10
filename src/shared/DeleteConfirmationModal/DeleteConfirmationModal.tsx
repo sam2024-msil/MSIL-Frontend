@@ -5,9 +5,10 @@ import styles from './DeleteConfirmModal.module.scss';
 interface DeleteConfirmModalProps {
     show: boolean;
     onClose: (type: string) => void;
+    msg?:string;
 }
 
-const DeleteConfimationModal = ({ show, onClose }: DeleteConfirmModalProps) => {
+const DeleteConfimationModal = ({ show, onClose, msg }: DeleteConfirmModalProps) => {
 
     return (
         <Modal
@@ -19,7 +20,9 @@ const DeleteConfimationModal = ({ show, onClose }: DeleteConfirmModalProps) => {
                 <Modal.Header closeButton>
                     <Modal.Title>Delete </Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Are you sure you want to delete this item?</Modal.Body>
+                <Modal.Body>
+                    {(msg) ? msg : 'Are you sure you want to delete this item?' }
+                </Modal.Body>
                 <Modal.Footer className={styles['footer']}>
                     <div className={styles['button-group']}>
 

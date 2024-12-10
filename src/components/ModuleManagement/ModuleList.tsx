@@ -6,7 +6,7 @@ import deleteIcon from '../../assets/delete-icon.svg';
 import DataTable from '../../shared/Rtable';
 import axiosInstance from '../../api/axios';
 import UploadModuleModal from './UploadModuleModal';
-import DeleteConfimationModal from './DeleteConfirmationModal';
+import DeleteConfimationModal from '../../shared/DeleteConfirmationModal/DeleteConfirmationModal';
 import { useToast } from '../../context/ToastContext';
 
 
@@ -107,7 +107,7 @@ const ModuleList: React.FC = () => {
     //       queryParams.append('to_date', DateUtil.formatDateToISO(endDate));
     //   }
     try {
-      const response = await axiosInstance.get(`/modules/`);
+      const response = await axiosInstance.get(`/modules/?${queryParams.toString()}`);
       const data = response.data;
       setShowLoader(false);
       return {

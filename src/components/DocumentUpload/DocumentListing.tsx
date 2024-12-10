@@ -14,6 +14,8 @@ import axiosInstance from '../../api/axios';
 import UploadModal from './UploadModal';
 import DateUtil from '../../utils/DateUtil';
 import { isMobileDevice } from '../../utils/BroswerUtil';
+import { useToast } from '../../context/ToastContext';
+import DeleteConfimationModal from '../../shared/DeleteConfirmationModal/DeleteConfirmationModal';
 
 
 interface DataItem {
@@ -23,10 +25,14 @@ interface DataItem {
 
 const DocumentListing: React.FC = () => {
 
+    const { showSuccess, showError } = useToast();
     const [showLoader, setShowLoader] = useState<boolean>(false);
     const [searchKeyword, setSearchKeyword] = useState<string>('');
     const [triggerTableApi, setTriggerTableApi] = useState<number>(0);
     const [dateRange, setDateRange] = useState<any>([null, null]);
+    const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+    const [docDeleteId, setDocDeleteId] = useState<number>(0);
+    const [editData, setEditData] = useState<any>({});
     const [startDate, endDate] = dateRange;
 
     const [showModal, setShowModal] = useState(false);
@@ -40,6 +46,7 @@ const DocumentListing: React.FC = () => {
     const handleShow = () => setShowModal(true);
     const handleClose = () => {
         setShowModal(false);
+        setEditData({});
         setTriggerTableApi(triggerTableApi + 1);
     }
     console.log(showLoader)
@@ -99,9 +106,9 @@ const DocumentListing: React.FC = () => {
                     <button
                         title='Edit Documents'
                     >
-                        <img src={editIcon} onClick={() => handleEdit(row?.values)} />
+                        <img src={editIcon} onClick={() => handleEdit(row?.original)} />
                         <img src={eyeIcon} />
-                        <img src={deleteIcon} /> 
+                        <img src={deleteIcon} onClick={() => { setShowDeleteModal(true); setDocDeleteId(row.original.doc_id)}} /> 
                     </button>
                 ),
                 disableSortBy: true,
@@ -109,8 +116,9 @@ const DocumentListing: React.FC = () => {
         ],
         []
     );
-    const handleEdit = (id:any) => {
-        console.log(id);
+    const handleEdit = (rowData:any) => {
+        setShowModal(true);
+        setEditData(rowData);
     }
     const fetchData = useCallback(async ({ pageIndex, pageSize, sortBy, searchString }: {
         pageIndex: number;
@@ -150,6 +158,25 @@ const DocumentListing: React.FC = () => {
         }
         return { rows: [], totalPages: 0, totalRecords: 0 };
     }, []);
+
+    const closeConfirmModal = (decision:string) => {
+        if(decision == 'proceed') {
+          axiosInstance.delete(`/modules/${docDeleteId}`)
+          .then((res) => {
+            if(res) {
+              showSuccess('Module deleted successfully');
+              setShowDeleteModal(false);
+              setTriggerTableApi(triggerTableApi + 1);
+            }
+          }).catch((e) => {
+            console.error(e)
+            showError('Something went wrong')
+          })
+        } else {
+          setShowDeleteModal(false);
+        }
+    }
+
     return (
         <>
 
@@ -205,7 +232,8 @@ const DocumentListing: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <UploadModal show={showModal} handleClose={handleClose} />
+            <UploadModal show={showModal} handleClose={handleClose} editData={editData} />
+            <DeleteConfimationModal show={showDeleteModal} onClose={closeConfirmModal} />
         </>
     );
 };
