@@ -1,13 +1,14 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import styles from './UserList.module.scss';
-import eyeIcon from '../../assets/icon-eye.svg';
 import searchIcon from '../../assets/search_icon.svg';
-// import uploadIcon from '../../assets/upload_icon.svg';
-// import deleteIcon from '../../assets/delete-icon.svg';
+import deleteIcon from '../../assets/delete-icon.svg';
+import adminIcon from '../../assets/adminIcon.svg';
+import editIcon from '../../assets/edit-icon.svg';
 import DataTable from '../../shared/Rtable';
 import axiosInstance from '../../api/axios';
 import AddUserModal from './AddUserModal';
 import AddVendorModal from './AddVendorModal';
+import DateUtil from '../../utils/DateUtil';
 
 interface DataItem {
   id: number;
@@ -35,33 +36,23 @@ const Listing: React.FC = () => {
   const columns: any = useMemo(
     () => [
       {
-        Header: 'User Id',
-        Cell: ({ row }: any) => {
-          return (
-            <span
-              className={styles.documentName}
-            //   onClick={() => gotoProject(row)}
-            >
-              {row?.values.name}
-            </span>
-          )
-        },
-        accessor: 'userId',
-        disableSortBy: true,
-      },
-      {
-        Header: 'Username',
-        accessor: 'userName',
+        Header: 'User Name',
+        accessor: 'MSILUserEmail',
         disableSortBy: true,
       },
       {
         Header: 'First Name',
-        accessor: 'firstName',
+        accessor: 'FirstName',
         disableSortBy: true,
       },
       {
         Header: 'Last Name',
-        accessor: 'lastName',
+        accessor: 'LastName',
+        disableSortBy: true,
+      },
+      {
+        Header: 'Module',
+        accessor: 'Modules',
 
       },
       {
@@ -69,21 +60,12 @@ const Listing: React.FC = () => {
         Cell: ({ row }: any) => {
           return (
             <span>
-              {row?.values.created_on}
+              {DateUtil.convertToIST(row?.values.CreatedOn)}
             </span>
           )
         },
-        accessor: 'created_on',
+        accessor: 'CreatedOn',
         disableSortBy: true,
-        sortType: (rowA: any, rowB: any) => {
-          const a = new Date(rowA.values.dob);
-          const b = new Date(rowB.values.dob);
-          return a > b ? 1 : a < b ? -1 : 0;
-        }
-      },
-      {
-        Header: 'Module',
-        accessor: 'module',
         sortType: (rowA: any, rowB: any) => {
           const a = new Date(rowA.values.dob);
           const b = new Date(rowB.values.dob);
@@ -93,12 +75,11 @@ const Listing: React.FC = () => {
       {
         Header: 'Action',
         Cell: ({ row }: any) => (
-          <button
-            className={styles.editButton}
-            title='Edit Project'
-            onClick={() => handleEdit(row.value)}
-          >
-            <img src={eyeIcon} />
+          <button>
+            {(row?.original?.IsAdmin) ? <img src={adminIcon} alt='Admin Icon' title='This user is MSIL Admin' /> : 
+            <div style={{width: '22px', marginRight: '12px'}}></div>}
+            <img src={editIcon} title='Edit User' alt='Edit Icon' onClick={() => handleEdit(row?.original)} />
+            <img src={deleteIcon}  title='Delete Document' alt='Delete Icon' onClick={() => { console.log(row.original.MSILUserID)}} /> 
           </button>
         ),
         accessor: '',
@@ -133,11 +114,11 @@ const Listing: React.FC = () => {
     //   }
     try {
       // const response = await axiosInstance.get(`/project/ListProjects/?page=${pageIndex + 1}&page_size=${pageSize}${sortParam}${searchParam}${dateParam}`);
-      const response = await axiosInstance.get(`/project/ListProjects/?${queryParams.toString()}`);
+      const response = await axiosInstance.get(`/users/?${queryParams.toString()}`);
       const data = response.data;
       setShowLoader(false);
       return {
-        rows: data.projects,
+        rows: data.users,
         totalPages: data.pages,
         totalRecords: data.total
       };

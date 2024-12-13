@@ -12,12 +12,16 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ 
       <Modal.Body className={`${styles['modal-body']}`}>
         <Form>
           <div className="mb-3">
-            <label htmlFor="userNameInput" className="form-label">Username</label>
-            <input type="text" className="form-control" id="userNameInput" placeholder="" />
+            <label htmlFor="userNameInput" className="form-label">First Name</label>
+            <input type="text" className="form-control" id="firstNameInput" placeholder="" />
           </div>
           <div className="mb-3">
-            <label htmlFor="emailInput" className="form-label">Email</label>
-            <input type="email" className="form-control" id="emailInput" placeholder="" />
+            <label htmlFor="userNameInput" className="form-label">Last Name</label>
+            <input type="text" className="form-control" id="lastNameInput" placeholder="" />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="emailInput" className="form-label">Username</label>
+            <input type="email" className="form-control" id="userNameInput" placeholder="" />
           </div>
           <div className="mb-3">
             <label htmlFor="vendorCodeInput" className="form-label">Vendor Code</label>

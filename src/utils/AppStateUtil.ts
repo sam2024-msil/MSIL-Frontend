@@ -29,6 +29,16 @@ class AppStateUtil {
             return USER_MESSAGES.something_wrong;
         }
     }
+
+    static isVendorLoggedIn() {
+        try {
+            if(typeof localStorage !== 'undefined') {
+                localStorage.getItem('')
+            }
+        } catch(e) {
+            return false
+        }
+    }
 }
 
 export default AppStateUtil;

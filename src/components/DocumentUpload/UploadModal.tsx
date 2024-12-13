@@ -17,13 +17,13 @@ interface moduleDetails {
   CreatedOn: string;
 }
 const UploadModal: React.FC<{ show: boolean; handleClose: () => void,editData:any }> = ({ show, handleClose, editData }) => {
-  console.log("editData :: ", editData);
+  
   const { showSuccess, showError } = useToast();
   const [files, setFiles] = useState<File[]>([]);
   const [moduleList, setModuleList] = useState<{ value: number; label: string }[]>([]);
   const [showFileReuploadConfirm, setShowFileReuploadConfirm] = useState<boolean>(false);
   const [msgToDuplicateUpload, setMsgToDuplicateUpload] = useState<string>('');
-  const [selectedOptionsInEditmode, setSelectedOptionsInEditmode] = useState<{ value: number; label: string } | null>(null);
+  const [selectedOptionsInEditmode, setSelectedOptionsInEditmode] = useState<{ value: number; label: string }[] | null>(null);
   
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
@@ -191,7 +191,9 @@ useEffect(() => {
   
   const editMappingModule = () => {
 
-    axiosInstance.post(`/update-doc-model-mapping?doc_id=${editData?.doc_id}`,{'file_catagory':[15,17,25]})
+    let categoryValueArray:any = selectedOptionsInEditmode;
+    categoryValueArray = categoryValueArray.map((item:any) => item.value)
+    axiosInstance.post(`/update-doc-model-mapping`,{doc_id: editData?.doc_id,file_catagory:categoryValueArray})
     .then((res) => {
       if(res) {
         showSuccess(res?.data.message);
@@ -203,11 +205,15 @@ useEffect(() => {
       showError(e?.response?.data?.detail)
     })
   }
-
+  console.log(" selectedOptions :: ", selectedOptions)
   return (
     <Modal show={show} onHide={() => { setFiles([]); setSelectedOptions([]); handleClose()}} size="xl">
       <Modal.Header closeButton>
+      {(Object.keys(editData).length === 0 && editData.constructor === Object) ?
         <Modal.Title className={`${styles['modal-heading']}`}>Upload File</Modal.Title>
+        :
+        <Modal.Title className={`${styles['modal-heading']}`}>Edit Module Mapping</Modal.Title>
+      }
       </Modal.Header>
       <Modal.Body>
         <div className="row">
@@ -266,7 +272,7 @@ useEffect(() => {
             </div>
           </div>
           </> : 
-          <div className="col-md-8">
+          <div className="col-md-12">
           <div className={`${styles['uploadModal-table-block']} table-responsive`}>
             <Table className={`${styles['uploadModal-table-section']}`}>
               <thead>
@@ -300,16 +306,18 @@ useEffect(() => {
         </div>
         {(Object.keys(editData).length === 0 && editData.constructor === Object) ?
         <>
-        {(files.length > 0) && 
+        {(files.length > 0 && (files.length === Object.keys(selectedOptions).length)) && 
         <Button variant="primary" className='mt-3 float-end' onClick={uploadDocument}>
           Upload
         </Button>
         }
         </>   :
         <>
-        <Button variant="primary" className='mt-3 float-end' onClick={editMappingModule}>
-          Update
-        </Button>
+        {(selectedOptionsInEditmode !=null && selectedOptionsInEditmode.length > 0) &&
+          <Button variant="primary" className='mt-3 float-end' onClick={editMappingModule}>
+            Update
+          </Button>
+        }
         </>
         }
       </Modal.Body>

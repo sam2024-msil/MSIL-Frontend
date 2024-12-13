@@ -102,18 +102,14 @@ const ModuleList: React.FC = () => {
       queryParams.append('sort_order', sortBy[0].desc ? 'desc' : 'asc');
     }
     if (searchString) queryParams.append('search', searchString);
-    //     if (startDate && endDate) {
-    //       queryParams.append('from_date', DateUtil.formatDateToISO(startDate));
-    //       queryParams.append('to_date', DateUtil.formatDateToISO(endDate));
-    //   }
     try {
-      const response = await axiosInstance.get(`/modules/?${queryParams.toString()}`);
+      const response = await axiosInstance.get(`/get-modules?${queryParams.toString()}`);
       const data = response.data;
       setShowLoader(false);
       return {
-        rows: data,
-        totalPages: 1,
-        totalRecords: data.length
+        rows: data.modules,
+        totalPages: data.pages,
+        totalRecords: data.total
       };
     }
     catch (error: any) {
