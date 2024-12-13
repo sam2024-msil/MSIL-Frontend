@@ -10,6 +10,8 @@ import Header from "../components/Header/Header";
 import styles from './AuthLayout.module.scss';
 import AppStateUtil from "../utils/AppStateUtil";
 import { isMobileDevice } from "../utils/BroswerUtil";
+import { useToast } from '../context/ToastContext';
+import axiosInstance from "../api/axios";
 
 
 type Props = {
@@ -21,10 +23,11 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
 
     const { instance, accounts } = useMsal();
     const navigate = useNavigate();
+    const { showSuccess, showError } = useToast();
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-    const isMobile = isMobileDevice() || false
+    const isMobile = isMobileDevice() || false;
+    const [isVendorLoggedIn, setIsVendorLoggedIn] = useState<boolean>(false);
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -70,20 +73,41 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
             await getAccessToken();
         }
     };
-    console.log(" isMobile ", isMobile)
+    
+    const vendorLoginHandler = (useName:string,password:string) => {
+        axiosInstance.post(`/login`,{userId:useName,userPassword:password})
+        .then((res) => {
+            if(res) {
+                if(res?.data?.code === 400) {
+                    showError('Invalid login credentials!');
+                } else {
+                    setIsVendorLoggedIn(true);
+                    localStorage.setItem('IsVendoreLoggedIn','true');
+                    localStorage.setItem('VendorAccessToken',res?.data?.tocken)
+                    navigate("/chat");
+                }
+            }
+        }).catch((e) => {
+            setIsVendorLoggedIn(false);
+            console.error(e);
+        })
+    }
+
     return (
         <>
             <UnauthenticatedTemplate>
-                <Login />
+            {(!isVendorLoggedIn) && 
+                <Login vendorLogin={vendorLoginHandler} />
+            }
             </UnauthenticatedTemplate>
             <AuthenticatedTemplate>
 
                 <Container fluid>
                     <Row>
-                        <Col xs={isMobile ? 12 : 1} className={`p-0 ${isMenuOpen ? styles.menuOpen : styles.menuClosed}`}>
+                        <Col xs={isMobile ? 12 : 1} className={`p-0 ${styles.sideMenuSection} ${isMenuOpen ? styles.menuOpen : styles.menuClosed}`}>
                             <SideMenu isMobile={isMobile} isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
                         </Col>
-                        <Col xs={isMobile ? 12 : 11} className={`p-0 ${isMenuOpen ? styles.menuClosed : styles.menuOpen}`}>
+                        <Col xs={isMobile ? 12 : 11} className={`p-0 ${styles.rightSection} ${isMenuOpen ? styles.menuClosed : styles.menuOpen}`}>
                             <div className={`${styles['right-content']}`}>
                                 <Header />
                                 {children}
@@ -93,6 +117,21 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
                 </Container>
 
             </AuthenticatedTemplate>
+
+            {(isVendorLoggedIn) && 
+            <>
+            <Container fluid>
+                <Row>
+                <Col xs={12} className={`p-0 ${isMenuOpen ? styles.menuClosed : styles.menuOpen}`}>
+                    <div className={`${styles['vendor-authrozed-content']}`}>
+                        <Header />
+                        {children}
+                    </div>
+                </Col>
+                </Row>
+                </Container>    
+            </>
+            }
         </>
     );
 };

@@ -16,6 +16,7 @@ import DateUtil from '../../utils/DateUtil';
 import { isMobileDevice } from '../../utils/BroswerUtil';
 import { useToast } from '../../context/ToastContext';
 import DeleteConfimationModal from '../../shared/DeleteConfirmationModal/DeleteConfirmationModal';
+import PdfViewer from '../../shared/PDFViewer/PdfViewer';
 
 
 interface DataItem {
@@ -33,6 +34,8 @@ const DocumentListing: React.FC = () => {
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
     const [docDeleteId, setDocDeleteId] = useState<number>(0);
     const [editData, setEditData] = useState<any>({});
+    const [showPDFModal, setShowPDFModal] = useState<boolean>(false);
+    const [pdfLink, setPdfLink] = useState<string>('');
     const [startDate, endDate] = dateRange;
 
     const [showModal, setShowModal] = useState(false);
@@ -50,15 +53,36 @@ const DocumentListing: React.FC = () => {
         setTriggerTableApi(triggerTableApi + 1);
     }
     console.log(showLoader)
+
+    const downloadPDF = (rowData:any) => {
+        const fileBlob = new Blob(['https://azcistrgvendorgptdev01.blob.core.windows.net/msilchunkingdocs/31-41Pages.pdf?sp=r&st=2024-12-11T04:40:05Z&se=2024-12-11T12:40:05Z&sv=2022-11-02&sr=b&sig=6hUDPxtEVOTv0GxHhwzmX1BSWOQYGti8Fn2q0f7Hdhc%3D'], { type: 'application/pdf' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(fileBlob);
+      link.setAttribute('download', 'test.pdf');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
     const columns: any = useMemo(
         () => [
             {
                 Header: 'Document Name',
+                Cell: ({ row }: any) => {
+                    return (
+                      <span
+                        className={styles.docName}
+                        onClick={() => downloadPDF(row?.original)}
+                      >
+                        {row?.values.doc_name}
+                      </span>
+                    )
+                  },
                 accessor: 'doc_name',
                 disableSortBy: true,
             },
             {
-                Header: 'Upload By',
+                Header: 'Uploaded by',
                 accessor: 'uploaded_by',
                 disableSortBy: true,
             },
@@ -89,13 +113,13 @@ const DocumentListing: React.FC = () => {
             },
             {
                 Header: 'Status',
-                // Cell: ({ row }: any) => {
-                //     return (
-                //         <span>
-                //             {row}
-                //         </span>
-                //     );
-                // },
+                Cell: ({ row }: any) => {
+                    return (
+                        <span className={styles[row?.values?.doc_status.toLowerCase()]}>
+                            {row?.values?.doc_status}
+                        </span>
+                    );
+                },
                 sortType: 'basic',
                 disableSortBy: false,
                 accessor:'doc_status'
@@ -103,12 +127,10 @@ const DocumentListing: React.FC = () => {
             {
                 Header: 'Action',
                 Cell: ({ row }: any) => (
-                    <button
-                        title='Edit Documents'
-                    >
-                        <img src={editIcon} onClick={() => handleEdit(row?.original)} />
-                        <img src={eyeIcon} />
-                        <img src={deleteIcon} onClick={() => { setShowDeleteModal(true); setDocDeleteId(row.original.doc_id)}} /> 
+                    <button>
+                        <img src={editIcon} title='Edit Document' alt='Edit Icon' onClick={() => handleEdit(row?.original)} />
+                        <img src={eyeIcon} title='Preview Document' alt='Preview Icon' onClick={() => viewPdf(row?.original)} />
+                        <img src={deleteIcon} title='Delete Document' alt='Delete Icon' onClick={() => { setShowDeleteModal(true); setDocDeleteId(row.original.doc_id)}} /> 
                     </button>
                 ),
                 disableSortBy: true,
@@ -116,6 +138,12 @@ const DocumentListing: React.FC = () => {
         ],
         []
     );
+
+    const viewPdf = (pdfParam:any) => {
+        setShowPDFModal(true);
+        setPdfLink('https://azcistrgvendorgptdev01.blob.core.windows.net/msilchunkingdocs/31-41Pages.pdf?sp=r&st=2024-12-11T04:40:05Z&se=2024-12-11T12:40:05Z&sv=2022-11-02&sr=b&sig=6hUDPxtEVOTv0GxHhwzmX1BSWOQYGti8Fn2q0f7Hdhc%3D')
+
+    }
     const handleEdit = (rowData:any) => {
         setShowModal(true);
         setEditData(rowData);
@@ -161,10 +189,10 @@ const DocumentListing: React.FC = () => {
 
     const closeConfirmModal = (decision:string) => {
         if(decision == 'proceed') {
-          axiosInstance.delete(`/modules/${docDeleteId}`)
+          axiosInstance.post(`/delet-doc?doc_id=${docDeleteId}`)
           .then((res) => {
             if(res) {
-              showSuccess('Module deleted successfully');
+              showSuccess('Document deleted successfully');
               setShowDeleteModal(false);
               setTriggerTableApi(triggerTableApi + 1);
             }
@@ -234,6 +262,7 @@ const DocumentListing: React.FC = () => {
             </div>
             <UploadModal show={showModal} handleClose={handleClose} editData={editData} />
             <DeleteConfimationModal show={showDeleteModal} onClose={closeConfirmModal} />
+            <PdfViewer showModal={showPDFModal} setShowModal={setShowPDFModal} srcLink={pdfLink} />
         </>
     );
 };

@@ -45,7 +45,7 @@ const UploadModuleModal: React.FC<{ show: boolean; handleClose: () => void;modul
   return (
     <Modal show={show} onHide={() => {setModuleName(''); handleClose()}} className={`${styles['modal-dialog']}`}>
       <Modal.Header closeButton>
-        <Modal.Title className={`${styles['modal-heading']}`}>Add Module</Modal.Title>
+        {(!moduleId) ? <Modal.Title className={`${styles['modal-heading']}`}>Add Module</Modal.Title> : <Modal.Title className={`${styles['modal-heading']}`}>Edit Module</Modal.Title> }
       </Modal.Header>
       <Modal.Body className={`${styles['modal-body']}`}>
         <div className="mb-3">
@@ -53,7 +53,7 @@ const UploadModuleModal: React.FC<{ show: boolean; handleClose: () => void;modul
           <input type="text" className="form-control" value={moduleName} onChange={(e) => setModuleName(e.target.value)} id="moduleNameInput" placeholder="" />
         </div>
         <Button variant="primary" className='mt-3 float-end' onClick={addModule}>
-          Add
+        {(!moduleId) ? 'Add' : 'Update' }
         </Button>
         <button type="button" onClick={() => {setModuleName(''); handleClose()}} className='mt-3 float-end me-3 btn btn-outline-primary'>
           Cancel
