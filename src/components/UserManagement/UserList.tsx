@@ -117,11 +117,15 @@ const Listing: React.FC = () => {
       const response = await axiosInstance.get(`/users/?${queryParams.toString()}`);
       const data = response.data;
       setShowLoader(false);
-      return {
-        rows: data.users,
-        totalPages: data.pages,
-        totalRecords: data.total
-      };
+      if(data.users) {
+        return {
+          rows: data.users,
+          totalPages: data.pages,
+          totalRecords: data.total
+        };
+      } else {
+        return { rows: [], totalPages: 0, totalRecords: 0 };
+      }
     }
     catch (error: any) {
       setShowLoader(false); // Ensure the loader is hidden on error  

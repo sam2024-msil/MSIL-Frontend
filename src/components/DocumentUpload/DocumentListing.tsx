@@ -163,10 +163,6 @@ const DocumentListing: React.FC = () => {
             queryParams.append('sort_order', sortBy[0].desc ? 'desc' : 'asc');
         }
         if (searchString) queryParams.append('search', searchString);
-        //     if (startDate && endDate) {
-        //       queryParams.append('from_date', DateUtil.formatDateToISO(startDate));
-        //       queryParams.append('to_date', DateUtil.formatDateToISO(endDate));
-        //   }
         try {
             const response = await axiosInstance.get(`/listOfDocs?${queryParams.toString()}`);
             const data = response.data;
