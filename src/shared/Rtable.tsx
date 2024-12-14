@@ -15,11 +15,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from './Rtable.module.scss';
 import leftButton from '../assets/PaginationLeftButton.svg';
 import rightButton from '../assets/PaginationRightButton.svg';
-import AscendingIcon from '../assets/Ascending-order-icon.svg';
-// import AscendingOrder from '../../assets/Icons/sort-ascending.svg';
-// import DescendingOrder from '../../assets/Icons/sort-descending.svg';
-import AscendingOrder from '../assets/Ascending-order-icon.svg';
-import DescendingOrder from '../assets/Ascending-order-icon.svg';
+import sortingDiabled from '../assets/sorting-disable.svg';
+import AscendingOrder from '../assets/sort-ascending.svg';
+import DescendingOrder from '../assets/sort-descending.svg';
 import { DOTS3, OF, ONE, PAGE, PAGINATION_OPTIONS, PROJECTS, SHOWING, SLASH, TO } from '../constants/TableConstants';
 
 interface DataTableProps<D extends object> {
@@ -202,7 +200,7 @@ const DataTable = <D extends object>({ columns, fetchData, searchString, trigger
                         ? <img src={DescendingOrder} />
                         : <img src={AscendingOrder} />
                       : ''}
-                      {(column.canSort && column.isSortedDesc == undefined ) && <img src={AscendingIcon} /> }
+                      {(column.canSort && column.isSortedDesc == undefined ) && <img src={sortingDiabled} /> }
                   </span>
                 </th>
               ))}

@@ -12,7 +12,7 @@ const SHOWING = { showing: 'Showing' };
 const OF = { of: 'of' };
 const TO = { to: 'to'}
 const ENTRIES = { entries: 'entries' };
-const PROJECTS = { projects: 'Projects'};
+const PROJECTS = { projects: 'Records'};
 const DOTS3 = { dots: '...' };
 
 export { PAGINATION_OPTIONS, PAGE, SLASH, ONE, SHOWING, OF, TO, ENTRIES, DOTS3, PROJECTS };
