@@ -41,6 +41,10 @@ const SideMenu: React.FC<{ isMobile: boolean; isMenuOpen: boolean; toggleMenu: (
       setActiveKey(selectedKey); // Set the active key to the selected menu item
       setHoverKey(null); // Reset hover key when an item is selected
       navigate(selectedKey); // Navigate to the selected key
+      if (isMenuOpen) {
+        toggleMenu();
+      }
+ 
     }
   };
 
@@ -106,6 +110,7 @@ const SideMenu: React.FC<{ isMobile: boolean; isMenuOpen: boolean; toggleMenu: (
         >
           <img src={getIcon('/document-management', ListingIcon, ListingIconActive)} alt="Listing Icon" className={`${styles['side-menu-icon']}`} />
           <img src={ListingIconActive} alt="ListingIconActive" className={`${styles['side-menu-icon-active']}`} />
+          <span className={styles['side-menu-text']}>Listing</span>
         </Nav.Link>
       </OverlayTrigger>
       <OverlayTrigger
@@ -123,6 +128,7 @@ const SideMenu: React.FC<{ isMobile: boolean; isMenuOpen: boolean; toggleMenu: (
         >
           <img src={getIcon('/chat', chatIcon, chatIconActive)} alt="Chat Icon" className={`${styles['side-menu-icon']}`} />
           <img src={chatIconActive} alt="chatIconActive" className={`${styles['side-menu-icon-active']}`} />
+          <span className={styles['side-menu-text']}>Chat</span>
         </Nav.Link>
       </OverlayTrigger>
 
@@ -141,6 +147,7 @@ const SideMenu: React.FC<{ isMobile: boolean; isMenuOpen: boolean; toggleMenu: (
         >
           <img src={getIcon('/module-management', moduleIcon, moduleIconActive)} alt="Module Icon" className={`${styles['side-menu-icon']}`} />
           <img src={moduleIconActive} alt="moduleIconActive" className={`${styles['side-menu-icon-active']}`} />
+          <span className={styles['side-menu-text']}>Module</span>
         </Nav.Link>
       </OverlayTrigger>
 
@@ -159,6 +166,7 @@ const SideMenu: React.FC<{ isMobile: boolean; isMenuOpen: boolean; toggleMenu: (
         >
           <img src={getIcon('/user-management', userManagementIcon, userManagementIconActive)} alt="User Management Icon" className={`${styles['side-menu-icon']}`} />
           <img src={userManagementIconActive} alt="userManagementIconActive" className={`${styles['side-menu-icon-active']}`} />
+          <span className={styles['side-menu-text']}>User Management</span>
         </Nav.Link>
       </OverlayTrigger>
 
@@ -177,6 +185,7 @@ const SideMenu: React.FC<{ isMobile: boolean; isMenuOpen: boolean; toggleMenu: (
         >
           <img src={getIcon('/logout', logoutIcon, logoutIconActive)} alt="Logout Icon" className={`${styles['side-menu-icon']}`} />
           <img src={logoutIconActive} alt="logoutIconActive" className={`${styles['side-menu-icon-active']}`} />
+          <span className={styles['side-menu-text']}>Logout</span>
         </Nav.Link>
       </OverlayTrigger>
 

@@ -1,20 +1,41 @@
 class DateUtil {
-  static formatDate = (date: Date): string => {
-    const day = date.getDate();
-    const month = date.toLocaleString('en-GB', { month: 'short' });
-    const year = date.getFullYear();
-    const daySuffix = (day: number) => {
-      if (day > 3 && day < 21) return 'th';
-      switch (day % 10) {
-        case 1: return 'st';
-        case 2: return 'nd';
-        case 3: return 'rd';
-        default: return 'th';
-      }
-    };
-    return `${day}${daySuffix(day)} ${month} ${year}`;
-  };
 
+  static formatChatResponseDate(dateString: number) {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const date = new Date(dateString);
+
+    const day = date.getUTCDate();
+    const month = months[date.getUTCMonth()];
+    const year = date.getUTCFullYear();
+
+    let hours = date.getUTCHours();
+    const minutes = date.getUTCMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+
+    const minutesStr = minutes < 10 ? `0${minutes}` : minutes;
+
+    return `${day}-${month}-${year} ${hours}:${minutesStr} ${ampm}`;
+}
+
+static formatDateAndTime = ():string => {
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const date = new Date();
+
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+
+  let hours = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const amPm = hours >= 12 ? 'PM' : 'AM';
+
+  hours = hours % 12 || 12; // Convert 24-hour to 12-hour format
+
+  return `${day}-${month}-${year} ${hours}:${minutes} ${amPm}`;
+}
   static formatTime = (date: Date): string => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };

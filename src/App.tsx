@@ -35,6 +35,7 @@ function App({ pca }: AppProps) {
           }
           >
             <Routes>
+              {/* <Route path="/" element={<Login />} /> */}
               <Route path="/document-management" element={<DocumentListing />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/user-management" element={<UserList />} />

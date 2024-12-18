@@ -32,23 +32,17 @@
         }
  
     }
- 
-    .side-menu-text {
-        color: #fff;
-        font: normal normal normal 20px Roboto;
-    }
- 
- 
- 
     .side-menu-icon-active {
         display: none;
     }
  
     .side-menu-text {
-        display: none; // Hide text by default
+        color: #a0afc4;
+        font: normal normal normal 20px Roboto;
+        display: none;
  
         @media screen and (max-width: 768px) {
-            display: inline; // Show text on mobile devices
+            display: inline;
             margin-left: 10px;
         }
     }
@@ -56,6 +50,10 @@
  
 .side-menu-item.active {
     border-left-color: #FF9800;
+
+    .side-menu-text {
+        color: #fff;
+    }
 }
  
 .popoverCustom {
@@ -65,7 +63,11 @@
     height: 40px;
     line-height: 10px;
     display: block;
- 
+    
+    @media screen and (max-width:768px) {
+        display: none;
+    }
+    
     .popover-content {
         color: #ffffff !important;
     }

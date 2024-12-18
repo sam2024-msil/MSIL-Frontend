@@ -3,64 +3,78 @@ import { Modal, Button } from 'react-bootstrap';
 import styles from './moduleList.module.scss';
 import axiosInstance from '../../api/axios';
 import { useToast } from '../../context/ToastContext';
-
-const UploadModuleModal: React.FC<{ show: boolean; handleClose: () => void;moduleId:number, moduleNameForEdit: string }> = ({ show, handleClose, moduleId, moduleNameForEdit }) => {
-
+ 
+const UploadModuleModal: React.FC<{ show: boolean; handleClose: () => void; moduleId: number; moduleNameForEdit: string }> = ({ show, handleClose, moduleId, moduleNameForEdit }) => {
   const { showSuccess, showError } = useToast();
-  const [moduleName, setModuleName] = useState<string>('')
-
+  const [moduleName, setModuleName] = useState<string>('');
+  const [error, setError] = useState<string>('');
+ 
   const addModule = () => {
-    if (!moduleId && moduleName) {
-      axiosInstance.post(`/modules/?module_name=${moduleName }`)
+    if (!moduleName) {
+      setError('Module name is required');
+      return;
+    }
+ 
+    if (!moduleId) {
+      axiosInstance.post(`/modules/?module_name=${moduleName}`)
         .then((response) => {
           if (response) {
             showSuccess('Module created successfully');
-            handleClose()
+            handleClose();
           }
         }).catch((e) => {
-          console.error(e)
-          showError(e?.response?.data?.detail)
-        })
-    }
-    if(moduleId && moduleName) {
+          console.error(e);
+          showError(e?.response?.data?.detail);
+        });
+    } else {
       axiosInstance.put(`/modules/${moduleId}?new_name=${moduleName}`)
-      .then((res) => {
-        if(res) {
-          showSuccess('Module updated successfully');
-          handleClose()
-        }
-      }).catch((e) => {
-        console.error(e)
-        showError(e?.response?.data?.detail)
-      })
+        .then((res) => {
+          if (res) {
+            showSuccess('Module updated successfully');
+            handleClose();
+          }
+        }).catch((e) => {
+          console.error(e);
+          showError(e?.response?.data?.detail);
+        });
     }
-  }
-
+  };
+ 
   useEffect(() => {
-    if(moduleId) {
-      setModuleName(moduleNameForEdit)
+    if (moduleId) {
+      setModuleName(moduleNameForEdit);
     }
-  },[moduleId])
-
+  }, [moduleId, moduleNameForEdit]);
+ 
   return (
-    <Modal show={show} onHide={() => {setModuleName(''); handleClose()}} className={`${styles['modal-dialog']}`}>
+    <Modal show={show} onHide={() => { setModuleName(''); setError(''); handleClose(); }} className={`${styles['modal-dialog']}`}>
       <Modal.Header closeButton>
-        {(!moduleId) ? <Modal.Title className={`${styles['modal-heading']}`}>Add Module</Modal.Title> : <Modal.Title className={`${styles['modal-heading']}`}>Edit Module</Modal.Title> }
+        <Modal.Title className={`${styles['modal-heading']}`}>{moduleId ? 'Edit Module' : 'Add Module'}</Modal.Title>
       </Modal.Header>
       <Modal.Body className={`${styles['modal-body']}`}>
         <div className="mb-3">
           <label htmlFor="moduleNameInput" className="form-label">Module Name</label>
-          <input type="text" className="form-control" value={moduleName} onChange={(e) => setModuleName(e.target.value)} id="moduleNameInput" placeholder="" />
+          <input
+            type="text"
+            className={`form-control ${error ? 'is-invalid' : ''}`}
+            value={moduleName}
+            onChange={(e) => { setModuleName(e.target.value); setError(''); }}
+            id="moduleNameInput"
+            placeholder=""
+          />
+          {error && <div className="invalid-feedback">{error}</div>}
         </div>
-        <Button variant="primary" className='mt-3 float-end' onClick={addModule}>
-        {(!moduleId) ? 'Add' : 'Update' }
-        </Button>
-        <button type="button" onClick={() => {setModuleName(''); handleClose()}} className='mt-3 float-end me-3 btn btn-outline-primary'>
-          Cancel
-        </button>
+        <div className='text-end'>
+          <button type="button" onClick={() => { setModuleName(''); setError(''); handleClose(); }} className='mt-3 me-3 btn btn-outline-primary'>
+            Cancel
+          </button>
+          <Button variant="primary" className='mt-3' onClick={addModule}>
+            {moduleId ? 'Update' : 'Add'}
+          </Button>
+        </div>
       </Modal.Body>
     </Modal>
   );
 };
-
+ 
 export default UploadModuleModal;

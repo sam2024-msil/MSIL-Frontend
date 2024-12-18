@@ -1,17 +1,84 @@
 .navbarBg {
     background-color: #fff;
     height: 60px;
+    @media screen and (max-width:992px) {
+        height: 70px;
+    }
+    @media screen and (max-width:576px) {
+        height: 80px;
+    }
 }
 
+.header-logo-section {
+    display: flex;
+    width: 30%;
+
+    .headerLogo {
+        img {
+            width: 100%;
+        }
+    }
+}
+ 
 .headerLogo {
     padding: 12px 0;
+    @media screen and (max-width: 992px) {
+        padding: 6px 0;
+    }
+    @media screen and (max-width: 576px) {
+        padding: 0;
+    }
     img {
         width: 25%;
+ 
+        @media screen and (max-width:992px) {
+            width: 50%;
+            margin-left: 14%;
+        }
+ 
+        @media screen and (max-width:576px) {
+            width: 80%;
+            margin-left: 25%;
+        }
+        @media screen and (max-width: 321px) {
+            margin-left: 30%;
+        }
+    }
+}
+
+.header-vendor-logo {
+    margin-left: 12px;
+    border-left: 1px solid #eaeaea;
+    padding: 12px 0;
+    @media screen and (max-width: 992px) {
+        padding: 6px 0;
+    }
+    @media screen and (max-width: 576px) {
+        padding: 0;
+    }
+    img {
+        width: 100%;
+        margin-left: 10px;
+        @media screen and (max-width:992px) {
+            width: 50%;
+            margin-left: 14%;
+        }
+ 
+        @media screen and (max-width:576px) {
+            width: 80%;
+            margin-left: 25%;
+        }
+        @media screen and (max-width: 321px) {
+            margin-left: 30%;
+        }
     }
 }
 
 .avatarProfileSection {
     text-align: right;
+    .avatarDropdown {
+        cursor: pointer;
+    }
     .avatarImg {
         width: 40px;
         background-color: #fff;
@@ -26,5 +93,20 @@
         text-transform: uppercase;
         opacity: 1;
         margin-left: 8px;
+ 
+        @media screen and (max-width: 576px) {
+            display: none;
+        }
+    }
+}
+ 
+.avatar-dropdown-menu {
+    left: unset !important;
+    li {
+        a {
+            cursor: pointer;
+            font: normal normal 400 1rem Roboto;
+            color: #282828;
+        }
     }
 }

@@ -1,7 +1,3 @@
-.chatWindow {
-  height: 400px;
-  overflow-y: auto;
-}
  
 .hrBorderColor {
   border-color: #ccc;
@@ -64,7 +60,30 @@
     flex-direction: column;
   }
 }
- 
+
+.message table {
+  font-family: Roboto;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.message table td, .message table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.message table tr:nth-child(even){background-color: #f2f2f2;}
+
+.message table tr:hover {background-color: #ddd;}
+
+.message table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #fff;
+  color: #222;
+}
+
 .pdf-btn {
   span {
     font: normal normal normal 14px/21px Roboto;

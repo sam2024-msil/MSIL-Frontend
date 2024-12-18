@@ -1,25 +1,36 @@
 .right-content {
     margin-left: -30px;
 }
+
 .right-content-section {
     background-color: #F7F7F7;
     height: 38vw;
     padding: 25px 16px;
 }
- 
+
 .right-main-heading {
- 
+
     margin-bottom: 18px;
-   
+
     h5 {
         text-align: left;
         font: normal normal 300 28px/24px Roboto;
         letter-spacing: 1.4px;
         color: #43425D;
         opacity: 1;
+
+        @media screen and (max-width:576px) {
+            font-size: 24px;
+        }
     }
 }
 
 .vendor-chat-window-bg {
-    background-color: #ffff;
+    width: 50%;
+    margin: auto;
+}
+
+.chatWindow {
+    height: 400px;
+    overflow-y: auto;
 }
