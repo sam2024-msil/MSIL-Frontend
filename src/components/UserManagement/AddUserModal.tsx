@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import styles from './UserList.module.scss';
-import Select, { SingleValue } from "react-select";
+import Select from "react-select";
 import axiosInstance from '../../api/axios';
 import { useToast } from '../../context/ToastContext';
 
@@ -31,10 +31,10 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ sh
     setIsLoading(true);
 
     try {
-      if(value) {
-        const response = await axiosInstance.get(`search-users?query=${value}`); 
-        const newOptions:[] = response.data; 
-        const transformedArray = newOptions.map((item:any) => ({
+      if (value) {
+        const response = await axiosInstance.get(`search-users?query=${value}`);
+        const newOptions: [] = response.data;
+        const transformedArray = newOptions.map((item: any) => ({
           label: item.mail,
           value: item.mail
         }));
@@ -47,7 +47,7 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ sh
     }
   };
 
-  const handleChange = (selected:any) => {
+  const handleChange = (selected: any) => {
     setSelectedOption(selected);
   }
 
@@ -57,17 +57,17 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ sh
 
   useEffect(() => {
     getModules();
-  },[])
+  }, [])
 
-    const getModules = () => {
-      axiosInstance.get(`/modules/`)
+  const getModules = () => {
+    axiosInstance.get(`/modules/`)
       .then((res) => {
-        if(res) {
-          const updatedArray = res.data.map((obj:moduleDetails) => {
-            return Object.keys(obj).reduce((acc:any, key) => {
+        if (res) {
+          const updatedArray = res.data.map((obj: moduleDetails) => {
+            return Object.keys(obj).reduce((acc: any, key) => {
               if (key === 'ModuleID') {
                 acc['value'] = obj[key];
-              } else if(key === 'ModuleName'){
+              } else if (key === 'ModuleName') {
                 acc['label'] = obj[key];
               }
               return acc;
@@ -78,26 +78,26 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ sh
       }).catch((e) => {
         console.error(e)
       })
-    }
+  }
 
-    const createUser = (e: React.FormEvent) => {
-      console.log(" selectedOption :: ", selectedOption, " selectedOptions :: ", selectedOptions);
-      if(Object.keys(selectedOption).length !== 0) {
-        if((!isAdmin  && selectedOptions.length > 0)) {
-          axiosInstance.post(`/users/`,{ModuleIDs:selectedOptions,MSILUserEmail:selectedOption?.label}).then((res) => {
-            console.log(res);
-            showSuccess('User created successfully')
-          }).catch((e) => {
-            console.error(e);
-          })
-        } else {
-          showError('Please select atlest one module to the selected user')
-        }
+  const createUser = (e: React.FormEvent) => {
+    console.log(" selectedOption :: ", selectedOption, " selectedOptions :: ", selectedOptions);
+    if (Object.keys(selectedOption).length !== 0) {
+      if ((!isAdmin && selectedOptions.length > 0)) {
+        axiosInstance.post(`/users/`, { ModuleIDs: selectedOptions, MSILUserEmail: selectedOption?.label }).then((res) => {
+          console.log(res);
+          showSuccess('User created successfully')
+        }).catch((e) => {
+          console.error(e);
+        })
       } else {
-        showError('Please select the user');
+        showError('Please select atlest one module to the selected user')
       }
-      e.preventDefault();
+    } else {
+      showError('Please select the user');
     }
+    e.preventDefault();
+  }
 
   return (
     <Modal show={show} onHide={() => {
@@ -105,7 +105,7 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ sh
       setSelectedOption(null);
       setIsAdmin(false);
       handleClose();
-      }} className={`${styles['modal-dialog']}`}>
+    }} className={`${styles['modal-dialog']}`}>
       <Modal.Header closeButton>
         <Modal.Title className={`${styles['modal-heading']}`}>Add User</Modal.Title>
       </Modal.Header>
@@ -120,7 +120,7 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ sh
               onInputChange={handleInputChange}
               isSearchable
               inputValue={inputValue}
-              isLoading={isLoading} 
+              isLoading={isLoading}
               placeholder="Type to select the user.."
             />
           </div>
@@ -132,7 +132,7 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ sh
               checked={isAdmin}
             />
           </div>
-          {(!isAdmin) && 
+          {(!isAdmin) &&
             <div className="mb-3">
               <label htmlFor="selectModule" className="form-label">Module</label>
               <Select
@@ -144,17 +144,19 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ sh
               />
             </div>
           }
-        <button type="button" className='mt-3 me-2 btn btn-outline-primary' onClick={() => {
-           setSelectedOptions([]);
-           setSelectedOption(null);
-           setIsAdmin(false);
-           handleClose(); 
-           }}>
-          Cancel
-        </button>
-        <Button variant="primary" type='submit' className='mt-3 float-end'>
-          Add
-        </Button>
+          <div className="text-end">
+            <button type="button" className='mt-3 me-2 btn btn-outline-primary' onClick={() => {
+              setSelectedOptions([]);
+              setSelectedOption(null);
+              setIsAdmin(false);
+              handleClose();
+            }}>
+              Cancel
+            </button>
+            <Button variant="primary" type='submit' className='mt-3'>
+              Add
+            </Button>
+          </div>
         </Form>
       </Modal.Body>
     </Modal>

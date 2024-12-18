@@ -1,25 +1,48 @@
 .login-right {
     position: relative;
+
+    .sso-login-card {
+        margin-top: 20%;
+        margin-right: auto;
+        width: 75%;
+
+        @media screen and (max-width: 992px) {
+            width: 94%;
+            margin-top: 0;
+        }
+
+        @media screen and (max-width: 576px) {
+            width: 100%;
+            margin-right: unset;
+            margin-bottom: 12px;
+        }
+
+        .sso-login-content {
+            padding: 30px 0;
+        }
+    }
+
     .login-right-bg-img {
-      width: 100%;
-      position: absolute;
-      top: -100%;
-      right: -100px;
+        width: 100%;
+        position: absolute;
+        top: -80%;
+        right: -100px;
+
+        @media screen and (max-width: 992px) {
+            display: none;
+        }
     }
 }
 
-.sso-login-card {
-    margin-top: 20%;
-    
-  
-    .sso-login-content {
-      padding: 24px 0;
-    }
+.msil-login-text {
+    font: normal normal bold 14px/17px Roboto;
+    letter-spacing: 0px;
+    color: #101010;
 }
 
 .login {
     text-align: center;
-  
+
     .btnLogin {
         background: #FFFFFF 0% 0% no-repeat padding-box;
         box-shadow: 5px 5px 6px #0000000D;
@@ -27,34 +50,31 @@
         opacity: 1;
         padding-right: 10px;
         padding-left: 0;
-        margin-top: 10px;
+        margin-top: 34px;
         margin-bottom: 30px;
-       
+
         img {
             height: 3.125rem;
             width: 3.125rem;
         }
+
         span {
             text-align: left;
-            font: normal normal 300 14px / 16px 'Ubuntu', sans-serif;
+            font: normal normal 300 14px / 16px Roboto;
             letter-spacing: 0px;
             color: #0B7BCE;
             opacity: 1;
         }
     }
+
     p {
-        font: normal normal 300 0.875rem/1rem Ubuntu, sans-serif;
+        font: normal normal 300 0.875rem/1rem Roboto;
         margin-bottom: 1rem;
     }
-  
+
     .microsoft {
         width: 100%;
         max-width: 245px;
         cursor: pointer;
     }
-  }
-  .msil-login-text{
-    font: normal normal bold 14px/17px Roboto;
-    letter-spacing: 0px;
-    color: #101010;
 }

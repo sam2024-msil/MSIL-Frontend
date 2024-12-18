@@ -1,0 +1,10 @@
+const API_STATUS = {
+    INITIAL: 'INITIAL',
+    PROGRESS: 'PROGRESS',
+    STREAMING: 'STREAMING',
+    SUCCESS: 'SUCCESS',
+    FAILURE: 'FAILURE',
+  };
+  
+  export { API_STATUS };
+  

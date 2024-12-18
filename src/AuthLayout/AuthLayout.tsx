@@ -12,6 +12,7 @@ import AppStateUtil from "../utils/AppStateUtil";
 import { isMobileDevice } from "../utils/BroswerUtil";
 import { useToast } from '../context/ToastContext';
 import axiosInstance from "../api/axios";
+import menuIcon from '../assets/menu_icon.svg';
 
 
 type Props = {
@@ -23,13 +24,17 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
 
     const { instance, accounts } = useMsal();
     const navigate = useNavigate();
-    const { showSuccess, showError } = useToast();
+    const { showError } = useToast();
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const isMobile = isMobileDevice() || false;
     const [isVendorLoggedIn, setIsVendorLoggedIn] = useState<boolean>(false);
 
-    const toggleMenu = () => {
+    const toggleMenuClose = () => {
+        setIsMenuOpen(!isMenuOpen);
+    };
+
+    const toggleMenuOpen = () => {
         setIsMenuOpen(!isMenuOpen);
     };
 
@@ -51,6 +56,9 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
         checkAuth();
     }, [instance, accounts]);
 
+    useEffect(() => {
+        setIsVendorLoggedIn(AppStateUtil.isVendorLoggedIn())
+    },[])
     const getAccessToken = async (): Promise<void> => {
         const account = accounts[0];
 
@@ -79,20 +87,24 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
         .then((res) => {
             if(res) {
                 if(res?.data?.code === 400) {
-                    showError('Invalid login credentials!');
+                    showError(res?.data?.message);
                 } else {
                     setIsVendorLoggedIn(true);
                     localStorage.setItem('IsVendoreLoggedIn','true');
-                    localStorage.setItem('VendorAccessToken',res?.data?.tocken)
+                    localStorage.setItem('VendorAccessToken',res?.data?.token)
                     navigate("/chat");
                 }
             }
         }).catch((e) => {
+            showError(e?.response?.data?.detail);
             setIsVendorLoggedIn(false);
             console.error(e);
         })
     }
 
+    const vendorLoggedOut = () => {
+        setIsVendorLoggedIn(false);
+    }
     return (
         <>
             <UnauthenticatedTemplate>
@@ -105,11 +117,14 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
                 <Container fluid>
                     <Row>
                         <Col xs={isMobile ? 12 : 1} className={`p-0 ${styles.sideMenuSection} ${isMenuOpen ? styles.menuOpen : styles.menuClosed}`}>
-                            <SideMenu isMobile={isMobile} isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
+                            <SideMenu isMobile={isMobile} isMenuOpen={isMenuOpen} toggleMenu={toggleMenuClose} />
                         </Col>
-                        <Col xs={isMobile ? 12 : 11} className={`p-0 ${styles.rightSection} ${isMenuOpen ? styles.menuClosed : styles.menuOpen}`}>
-                            <div className={`${styles['right-content']}`}>
-                                <Header />
+                        <Col xs={isMobile ? 12 : 11} className={`p-0 ${styles.rightSection} ${isMenuOpen ? styles.menuClosed : styles.menuOpen} ${isVendorLoggedIn ? 'start-0 w-100' : ''}`}>
+                            <div className={`${styles['right-content']} ${(isVendorLoggedIn) ? 'ms-0' : ''}`}>
+                            <button className={`mt-3 me-3 btn ${styles.menuToggleButton}`} onClick={toggleMenuOpen} >
+                                <img src={menuIcon} alt="menuToggleIcon" className={styles.menuToggleIcon} />
+                            </button>
+                                <Header vendorLoggedOut={vendorLoggedOut} />
                                 {children}
                             </div>
                         </Col>
@@ -119,18 +134,16 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
             </AuthenticatedTemplate>
 
             {(isVendorLoggedIn) && 
-            <>
             <Container fluid>
                 <Row>
                 <Col xs={12} className={`p-0 ${isMenuOpen ? styles.menuClosed : styles.menuOpen}`}>
                     <div className={`${styles['vendor-authrozed-content']}`}>
-                        <Header />
+                        <Header vendorLoggedOut={vendorLoggedOut} />
                         {children}
                     </div>
                 </Col>
                 </Row>
-                </Container>    
-            </>
+            </Container>    
             }
         </>
     );

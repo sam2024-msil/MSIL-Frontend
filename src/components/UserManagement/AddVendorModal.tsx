@@ -11,7 +11,7 @@ interface moduleDetails {
   CreatedOn: string;
 }
 
-const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ show, handleClose }) => {
+const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUserData:any }> = ({ show, handleClose, editUserData }) => {
 
   const { showSuccess, showError } = useToast();
   const [moduleList, setModuleList] = useState<{ value: number; label: string }[]>([]);
@@ -33,6 +33,15 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ 
     module: ''
   });
 
+  useEffect(() => {
+    if(editUserData !=null ) {
+      const moduleNames = editUserData?.Modules.join(', ');
+      console.log( " moduleNames :: ", moduleNames)
+      const labels = moduleNames?.split(',')?.map((label:string) => label.trim().toLowerCase());
+      const result:any = moduleList?.filter(item => labels.includes(item.label.toLowerCase())).map(item => ({ value: item.value, label: item.label }));
+      setSelectedOptions(result);
+    }
+  },[editUserData])
   const resetFormData = () => {
     setErrors({firstName: '',lastName: '',userName: '',vendorCode: '',module: ''});
     setFormValues({firstName: '',lastName: '',userName: '',vendorCode: '',module: []});
@@ -152,22 +161,22 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ 
         <Form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="userNameInput" className="form-label">First Name</label>
-            <input type="text" name='firstName' className={`form-control ${errors.firstName ? 'is-invalid' : ''}`} onChange={handleChange} id="firstNameInput" placeholder="" />
+            <input type="text" name='firstName' value={formValues.firstName} className={`form-control ${errors.firstName ? 'is-invalid' : ''}`} onChange={handleChange} id="firstNameInput" placeholder="" />
             {errors.firstName && <div className="invalid-feedback">{errors.firstName}</div>}
           </div>
           <div className="mb-3">
             <label htmlFor="userNameInput" className="form-label">Last Name</label>
-            <input type="text" name="lastName" className={`form-control ${errors.lastName ? 'is-invalid' : ''}`} onChange={handleChange} id="lastNameInput" placeholder="" />
+            <input type="text" name="lastName" value={formValues.lastName} className={`form-control ${errors.lastName ? 'is-invalid' : ''}`} onChange={handleChange} id="lastNameInput" placeholder="" />
             {errors.lastName && <div className="invalid-feedback">{errors.lastName}</div>}
           </div>
           <div className="mb-3">
             <label htmlFor="emailInput" className="form-label">Username</label>
-            <input type="text" name='userName' className={`form-control ${errors.userName ? 'is-invalid' : ''}`} onChange={handleChange} id="userNameInput" placeholder="" />
+            <input type="text" name='userName' value={formValues.userName} className={`form-control ${errors.userName ? 'is-invalid' : ''}`} onChange={handleChange} id="userNameInput" placeholder="" />
             {errors.userName && <div className="invalid-feedback">{errors.userName}</div>}
           </div>
           <div className="mb-3">
             <label htmlFor="vendorCodeInput" className="form-label">Vendor Code</label>
-            <input type="text" name='vendorCode' className={`form-control ${errors.vendorCode ? 'is-invalid' : ''}`} onChange={handleChange} id="vendorCodeInput" placeholder="" />
+            <input type="text" name='vendorCode' value={formValues.vendorCode} className={`form-control ${errors.vendorCode ? 'is-invalid' : ''}`} onChange={handleChange} id="vendorCodeInput" placeholder="" />
             {errors.vendorCode && <div className="invalid-feedback">{errors.vendorCode}</div>}
           </div>
           <div className="mb-3">

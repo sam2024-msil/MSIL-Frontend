@@ -182,9 +182,9 @@ useEffect(() => {
 
   useEffect(() => {
     if(Object.keys(editData).length != 0) {
-      const moduleNames = 'Abc,common';
-      const labels = moduleNames.split(',').map(label => label.trim().toLowerCase());
-      const result:any = moduleList.filter(item => labels.includes(item.label.toLowerCase())).map(item => ({ value: item.value, label: item.label }));
+      const moduleNames = editData?.doc_category;
+      const labels = moduleNames?.split(',')?.map((label:string) => label.trim().toLowerCase());
+      const result:any = moduleList?.filter(item => labels.includes(item.label.toLowerCase())).map(item => ({ value: item.value, label: item.label }));
       setSelectedOptionsInEditmode(result);
     }
   },[editData])
@@ -294,6 +294,8 @@ useEffect(() => {
                         value={selectedOptionsInEditmode}
                         onChange={(options) => handleChange(1, options)}
                         placeholder="Modules"
+                        menuPosition="fixed"
+                        menuPlacement="auto"
                       />
                       </td>
                       <td></td>

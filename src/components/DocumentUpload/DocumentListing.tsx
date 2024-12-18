@@ -6,14 +6,13 @@ import eyeIcon from '../../assets/icon-eye.svg';
 import searchIcon from '../../assets/search_icon.svg';
 import uploadIcon from '../../assets/upload_icon.svg';
 import deleteIcon from '../../assets/delete-icon.svg';
-import menuIcon from '../../assets/menu_icon.svg';
+// import menuIcon from '../../assets/menu_icon.svg';
 import editIcon from '../../assets/edit-icon.svg';
 import CalendarIcon from '../../assets/calendarIcon.svg';
 import DataTable from '../../shared/Rtable';
 import axiosInstance from '../../api/axios';
 import UploadModal from './UploadModal';
 import DateUtil from '../../utils/DateUtil';
-import { isMobileDevice } from '../../utils/BroswerUtil';
 import { useToast } from '../../context/ToastContext';
 import DeleteConfimationModal from '../../shared/DeleteConfirmationModal/DeleteConfirmationModal';
 import PdfViewer from '../../shared/PDFViewer/PdfViewer';
@@ -39,12 +38,11 @@ const DocumentListing: React.FC = () => {
     const [startDate, endDate] = dateRange;
 
     const [showModal, setShowModal] = useState(false);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    // const [isMenuOpen, setIsMenuOpen] = useState(false);
  
-    const isMobile = isMobileDevice();
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
-    };
+    // const toggleMenu = () => {
+    //     setIsMenuOpen(!isMenuOpen);
+    // };
 
     const handleShow = () => setShowModal(true);
     const handleClose = () => {
@@ -55,7 +53,8 @@ const DocumentListing: React.FC = () => {
     console.log(showLoader)
 
     const downloadPDF = (rowData:any) => {
-        const fileBlob = new Blob(['https://azcistrgvendorgptdev01.blob.core.windows.net/msilchunkingdocs/31-41Pages.pdf?sp=r&st=2024-12-11T04:40:05Z&se=2024-12-11T12:40:05Z&sv=2022-11-02&sr=b&sig=6hUDPxtEVOTv0GxHhwzmX1BSWOQYGti8Fn2q0f7Hdhc%3D'], { type: 'application/pdf' });
+        console.log(rowData)
+    const fileBlob = new Blob(['https://azcistrgvendorgptdev01.blob.core.windows.net/msilchunkingdocs/31-41Pages.pdf?sp=r&st=2024-12-11T04:40:05Z&se=2024-12-11T12:40:05Z&sv=2022-11-02&sr=b&sig=6hUDPxtEVOTv0GxHhwzmX1BSWOQYGti8Fn2q0f7Hdhc%3D'], { type: 'application/pdf' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(fileBlob);
       link.setAttribute('download', 'test.pdf');
@@ -140,6 +139,7 @@ const DocumentListing: React.FC = () => {
     );
 
     const viewPdf = (pdfParam:any) => {
+        console.log(" pdfParam :: ", pdfParam)
         setShowPDFModal(true);
         setPdfLink('https://azcistrgvendorgptdev01.blob.core.windows.net/msilchunkingdocs/31-41Pages.pdf?sp=r&st=2024-12-11T04:40:05Z&se=2024-12-11T12:40:05Z&sv=2022-11-02&sr=b&sig=6hUDPxtEVOTv0GxHhwzmX1BSWOQYGti8Fn2q0f7Hdhc%3D')
 
@@ -206,14 +206,11 @@ const DocumentListing: React.FC = () => {
 
             <div className={`${styles['right-content-section']}`}>
             <div className={`${styles['right-main-heading']}`}>
-                <button onClick={toggleMenu} className={styles.menuToggleButton}>
-                    <img src={menuIcon} alt="menuToggleIcon" className={styles.menuToggleIcon} />
-                </button>
                 <h5>Document Listing</h5>
             </div>
                 <div className='row mb-3'>
-                    <div className='col-md-9'>
-                        <div className='d-flex'>
+                    <div className='col-md-9 col-sm-12'>
+                        <div className={`${styles.searchContainer}`}>   
                             <div className={`${styles['search-section']}`}>
                                 <div className={styles.formGroup}>
                                     <span className={`${styles.formControlFeedback}`}>
@@ -250,7 +247,7 @@ const DocumentListing: React.FC = () => {
                 </div>
                 <div className='row'>
                     <div className='col-md-12'>
-                        <div className={`${styles['table-section']}`}>
+                        <div>
                             <DataTable columns={columns} tableType={'documentList'} fetchData={fetchData} searchString={searchKeyword} triggerTableApi={triggerTableApi} startDate={''} endDate={''} />
                         </div>
                     </div>

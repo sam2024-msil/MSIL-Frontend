@@ -30,14 +30,28 @@ class AppStateUtil {
         }
     }
 
-    static isVendorLoggedIn() {
+    static isVendorLoggedIn(): boolean {
         try {
-            if(typeof localStorage !== 'undefined') {
-                localStorage.getItem('')
+            if (typeof localStorage !== 'undefined') {
+                const value = localStorage.getItem('IsVendoreLoggedIn');
+                return value === 'true';
             }
-        } catch(e) {
+        } catch (e) {
             return false
         }
+        return false;
+    }
+
+    static getVendorAuthToken(): string {
+        try {
+            if (typeof localStorage !== 'undefined') {
+                const value: any = localStorage.getItem('VendorAccessToken');
+                return value;
+            }
+        } catch (e) {
+            return ''
+        }
+        return '';
     }
 }
 

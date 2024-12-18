@@ -21,7 +21,7 @@ const MsilLogin = () => {
     return (
         <div className={`${styles['login-right']}`}>
             <img src={rightBgImage} alt="" className={`${styles['login-right-bg-img']}`} />
-            <div className={`d-flex h-auto ${styles['sso-login-card']} w-75 me-auto`}>
+            <div className={`d-flex h-auto ${styles['sso-login-card']}`}>
                 <Card className="shadow-sm flex-grow-1">
                     <Card.Body className={`${styles['right-form']} text-center`}>
                         <h4 className={`${styles['msil-login-text']} fw-bold`}>MSIL Login</h4>

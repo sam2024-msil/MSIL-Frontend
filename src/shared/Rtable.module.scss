@@ -1,6 +1,4 @@
 .list {
-    // border-top: 2px solid #DBDBDB;
-    // border-bottom: 2px solid #DBDBDB;
     border: 1px solid #DBDBDB;
 }
 
@@ -42,6 +40,9 @@
   display: flex;
   float: right;
   margin-top: 16px;
+  @media screen and (max-width:576px) {
+    float: unset;
+  }
 }
 
 .moduleList {

@@ -1,34 +1,46 @@
 .right-content {
     margin-left: -30px;
 }
+ 
 .right-content-section {
     background-color: #F7F7F7;
     padding: 25px 16px;
 }
-
+ 
 .right-main-heading {
-
+ 
     margin-bottom: 30px;
-    
+    display: flex;
+    align-items: center;
+ 
     h5 {
         text-align: left;
         font: normal normal 300 28px/24px Roboto;
         letter-spacing: 1.4px;
         color: #43425D;
         opacity: 1;
+ 
+        @media screen and (max-width:576px) {
+            font-size: 24px;
+        }
     }
 }
-
+ 
 .search-section {
     width: 45%;
-
+ 
+    @media screen and (max-width: 992px) {
+        width: 100%;
+        margin-bottom: 16px;
+    }
+ 
     .searchIcon {
         width: 100%;
     }
-
+ 
     .formGroup {
         position: relative;
-
+ 
         .formControlFeedback {
             position: absolute;
             pointer-events: none;
@@ -37,7 +49,7 @@
             top: 50%;
             transform: translateY(-50%);
         }
-
+ 
         .formControl {
             padding-left: 40px;
             background: #FFFFFF 0% 0% no-repeat padding-box;
@@ -47,31 +59,89 @@
         }
     }
 }
-
+ 
 .upload-button {
     float: right;
+    @media screen and (max-width:992px) {
+        white-space: nowrap;
+    }
 }
-
+ 
 .table-section {
     background: #FFFFFF 0% 0% no-repeat padding-box;
     border: 1px solid #DBDBDB;
     border-radius: 10px;
     opacity: 1;
+ 
     table {
         margin-bottom: 0;
         border: none;
     }
+ 
     .paginationCustom {
         margin-top: 16px;
     }
 }
-
+ 
 .form-switch .form-check-input:checked {
     background-position: right center;
     --bs-form-switch-bg: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%171c8f'/%3e%3c/svg%3e);
 }
-
+ 
 .modal-body-scrollable {
     max-height: 34vw;
     overflow-y: auto;
+    @media screen and (max-width: 768px) {
+        max-height: 100%;
+    }
+}
+ 
+.menuOpen {
+    display: block;
+}
+ 
+.menuClosed {
+    display: none;
+}
+ 
+@media (min-width: 992px) {
+ 
+    .menuOpen,
+    .menuClosed {
+        display: block;
+    }
+}
+ 
+.menuToggleButton {
+    margin-right: 10px;
+    background: none;
+    border: 1px solid #171C8F;
+    border-radius: 5px;
+ 
+    @media (min-width: 992px) {
+        display: none;
+    }
+}
+ 
+.menuToggleIcon {
+    width: 24px;
+    height: 24px;
+}
+ 
+.sideMenuContainer {
+    position: relative;
+}
+ 
+.closeMenuButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    z-index: 1000;
+}
+ 
+.closeMenuIcon {
+    width: 24px;
+    height: 24px;
 }

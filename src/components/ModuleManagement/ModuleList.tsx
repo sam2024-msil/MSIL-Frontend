@@ -150,7 +150,6 @@ const ModuleList: React.FC = () => {
           <div className='col-md-9'>
             <div className={`${styles['search-section']}`}>
               <form>
-
                 <div className={styles.formGroup}>
                   <span className={`${styles.formControlFeedback}`}>
                     <img src={searchIcon} alt="searchIcon" className={`${styles['searchIcon']}`} />
@@ -171,7 +170,7 @@ const ModuleList: React.FC = () => {
         </div>
         <div className='row'>
           <div className='col-md-12'>
-            <div className={`${styles['table-section']}`}>
+            <div>
               <DataTable columns={columns} fetchData={fetchData} tableType={'moduleList'} searchString={searchKeyword} triggerTableApi={triggerTableApi} startDate={''} endDate={''} />
             </div>
           </div>

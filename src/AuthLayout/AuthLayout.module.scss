@@ -1,19 +1,90 @@
 .right-content {
-    margin-left: -30px;
+    margin-left: -29px;
  
     @media screen and (max-width:768px) {
         margin-left: 0;
+        position: relative;
     }
 }
-
+ 
 .sideMenuSection {
     position: fixed;
     top: 0;
     left: 0;
+    @media screen and (max-width: 992px) {
+        position: unset;
+    }
 }
 .rightSection {
     position: absolute;
     left:8%;
     top: 0;
+    @media screen and (max-width: 768px) {
+        position: unset;
+        left: unset;
+        top: unset;
+    }
 }
-
+ 
+.menuOpen {
+    display: block;
+}
+ 
+.menuClosed {
+    display: none;
+}
+ 
+@media (min-width: 992px) {
+ 
+    .menuOpen,
+    .menuClosed {
+        display: block;
+    }
+}
+ 
+.rightMainHeading {
+    display: flex;
+    align-items: center;
+}
+ 
+.menuToggleButton {
+    background: none;
+    border: 1px solid #171C8F;
+    border-radius: 5px;
+    position: absolute;
+    left: 16px;
+    z-index: 10;
+ 
+    span {
+        color:#171C8F;
+        font: normal normal 400 1rem Roboto;
+    }
+    @media (min-width: 992px) {
+        display: none;
+    }
+}
+ 
+.menuToggleIcon {
+    width: 24px;
+    height: 24px;
+}
+ 
+ 
+ 
+.sideMenuContainer {
+    position: relative;
+}
+ 
+.closeMenuButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    z-index: 1000;
+}
+ 
+.closeMenuIcon {
+    width: 24px;
+    height: 24px;
+}
