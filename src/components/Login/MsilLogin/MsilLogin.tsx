@@ -26,7 +26,7 @@ const MsilLogin = () => {
                     <Card.Body className={`${styles['right-form']} text-center`}>
                         <h4 className={`${styles['msil-login-text']} fw-bold`}>MSIL Login</h4>
                         <div className={`${styles['sso-login-content']}`}>
-                            <p className="text-muted">Single Sign on</p>
+                            <p className={`${styles['sso-text']}`}>Single Sign on</p>
                             <div className={styles.login}>
                                 <p>Sign in with your Identity provider </p>
                                 <button type="button" className={styles.btnLogin} onClick={() => handleLogin("redirect")}>

@@ -91,17 +91,44 @@
     color: #171C8F;
   }
 }
+
+.chatInput {
+  margin-top: 20px;
+  position: relative;
  
-.chat-textbox {
-  text-align: left;
-  font: normal normal normal 15px/20px Roboto;
-  letter-spacing: 0px;
-  color: #838EAB;
-  background: #FFFFFF 0% 0% no-repeat padding-box;
-  box-shadow: 0px 3px 6px #00000012;
-  border: 1px solid #E6E5E5;
-  border-radius: 4px;
-  opacity: 1;
+  .chat-textbox {
+      resize: none;
+      padding-right: 60px;
+      text-align: left;
+      font: normal normal normal 15px/20px Roboto;
+      letter-spacing: 0px;
+      color: #838EAB;
+      background: #FFFFFF 0% 0% no-repeat padding-box;
+      box-shadow: 0px 3px 6px #00000012;
+      border: 1px solid #E6E5E5;
+      border-radius: 4px;
+      opacity: 1;
+      height: 40px;
+ 
+      &::placeholder {
+          text-align: left;
+          font: normal normal normal 15px/20px Roboto;
+          letter-spacing: 0px;
+          color: #838EAB;
+          opacity: 1;
+      }
+  }
+ 
+  .chatInputButton {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-radius: 3px;
+  }
 }
  
 .text-muted {
