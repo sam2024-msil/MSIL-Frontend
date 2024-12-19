@@ -29,8 +29,10 @@ const Chat: React.FC = () => {
     const chatWindowRef = useRef<HTMLDivElement>(null);
     
     useEffect(() => {
-        chatWindowRef?.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-    }, [conversations.length])
+        if (chatWindowRef.current) {
+            chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
+          }
+    }, [conversations])
 
     useEffect(() => {
         setIsVendorLoggedIn(AppStateUtil.isVendorLoggedIn());

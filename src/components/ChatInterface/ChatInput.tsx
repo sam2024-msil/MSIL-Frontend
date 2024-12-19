@@ -34,7 +34,7 @@ const ChatInput = ({ getInput, showStopButton, onStop }:InputPros) => {
 
     return(
         <Form className="mt-3" onSubmit={(e) => { e.preventDefault(); handleSend(); }}>
-            <Form.Group controlId="chatInput" className="d-flex">
+            <Form.Group controlId="chatInput" className={`${styles.chatInput}`}>
               <Form.Control
                 ref={inputElem}
                 type="text"
@@ -45,10 +45,10 @@ const ChatInput = ({ getInput, showStopButton, onStop }:InputPros) => {
                 autoComplete="false"
                 maxLength={250}
               />
-              <Button type="submit">
-                {/* {(!showStopButton) ? <img src={SendIcon} alt="Send Icon" className='w-75' /> : <img src={StopCircleIcon} alt="Stop Icon" className="w-75" /> } */}
-                <img src={SendIcon} alt="Send Icon" className='w-75' />
-              </Button>
+              <button type="submit" className={`${styles.chatInputButton} btn-primary float-end`}>
+                {/* {(!showStopButton) ? <img src={SendIcon} alt="Send Icon" width='20' /> : <img src={StopCircleIcon} alt="Stop Icon" width='20' /> } */}
+                <img src={SendIcon} alt="Send Icon" width="20" />
+              </button>
             </Form.Group>
           </Form>
     )

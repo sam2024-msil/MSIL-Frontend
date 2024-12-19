@@ -37,7 +37,6 @@ const Chatbot = ({ userMessage,index, assistantMessage, botResponseLoadingStatus
   // const [showGivenFeedback, setShowGivenFeedback] = useState(false);
     // const [loader, setLoader] = useState<boolean>(false);
   // const [showModal, setShowModal] = useState(false);
-  const chatWindowRef = useRef<HTMLDivElement>(null);
   
   var references: Array<TypeReference> = [];
     //References may come in content or message in API response
@@ -47,11 +46,6 @@ const Chatbot = ({ userMessage,index, assistantMessage, botResponseLoadingStatus
       references = assistantMessage?.content?.references;
     }
     console.log(" refernces :: ", references);
-  useEffect(() => {
-    if (chatWindowRef.current) {
-      chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
-    }
-  }, []);
   
   return (
             <>
@@ -73,7 +67,7 @@ const Chatbot = ({ userMessage,index, assistantMessage, botResponseLoadingStatus
 
                     {/* Assistant response */}
                     
-                    <div className="d-flex align-items-start w-100">
+                    <div className="d-flex align-items-start w-100 my-3">
                       <div className={`${styles.userIcon} me-2`}><img src={msilLogo} alt="User Icon" /></div>
                       <div className="w-100">
                       {/* {(loader) && <Loader />} */}
