@@ -8,6 +8,8 @@ import axiosInstance from '../../api/axios';
 import UploadModuleModal from './UploadModuleModal';
 import DeleteConfimationModal from '../../shared/DeleteConfirmationModal/DeleteConfirmationModal';
 import { useToast } from '../../context/ToastContext';
+import DateUtil from '../../utils/DateUtil';
+import Loader from '../Spinner/Spinner';
 
 
 interface DataItem {
@@ -52,7 +54,7 @@ const ModuleList: React.FC = () => {
         Cell: ({ row }: any) => {
           return (
             <span>
-              {row?.values.CreatedOn}
+              {DateUtil.convertToIST(row?.values.CreatedOn)}
             </span>
           )
         },
@@ -124,14 +126,17 @@ const ModuleList: React.FC = () => {
 
   const closeConfirmModal = (decision:string) => {
     if(decision == 'proceed') {
+      setShowLoader(true);
       axiosInstance.delete(`/modules/${moduleDeleteId}`)
       .then((res) => {
         if(res) {
+          setShowLoader(false);
           showSuccess('Module deleted successfully');
           setShowDeleteModal(false);
           setTriggerTableApi(triggerTableApi + 1);
         }
       }).catch((e) => {
+        setShowLoader(false);
         console.error(e)
         showError('Something went wrong')
       })
@@ -141,10 +146,10 @@ const ModuleList: React.FC = () => {
   }
   return (
     <>
-
+      {showLoader && <Loader />}
       <div className={`${styles['right-content-section']}`}>
         <div className={`${styles['right-main-heading']}`}>
-          <h5>Module</h5>
+          <h5>Module Listing</h5>
         </div>
         <div className='row mb-3'>
           <div className='col-md-9'>

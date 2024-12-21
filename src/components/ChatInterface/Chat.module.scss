@@ -31,6 +31,30 @@
 }
 
 .chatWindow {
-    height: 400px;
+    height: 76vh;
     overflow-y: auto;
+}
+
+@media only screen and (min-width: 1280px) and (max-width: 1599px) {
+    .chatWindow {
+        height: calc(76vh - 50px);
+    }
+}
+ 
+@media only screen and (min-width: 1600px) and (max-width: 1919px) {
+    .chatWindow {
+        height: calc(76vh - 100px);
+    }
+}
+ 
+@media only screen and (min-width: 1920px) and (max-width: 2559px) {
+    .chatWindow {
+        height: calc(76vh - 150px);
+    }
+}
+ 
+@media only screen and (min-width: 2560px) {
+    .chatWindow {
+        height: calc(76vh - 200px);
+    }
 }

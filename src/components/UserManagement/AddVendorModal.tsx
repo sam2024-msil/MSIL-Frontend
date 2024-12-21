@@ -11,13 +11,21 @@ interface moduleDetails {
   CreatedOn: string;
 }
 
+type FormValues = {
+  firstName: string;
+  lastName: string;
+  userName: string;
+  vendorCode?: string; // Optional
+  module?: string[];
+};
+
 const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUserData:any }> = ({ show, handleClose, editUserData }) => {
 
   const { showSuccess, showError } = useToast();
   const [moduleList, setModuleList] = useState<{ value: number; label: string }[]>([]);
   const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
 
-  const [formValues, setFormValues] = useState({
+  const [formValues, setFormValues] = useState<FormValues>({
     firstName: '',
     lastName: '',
     userName: '',
@@ -36,12 +44,13 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
   useEffect(() => {
     if(editUserData !=null ) {
       const moduleNames = editUserData?.Modules.join(', ');
-      console.log( " moduleNames :: ", moduleNames)
       const labels = moduleNames?.split(',')?.map((label:string) => label.trim().toLowerCase());
       const result:any = moduleList?.filter(item => labels.includes(item.label.toLowerCase())).map(item => ({ value: item.value, label: item.label }));
       setSelectedOptions(result);
+      setFormValues({firstName:editUserData?.FirstName,lastName:editUserData?.LastName,userName:editUserData?.Email})
     }
   },[editUserData])
+
   const resetFormData = () => {
     setErrors({firstName: '',lastName: '',userName: '',vendorCode: '',module: ''});
     setFormValues({firstName: '',lastName: '',userName: '',vendorCode: '',module: []});
@@ -70,11 +79,11 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
 
   const handleModuleSelectChange = (selected: any) => {
     const selectedIds = selected.map((item:any) => item.value);  
-    setFormValues((prevState:any) => ({    // For Req payload
+    setFormValues((prevState:any) => ({   
       ...prevState, 
       module: selectedIds,
     }));
-    setSelectedOptions(selected); // For get select in dorpdown
+    setSelectedOptions(selected); 
   };
   useEffect(() => {
     getModules();
@@ -82,14 +91,15 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
 
   const createVendormHandler = () => {
     if (formValues.firstName) {
-      const reqPayload = {
+      const reqPayload = (editUserData) ? { RoleID:3, ModuleIDs: formValues.module,IsAdmin:false } : {
         FirstName: formValues.firstName,
         LastName: formValues.lastName,
         UserEmailId: formValues.userName,
         VendorCode: formValues.vendorCode,
         ModuleIDs: formValues.module
       }
-      axiosInstance.post(`/vendoruser/`, reqPayload)
+      const apiUrl = (editUserData) ? `/users/${editUserData?.ID}` : '/vendoruser/';
+      axiosInstance.post(`${apiUrl}`, reqPayload)
         .then((res) => {
           if (res) {
             showSuccess(res.data.message);
@@ -124,11 +134,11 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
         valid = false;
       }
     }
-    if (!formValues.vendorCode.trim()) {
+    if (formValues?.vendorCode && !formValues?.vendorCode.trim()) {
       newErrors.vendorCode = 'Vendor code is required';
       valid = false;
     }
-    if (!formValues.module) {
+    if (!selectedOptions.length) {
       newErrors.module = 'Module selection is required';
       valid = false;
     }
@@ -155,30 +165,33 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
       handleClose();
       }} className={`${styles['modal-dialog']}`}>
       <Modal.Header closeButton>
-        <Modal.Title className={`${styles['modal-heading']}`}>Add Vendor</Modal.Title>
+        <Modal.Title className={`${styles['modal-heading']}`}>
+          {editUserData ? 'Edit Vendor' : 'Add Vendor'}
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body className={`${styles['modal-body']} ${styles['modal-body-scrollable']}`}>
         <Form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="userNameInput" className="form-label">First Name</label>
-            <input type="text" name='firstName' value={formValues.firstName} className={`form-control ${errors.firstName ? 'is-invalid' : ''}`} onChange={handleChange} id="firstNameInput" placeholder="" />
+            <input type="text" name='firstName' disabled={(editUserData) ? true : false} value={formValues.firstName} className={`form-control ${errors.firstName ? 'is-invalid' : ''}`} onChange={handleChange} id="firstNameInput" placeholder="" />
             {errors.firstName && <div className="invalid-feedback">{errors.firstName}</div>}
           </div>
           <div className="mb-3">
             <label htmlFor="userNameInput" className="form-label">Last Name</label>
-            <input type="text" name="lastName" value={formValues.lastName} className={`form-control ${errors.lastName ? 'is-invalid' : ''}`} onChange={handleChange} id="lastNameInput" placeholder="" />
+            <input type="text" name="lastName" disabled={(editUserData) ? true : false} value={formValues.lastName} className={`form-control ${errors.lastName ? 'is-invalid' : ''}`} onChange={handleChange} id="lastNameInput" placeholder="" />
             {errors.lastName && <div className="invalid-feedback">{errors.lastName}</div>}
           </div>
           <div className="mb-3">
             <label htmlFor="emailInput" className="form-label">Username</label>
-            <input type="text" name='userName' value={formValues.userName} className={`form-control ${errors.userName ? 'is-invalid' : ''}`} onChange={handleChange} id="userNameInput" placeholder="" />
+            <input type="text" name='userName' disabled={(editUserData) ? true : false} value={formValues.userName} className={`form-control ${errors.userName ? 'is-invalid' : ''}`} onChange={handleChange} id="userNameInput" placeholder="" />
             {errors.userName && <div className="invalid-feedback">{errors.userName}</div>}
           </div>
+          {!editUserData &&
           <div className="mb-3">
             <label htmlFor="vendorCodeInput" className="form-label">Vendor Code</label>
-            <input type="text" name='vendorCode' value={formValues.vendorCode} className={`form-control ${errors.vendorCode ? 'is-invalid' : ''}`} onChange={handleChange} id="vendorCodeInput" placeholder="" />
+            <input type="text" name='vendorCode' disabled={(editUserData) ? true : false} value={formValues.vendorCode} className={`form-control ${errors.vendorCode ? 'is-invalid' : ''}`} onChange={handleChange} id="vendorCodeInput" placeholder="" />
             {errors.vendorCode && <div className="invalid-feedback">{errors.vendorCode}</div>}
-          </div>
+          </div> }
           <div className="mb-3">
             <label htmlFor="selectModule" className="form-label">Module</label>
             <Select
@@ -197,7 +210,7 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
               Cancel
             </button>
             <Button variant="primary" type='submit' className='mt-3'>
-              Add
+              {editUserData ? 'Update':'Add'}
             </Button>
           </div>
         </Form>

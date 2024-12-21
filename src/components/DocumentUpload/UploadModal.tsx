@@ -205,7 +205,7 @@ useEffect(() => {
       showError(e?.response?.data?.detail)
     })
   }
-  console.log(" selectedOptions :: ", selectedOptions)
+
   return (
     <Modal show={show} onHide={() => { setFiles([]); setSelectedOptions([]); handleClose()}} size="xl">
       <Modal.Header closeButton>

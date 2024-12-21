@@ -12,6 +12,7 @@ import AddVendorModal from './AddVendorModal';
 import DateUtil from '../../utils/DateUtil';
 import { useToast } from '../../context/ToastContext';
 import DeleteConfimationModal from '../../shared/DeleteConfirmationModal/DeleteConfirmationModal';
+import Loader from '../Spinner/Spinner';
 
 interface DataItem {
   id: number;
@@ -32,15 +33,15 @@ const Listing: React.FC = () => {
   const [editUserData, setEditUserData] = useState<any>(null);
 
   const handleUserShow = () => setUserShowModal(true);
-  const handleUserClose = () => setUserShowModal(false);
+  const handleUserClose = () => {setUserShowModal(false);setEditUserData(null);};
 
   const handleVendorShow = () => setVendorShowModal(true);
   const handleVendorClose = () => {
     setVendorShowModal(false);
+    setEditUserData(null);
     setTriggerTableApi(triggerTableApi + 1);
   }
   
-  console.log(" showLoader :: ", showLoader)
   const columns: any = useMemo(
     () => [
       {
@@ -95,7 +96,6 @@ const Listing: React.FC = () => {
   );
 
   const handleEdit = (editData:any) => {
-    console.log(editData);
     if(editData?.IsVendorUser) {
       setEditUserData(editData);
       setVendorShowModal(true);
@@ -146,16 +146,19 @@ const Listing: React.FC = () => {
 
   const closeConfirmModal = (decision:string) => {
     if(decision == 'proceed') {
+      setShowLoader(true);
       axiosInstance.delete(`/users/${docDeleteId}`)
       .then((res) => {
         if(res) {
+          setShowLoader(false);
           showSuccess('Document deleted successfully');
           setShowDeleteModal(false);
           setTriggerTableApi(triggerTableApi + 1);
         }
       }).catch((e) => {
+        setShowLoader(false);
         console.error(e)
-        showError('Something went wrong')
+        showError(e.response.data.detail)
       })
     } else {
       setShowDeleteModal(false);
@@ -164,9 +167,10 @@ const Listing: React.FC = () => {
 
   return (
     <>
+      {showLoader && <Loader /> }
       <div className={`${styles['right-content-section']}`}>
         <div className={`${styles['right-main-heading']}`}>
-          <h5>User Mangement</h5>
+          <h5>User Listing</h5>
         </div>
         <div className='row mb-3'>
           <div className='col-md-7 col-sm-12'>
@@ -203,7 +207,7 @@ const Listing: React.FC = () => {
         </div>
       </div>
       <DeleteConfimationModal show={showDeleteModal} onClose={closeConfirmModal} />
-      <AddUserModal show={showUserModal} handleClose={handleUserClose} />
+      <AddUserModal show={showUserModal} handleClose={handleUserClose} editUserData={editUserData} />
       <AddVendorModal show={showVendorModal} handleClose={handleVendorClose} editUserData={editUserData} />
     </>
   );

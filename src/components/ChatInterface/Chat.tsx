@@ -104,7 +104,7 @@ const Chat: React.FC = () => {
         setConversations,
         setResponseErrorData
     )
-    console.log(" botResponseLoadingStatus :: ", botResponseLoadingStatus, " responseErrorData :: ", responseErrorData)
+    console.log(" conversations :: ", conversations, " responseErrorData :: ", responseErrorData)
     return (
         <div className={`${styles['right-content-section']}`}>
             <div className='row'>

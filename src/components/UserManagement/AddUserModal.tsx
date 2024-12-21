@@ -11,8 +11,8 @@ interface moduleDetails {
   CreatedOn: string;
 }
 
-const AddUserModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ show, handleClose }) => {
-
+const AddUserModal: React.FC<{ show: boolean; handleClose: () => void, editUserData:any }> = ({ show, handleClose, editUserData }) => {
+  console.log(" editUserData :: ", editUserData)
   const { showSuccess, showError } = useToast();
   const [isAdmin, setIsAdmin] = useState(false);
   const [dropdownOptions, setDropdownOptions] = useState<{ value: number; label: string }[]>([]);
@@ -56,7 +56,7 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ sh
   };
 
   useEffect(() => {
-    getModules();
+    (show) && getModules();
   }, [])
 
   const getModules = () => {
@@ -81,23 +81,63 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ sh
   }
 
   const createUser = (e: React.FormEvent) => {
-    console.log(" selectedOption :: ", selectedOption, " selectedOptions :: ", selectedOptions);
     if (Object.keys(selectedOption).length !== 0) {
-      if ((!isAdmin && selectedOptions.length > 0)) {
-        axiosInstance.post(`/users/`, { ModuleIDs: selectedOptions, MSILUserEmail: selectedOption?.label }).then((res) => {
-          console.log(res);
-          showSuccess('User created successfully')
+      const selectedModule = selectedOptions.map(item => item.value);
+      if (isAdmin) {
+        const apiUrl = (editUserData) ? `/users/${editUserData?.ID}` : '/users/';
+        const reqBody = (editUserData) ? { RoleID:1, ModuleIDs:(isAdmin) ? [] : selectedModule,IsAdmin:isAdmin } : { ModuleIDs: [], MSILUserEmail: selectedOption?.label, IsAdmin:isAdmin } ;
+        axiosInstance.post(`${apiUrl}`, reqBody).then((res) => {
+          console.log(res)
+          showSuccess('User created successfully');
+          setSelectedOptions([]);
+          setSelectedOption(null);
+          setIsAdmin(false);
+          handleClose();
         }).catch((e) => {
           console.error(e);
+          showError(e?.response?.data?.detail);
         })
       } else {
-        showError('Please select atlest one module to the selected user')
+        if(selectedOptions.length > 0) {
+          const apiUrl = (editUserData) ? `/users/${editUserData?.ID}` : '/users/';
+          const reqBody = (editUserData) ? { RoleID:2, ModuleIDs:selectedModule,IsAdmin:false } : { ModuleIDs: selectedModule, MSILUserEmail: selectedOption?.label, IsAdmin:isAdmin };
+          axiosInstance.post(`${apiUrl}`, reqBody).then((res) => {
+            console.log(res)
+            showSuccess('User created successfully');
+            setSelectedOptions([]);
+            setSelectedOption(null);
+            setIsAdmin(false);
+            handleClose();
+          }).catch((e) => {
+            console.error(e);
+            showError(e?.response?.data?.detail);
+          })
+        } else {
+          showError('Please select atleast one module to the selected user');
+        }
       }
     } else {
       showError('Please select the user');
     }
     e.preventDefault();
   }
+
+  useEffect(() => {
+    if (editUserData) {
+      setSelectedOption({ value: editUserData.Email, label: editUserData.Email });
+      setInputValue(editUserData.Email);
+      const moduleNames = editUserData?.Modules.join(', ');
+      const labels = moduleNames?.split(',')?.map((label:string) => label.trim().toLowerCase());
+      const result:any = moduleList?.filter(item => labels.includes(item.label.toLowerCase())).map(item => ({ value: item.value, label: item.label }));
+      setSelectedOptions(result);
+      setIsAdmin(editUserData?.IsAdmin)
+    } else {
+      setSelectedOption(null);
+      setInputValue('');
+      setSelectedOptions([]);
+    }
+  }, [editUserData]);
+
 
   return (
     <Modal show={show} onHide={() => {
@@ -107,7 +147,9 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ sh
       handleClose();
     }} className={`${styles['modal-dialog']}`}>
       <Modal.Header closeButton>
-        <Modal.Title className={`${styles['modal-heading']}`}>Add User</Modal.Title>
+        <Modal.Title className={`${styles['modal-heading']}`}>
+          {(editUserData !=null) ? 'Edit User' : 'Add User'}
+          </Modal.Title>
       </Modal.Header>
       <Modal.Body className={`${styles['modal-body']}`}>
         <Form onSubmit={createUser}>
@@ -122,6 +164,7 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ sh
               inputValue={inputValue}
               isLoading={isLoading}
               placeholder="Type to select the user.."
+              className={`${editUserData !==null ? styles['select-disabled'] : ''}`}
             />
           </div>
           <div className="mb-3">
@@ -154,7 +197,7 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ sh
               Cancel
             </button>
             <Button variant="primary" type='submit' className='mt-3'>
-              Add
+              {editUserData ? 'Edit' : 'Add'}
             </Button>
           </div>
         </Form>
@@ -163,4 +206,4 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void }> = ({ sh
   );
 };
 
-export default AddUserModal;
+export default React.memo(AddUserModal);

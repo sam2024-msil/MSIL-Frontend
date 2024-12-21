@@ -15,7 +15,8 @@ const handleStreamResponseData = (
         const conversationHistory = [...conversations];
         const allMessages = conversationHistory[conversationHistory.length - 1]?.messages;
         if (allMessages) {
-            const assistantMessage = allMessages.slice(-1).find((v) => v.role === 'assistant');
+            let assistantMessage 
+            assistantMessage = allMessages.slice(-1).find((v) => v.role === 'assistant');
             if (data?.type === STREAM_ITEM_TYPE.message) {
                 if (!assistantMessage) {
                     conversationHistory[conversationHistory.length - 1].messages.push({
@@ -65,8 +66,8 @@ const handleStreamResponseData = (
             ) {
                 assistantMessage.references = JSON.parse(data.content);
             }
-            // debugger;
-            if (data?.type === STREAM_ITEM_TYPE.intent && assistantMessage) {
+            
+            if (data?.type == STREAM_ITEM_TYPE.intent && assistantMessage) {
                 assistantMessage.intent = data?.content;
             }
             setConversations(conversationHistory);

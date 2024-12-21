@@ -1,4 +1,4 @@
-import { Form, Button } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import styles from './Chatbot/Chatbot.module.scss';
 import SendIcon from '../../assets/send-icon.svg';
 // import StopCircleIcon from '../../assets/stop-circle.svg';
@@ -24,11 +24,11 @@ const ChatInput = ({ getInput, showStopButton, onStop }:InputPros) => {
     }, [showStopButton]);
 
     const handleSend = () => {
-      if(!showStopButton) {
+      if(true) {
         getInput(query);
         setQuery('');
       } else {
-        onStop()
+        onStop();
       }
     }
 
@@ -42,10 +42,12 @@ const ChatInput = ({ getInput, showStopButton, onStop }:InputPros) => {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className={`${styles['chat-textbox']}`}
-                autoComplete="false"
+                autoComplete="off"
                 maxLength={250}
               />
-              <button type="submit" className={`${styles.chatInputButton} btn-primary float-end`}>
+              <button type="submit" className={`${styles.chatInputButton} btn-primary float-end`}
+              disabled={showStopButton}
+              >
                 {/* {(!showStopButton) ? <img src={SendIcon} alt="Send Icon" width='20' /> : <img src={StopCircleIcon} alt="Stop Icon" width='20' /> } */}
                 <img src={SendIcon} alt="Send Icon" width="20" />
               </button>
