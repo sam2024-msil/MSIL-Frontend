@@ -40,11 +40,6 @@ const DocumentListing: React.FC = () => {
     const [startDate, endDate] = dateRange;
 
     const [showModal, setShowModal] = useState(false);
-    // const [isMenuOpen, setIsMenuOpen] = useState(false);
- 
-    // const toggleMenu = () => {
-    //     setIsMenuOpen(!isMenuOpen);
-    // };
 
     const handleShow = () => setShowModal(true);
     const handleClose = () => {
@@ -172,11 +167,13 @@ const DocumentListing: React.FC = () => {
         setShowModal(true);
         setEditData(rowData);
     }
-    const fetchData = useCallback(async ({ pageIndex, pageSize, sortBy, searchString }: {
+    const fetchData = useCallback(async ({ pageIndex, pageSize, sortBy, searchString,  startDate, endDate }: {
         pageIndex: number;
         pageSize: number;
         sortBy: { id: string; desc: boolean }[];
         searchString: string;
+        startDate?: string;
+        endDate?: string;
     }): Promise<{ rows: DataItem[]; totalPages: number; totalRecords: number }> => {
         setShowLoader(true);
         const queryParams = new URLSearchParams();
@@ -187,6 +184,10 @@ const DocumentListing: React.FC = () => {
             queryParams.append('sort_order', sortBy[0].desc ? 'desc' : 'asc');
         }
         if (searchString) queryParams.append('search', searchString);
+        if (startDate && endDate) {
+            queryParams.append('from_date', DateUtil.formatDateToISO(startDate));
+            queryParams.append('to_date', DateUtil.formatDateToISO(endDate));
+        }
         try {
             const response = await axiosInstance.get(`/listOfDocs?${queryParams.toString()}`, {
                 timeout: 200000,
@@ -277,7 +278,7 @@ const DocumentListing: React.FC = () => {
                 <div className='row'>
                     <div className='col-md-12'>
                         <div>
-                            <DataTable columns={columns} tableType={'documentList'} fetchData={fetchData} searchString={searchKeyword} triggerTableApi={triggerTableApi} startDate={''} endDate={''} />
+                            <DataTable columns={columns} tableType={'documentList'} fetchData={fetchData} searchString={searchKeyword} triggerTableApi={triggerTableApi} startDate={startDate} endDate={endDate}  />
                         </div>
                     </div>
                 </div>

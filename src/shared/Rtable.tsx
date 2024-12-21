@@ -31,7 +31,6 @@ interface DataTableProps<D extends object> {
     triggerTableApi,
     startDate,
     endDate,
-    retryCount,
   }: {
     pageIndex: number;
     pageSize: number;
@@ -40,7 +39,6 @@ interface DataTableProps<D extends object> {
     triggerTableApi: number;
     startDate?:string;
     endDate?:string;
-    retryCount?:number;
   }) => Promise<{ rows: D[], totalPages: number, totalRecords:number }>;
   searchString: string;
   triggerTableApi: number;
