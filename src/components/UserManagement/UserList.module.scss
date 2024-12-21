@@ -145,3 +145,10 @@
     width: 24px;
     height: 24px;
 }
+
+.select-disabled {
+    pointer-events: none;
+    div {
+        background-color: #e9ecef !important;
+    }
+}

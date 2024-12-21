@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-// import { useToast } from '../../../context/ToastContext';
+import { useState } from 'react';
+import { useToast } from '../../../context/ToastContext';
 import Markdown from 'react-markdown';
 import rehypeRaw from "rehype-raw";
 // import { Modal } from 'react-bootstrap';
@@ -10,10 +10,12 @@ import styles from './Chatbot.module.scss';
 import DotLoader from "../../../lib/DotLoader";
 // import PDFFile from '../../../assets/sample.pdf';
 import { isAppreciationOrgratitudeMessage, isGreetingMessage, isOutofScopeMessage } from "../../../utils/MessageUtil";
-// import Loader from '../../Spinner/Spinner';
-import { TypeReference, TypeReview } from '../../../type/CustomTypes';
+import Loader from '../../Spinner/Spinner';
+import { TypeReview } from '../../../type/CustomTypes';
 import { API_STATUS } from '../../../constants/ApiConstants';
 import DateUtil from '../../../utils/DateUtil';
+import axiosInstance from '../../../api/axios';
+import FeedbackViewer from '../../Feedback/FeedbackViewer/FeedbackViewer';
  
 
 interface InteractionViewerProps {
@@ -28,25 +30,33 @@ interface InteractionViewerProps {
   isOffline?:  boolean;
 }
  
-const Chatbot = ({ userMessage,index, assistantMessage, botResponseLoadingStatus, isOffline, conversations, isStreaming }: InteractionViewerProps) => {
+const Chatbot = ({ userMessage,index, assistantMessage, botResponseLoadingStatus, isOffline, conversations, isStreaming, review, interactionId }: InteractionViewerProps) => {
 
-  console.log( " isStreaming :: ", isStreaming, " assistantMessage?.intent :: ", assistantMessage?.intent)
-  // const { showSuccess, showError } = useToast();  
+  const { showSuccess, showError } = useToast();  
 
-  // const [displayReview, setDisplayReview] = useState(review);
-  // const [showGivenFeedback, setShowGivenFeedback] = useState(false);
-    // const [loader, setLoader] = useState<boolean>(false);
+  const [displayReview, setDisplayReview] = useState(review);
+  const [showGivenFeedback, setShowGivenFeedback] = useState(false);
+  const [loader, setLoader] = useState<boolean>(false);
   // const [showModal, setShowModal] = useState(false);
   
-  var references: Array<TypeReference> = [];
-    //References may come in content or message in API response
-    if (assistantMessage?.references?.length) {
-      references = assistantMessage.references;
-    } else if (assistantMessage?.content?.references?.length) {
-      references = assistantMessage?.content?.references;
-    }
-    console.log(" refernces :: ", references);
-  
+  const hadleHideFeedbackButtonClick = () => setShowGivenFeedback(false);
+  const onFeedbackSubmit = (rating: number, options: Array<number>, message: string, currentInteractionId: string, showModal: (param: boolean) => void) => {
+    setLoader(true);
+    axiosInstance.post(`/feedback/`, { rating: rating, feedback: message, options: options,interaction_id: currentInteractionId,user_mail:'sam@gmail.com'})
+        .then((res) => {
+            if (res?.data) {
+                setDisplayReview({ rating: rating, options: options, message: message });
+                showSuccess('Feedback submitted successfully');
+                showModal(false);
+            }
+            setLoader(false);
+        }).catch((e) => {
+            console.log(e);
+            showError('Feedback is not submitted.');
+            setLoader(false);
+        })
+}
+
   return (
             <>
               <div key={index}>
@@ -62,7 +72,7 @@ const Chatbot = ({ userMessage,index, assistantMessage, botResponseLoadingStatus
                       <div className={`${styles.message} ${styles.question}`}>
                         <div>{userMessage?.content?.text}</div>
                       </div>
-                      <small className="text-muted">{DateUtil.formatDateAndTime()}</small>
+                      <small className={`${styles['text-muted']}`}>{DateUtil.formatDateAndTime()}</small>
                     </div>
 
                     {/* Assistant response */}
@@ -70,7 +80,7 @@ const Chatbot = ({ userMessage,index, assistantMessage, botResponseLoadingStatus
                     <div className="d-flex align-items-start w-100 my-3">
                       <div className={`${styles.userIcon} me-2`}><img src={msilLogo} alt="User Icon" /></div>
                       <div className="w-100">
-                      {/* {(loader) && <Loader />} */}
+                      {(loader) && <Loader />}
                     {(botResponseLoadingStatus === API_STATUS.PROGRESS && !isOffline && conversations.length === index + 1) && <DotLoader />}
                     {(botResponseLoadingStatus === API_STATUS.PROGRESS && isOffline && conversations.length === index + 1) && 
                     <div className={styles['connection-error']}>
@@ -95,9 +105,10 @@ const Chatbot = ({ userMessage,index, assistantMessage, botResponseLoadingStatus
                                     !isOutofScopeMessage(assistantMessage?.intent) &&
                                     !isAppreciationOrgratitudeMessage(assistantMessage?.intent) &&
                                     assistantMessage.content.text && (
-                                      <Feedback />
+                                      <Feedback onFeedbackSubmit={onFeedbackSubmit} interactionId={interactionId} givenRating={displayReview?.rating} />
                             )}
-                          <small className="text-muted"> 
+                            {displayReview && (<FeedbackViewer isOpen={showGivenFeedback} data={displayReview} onClose={hadleHideFeedbackButtonClick} />)}
+                          <small className={`${styles['text-muted']} w-100 text-end`}> 
                           {(assistantMessage?.timestamp) && DateUtil.formatChatResponseDate(assistantMessage?.timestamp)}
                           </small>
                         </div>

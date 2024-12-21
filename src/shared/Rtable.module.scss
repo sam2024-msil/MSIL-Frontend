@@ -130,6 +130,11 @@
   
 
   }
+.user-list-module {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .pageSizeRecords {
     color: #747474;

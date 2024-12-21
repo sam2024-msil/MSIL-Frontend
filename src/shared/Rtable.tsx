@@ -31,7 +31,6 @@ interface DataTableProps<D extends object> {
     triggerTableApi,
     startDate,
     endDate,
-    retryCount,
   }: {
     pageIndex: number;
     pageSize: number;
@@ -40,7 +39,6 @@ interface DataTableProps<D extends object> {
     triggerTableApi: number;
     startDate?:string;
     endDate?:string;
-    retryCount?:number;
   }) => Promise<{ rows: D[], totalPages: number, totalRecords:number }>;
   searchString: string;
   triggerTableApi: number;
@@ -218,9 +216,12 @@ const DataTable = <D extends object>({ columns, fetchData, searchString, trigger
               prepareRow(row);
               return (
                 <tr {...row.getRowProps()} key={row.id}>
-                  {row.cells.map((cell:any) =>  { 
+                  {row.cells.map((cell:any) =>  {
                     return(
-                    <td {...cell.getCellProps()} key={cell.column.id}>{cell.render('Cell')}</td>
+                    <td {...cell.getCellProps()} key={cell.column.id} title={cell?.value} className={`${(tableType === 'userList' && cell.column.Header === "Module") ? `${styles['user-list-module']}` : ''}`}>
+                      {(tableType === 'userList' && cell.column.Header === "Module") ?
+                      cell?.value?.toString() : cell.render('Cell')}
+                      </td>
                   )}
                   )}
                 </tr>

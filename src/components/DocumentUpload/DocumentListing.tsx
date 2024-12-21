@@ -16,6 +16,8 @@ import DateUtil from '../../utils/DateUtil';
 import { useToast } from '../../context/ToastContext';
 import DeleteConfimationModal from '../../shared/DeleteConfirmationModal/DeleteConfirmationModal';
 import PdfViewer from '../../shared/PDFViewer/PdfViewer';
+import { FileStatus } from '../../enums/FileProcessStatus';
+import Loader from '../Spinner/Spinner';
 
 
 interface DataItem {
@@ -38,11 +40,6 @@ const DocumentListing: React.FC = () => {
     const [startDate, endDate] = dateRange;
 
     const [showModal, setShowModal] = useState(false);
-    // const [isMenuOpen, setIsMenuOpen] = useState(false);
- 
-    // const toggleMenu = () => {
-    //     setIsMenuOpen(!isMenuOpen);
-    // };
 
     const handleShow = () => setShowModal(true);
     const handleClose = () => {
@@ -50,17 +47,25 @@ const DocumentListing: React.FC = () => {
         setEditData({});
         setTriggerTableApi(triggerTableApi + 1);
     }
-    console.log(showLoader)
+    
 
     const downloadPDF = (rowData:any) => {
         console.log(rowData)
-    const fileBlob = new Blob(['https://azcistrgvendorgptdev01.blob.core.windows.net/msilchunkingdocs/31-41Pages.pdf?sp=r&st=2024-12-11T04:40:05Z&se=2024-12-11T12:40:05Z&sv=2022-11-02&sr=b&sig=6hUDPxtEVOTv0GxHhwzmX1BSWOQYGti8Fn2q0f7Hdhc%3D'], { type: 'application/pdf' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(fileBlob);
-      link.setAttribute('download', 'test.pdf');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+        axiosInstance.get(`/view-document?doc_id=${rowData?.doc_id}`)
+        .then((res) => {
+            if(res) {
+                const fileBlob = new Blob([res?.data?.sas_url], {type: 'application/pdf'})
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(fileBlob);
+                link.setAttribute('download', rowData?.doc_name);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }).catch((e) => {
+            console.error(e)
+        })
+      
     }
 
     const columns: any = useMemo(
@@ -113,8 +118,17 @@ const DocumentListing: React.FC = () => {
             {
                 Header: 'Status',
                 Cell: ({ row }: any) => {
+                    let colurCode = (row?.values?.doc_status.toLowerCase() === FileStatus.failed)
+                    ? 'rgb(244,67,54)':
+                    (row?.values?.doc_status.toLowerCase() === FileStatus.uploaded)
+                    ? 'rgb(249,167,37)':
+                    (row?.values?.doc_status.toLowerCase() === FileStatus.processing)
+                    ? 'rgb(0,150,136)':
+                    (row?.values?.doc_status.toLowerCase() === FileStatus.processed)
+                    ? 'rgb(48,63,160)'
+                    : 'rgb(0,200,81)';
                     return (
-                        <span className={styles[row?.values?.doc_status.toLowerCase()]}>
+                        <span className={styles[row?.values?.doc_status.toLowerCase()]} style={{color:colurCode}}>
                             {row?.values?.doc_status}
                         </span>
                     );
@@ -139,20 +153,27 @@ const DocumentListing: React.FC = () => {
     );
 
     const viewPdf = (pdfParam:any) => {
-        console.log(" pdfParam :: ", pdfParam)
-        setShowPDFModal(true);
-        setPdfLink('https://azcistrgvendorgptdev01.blob.core.windows.net/msilchunkingdocs/31-41Pages.pdf?sp=r&st=2024-12-11T04:40:05Z&se=2024-12-11T12:40:05Z&sv=2022-11-02&sr=b&sig=6hUDPxtEVOTv0GxHhwzmX1BSWOQYGti8Fn2q0f7Hdhc%3D')
-
+        axiosInstance.get(`/view-document?doc_id=${pdfParam?.doc_id}`)
+        .then((res) => {
+            if(res) {
+                setShowPDFModal(true);
+                setPdfLink(res?.data?.sas_url)
+            }
+        }).catch((e) => {
+            console.error(e)
+        })
     }
     const handleEdit = (rowData:any) => {
         setShowModal(true);
         setEditData(rowData);
     }
-    const fetchData = useCallback(async ({ pageIndex, pageSize, sortBy, searchString }: {
+    const fetchData = useCallback(async ({ pageIndex, pageSize, sortBy, searchString,  startDate, endDate }: {
         pageIndex: number;
         pageSize: number;
         sortBy: { id: string; desc: boolean }[];
         searchString: string;
+        startDate?: string;
+        endDate?: string;
     }): Promise<{ rows: DataItem[]; totalPages: number; totalRecords: number }> => {
         setShowLoader(true);
         const queryParams = new URLSearchParams();
@@ -163,8 +184,14 @@ const DocumentListing: React.FC = () => {
             queryParams.append('sort_order', sortBy[0].desc ? 'desc' : 'asc');
         }
         if (searchString) queryParams.append('search', searchString);
+        if (startDate && endDate) {
+            queryParams.append('from_date', DateUtil.formatDateToISO(startDate));
+            queryParams.append('to_date', DateUtil.formatDateToISO(endDate));
+        }
         try {
-            const response = await axiosInstance.get(`/listOfDocs?${queryParams.toString()}`);
+            const response = await axiosInstance.get(`/listOfDocs?${queryParams.toString()}`, {
+                timeout: 200000,
+              });
             const data = response.data;
             setShowLoader(false);
             return {
@@ -185,16 +212,19 @@ const DocumentListing: React.FC = () => {
 
     const closeConfirmModal = (decision:string) => {
         if(decision == 'proceed') {
+          setShowLoader(true);
           axiosInstance.post(`/delet-doc?doc_id=${docDeleteId}`)
           .then((res) => {
             if(res) {
+              setShowLoader(false);
               showSuccess('Document deleted successfully');
               setShowDeleteModal(false);
               setTriggerTableApi(triggerTableApi + 1);
             }
           }).catch((e) => {
+            setShowLoader(false);
             console.error(e)
-            showError('Something went wrong')
+            showError('Something went wrong');
           })
         } else {
           setShowDeleteModal(false);
@@ -203,7 +233,7 @@ const DocumentListing: React.FC = () => {
 
     return (
         <>
-
+            {showLoader && <Loader />}
             <div className={`${styles['right-content-section']}`}>
             <div className={`${styles['right-main-heading']}`}>
                 <h5>Document Listing</h5>
@@ -248,7 +278,7 @@ const DocumentListing: React.FC = () => {
                 <div className='row'>
                     <div className='col-md-12'>
                         <div>
-                            <DataTable columns={columns} tableType={'documentList'} fetchData={fetchData} searchString={searchKeyword} triggerTableApi={triggerTableApi} startDate={''} endDate={''} />
+                            <DataTable columns={columns} tableType={'documentList'} fetchData={fetchData} searchString={searchKeyword} triggerTableApi={triggerTableApi} startDate={startDate} endDate={endDate}  />
                         </div>
                     </div>
                 </div>
