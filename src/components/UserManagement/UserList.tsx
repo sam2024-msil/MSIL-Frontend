@@ -33,7 +33,7 @@ const Listing: React.FC = () => {
   const [editUserData, setEditUserData] = useState<any>(null);
 
   const handleUserShow = () => setUserShowModal(true);
-  const handleUserClose = () => {setUserShowModal(false);setEditUserData(null);};
+  const handleUserClose = () => {setUserShowModal(false);setEditUserData(null);setTriggerTableApi(triggerTableApi + 1);};
 
   const handleVendorShow = () => setVendorShowModal(true);
   const handleVendorClose = () => {

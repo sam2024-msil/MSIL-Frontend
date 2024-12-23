@@ -107,12 +107,12 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
     }
     return (
         <>
-            {/* <UnauthenticatedTemplate>
+            <UnauthenticatedTemplate>
             {(!isVendorLoggedIn) && 
                 <Login vendorLogin={vendorLoginHandler} />
             }
             </UnauthenticatedTemplate>
-            <AuthenticatedTemplate> */}
+            <AuthenticatedTemplate>
 
                 <Container fluid>
                     <Row>
@@ -131,7 +131,7 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
                     </Row>
                 </Container>
 
-            {/* </AuthenticatedTemplate> */}
+            </AuthenticatedTemplate>
 
             {(isVendorLoggedIn) && 
             <Container fluid>

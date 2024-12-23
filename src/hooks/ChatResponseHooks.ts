@@ -70,6 +70,12 @@ const handleStreamResponseData = (
             if (data?.type == STREAM_ITEM_TYPE.intent && assistantMessage) {
                 assistantMessage.intent = data?.content;
             }
+            if (data?.type == STREAM_ITEM_TYPE.images && assistantMessage) {
+                assistantMessage.images = data?.content;
+            }
+            if (data?.type == STREAM_ITEM_TYPE.document_name && assistantMessage) {
+                assistantMessage.document_name = data?.content;
+            }
             setConversations(conversationHistory);
         }
     }

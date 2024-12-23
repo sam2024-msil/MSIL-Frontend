@@ -10,6 +10,7 @@ import { useAskQuestionHandler } from '../../hooks/ChatResponseHooks';
 import { API_STATUS } from '../../constants/ApiConstants';
 import { CHAT_CONSTANTS } from '../../constants/ChatConstants';
 import ChatApi from '../../ChatApi/ChatApi';
+import ChatClearPopup from './ChatClearPopup/ChatClearPopup';
 
 const Chat: React.FC = () => {
 
@@ -23,6 +24,7 @@ const Chat: React.FC = () => {
     );
     const [isOffline, setIsOffline] = useState<boolean>();
     const [responseErrorData, setResponseErrorData] = React.useState<TypeResponseErrorMessage | null>(null);
+    const [showClearChatPopup, setShowClearChatPopup] = useState<boolean>(false);
 
     const chatApi = useMemo(() => new ChatApi(), []);
 
@@ -104,7 +106,12 @@ const Chat: React.FC = () => {
         setConversations,
         setResponseErrorData
     )
-    console.log(" conversations :: ", conversations, " responseErrorData :: ", responseErrorData)
+
+    const clearChatWindow = () => {
+        // setShowClearChatPopup(true);
+        setConversations([]);
+    }
+    console.log(" responseErrorData :: ", responseErrorData)
     return (
         <div className={`${styles['right-content-section']}`}>
             <div className='row'>
@@ -155,6 +162,7 @@ const Chat: React.FC = () => {
                                         botResponseLoadingStatus === API_STATUS.PROGRESS
                                       }
                                     onStop={handleStopStreamButtonClick}
+                                    clearChatWindow={clearChatWindow}
                                      />
                                 </Col>
                             </Row>
@@ -162,6 +170,7 @@ const Chat: React.FC = () => {
                     </div>
                 </div>
             </div>
+            <ChatClearPopup showModal={showClearChatPopup} setShowModal={setShowClearChatPopup} />
         </div>
     );
 };

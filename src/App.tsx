@@ -22,7 +22,7 @@ function App({ pca }: AppProps) {
 
 
   return (
-    // <MsalProvider instance={pca}>
+    <MsalProvider instance={pca}>
       <AuthProvider>
         <ToastProvider>
           <AuthLayout>
@@ -45,7 +45,7 @@ function App({ pca }: AppProps) {
           </AuthLayout>
         </ToastProvider>
       </AuthProvider>
-    // </MsalProvider>
+    </MsalProvider>
   )
 }
 

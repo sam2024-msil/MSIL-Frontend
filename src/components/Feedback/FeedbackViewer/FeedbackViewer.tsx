@@ -49,7 +49,7 @@ const FeedbackViewer = ({ isOpen, data, onClose }: FeedbackViewerProps) => {
                 <Modal.Body className='pt-0'>
                     <div className={styles['content-block']}>
                         <div className={styles['emotion-block']}>
-                            <div className="reaction-icons reaction-icons-modal d-flex justify-content-center">
+                            <div className={`${styles['reaction-icons']} reaction-icons-modal d-flex justify-content-center`}>
                                 <div className="icon">
                                     {(data?.rating === 1) ? <img src={SmileyOneSelected} alt="Smile One Icon" width="24" /> : <img src={SmileyOneIcon} alt="Smile One Icon" width="24" />}
                                 </div>
