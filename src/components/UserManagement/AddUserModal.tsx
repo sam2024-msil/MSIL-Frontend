@@ -4,6 +4,7 @@ import styles from './UserList.module.scss';
 import Select from "react-select";
 import axiosInstance from '../../api/axios';
 import { useToast } from '../../context/ToastContext';
+import Loader from '../Spinner/Spinner';
 
 interface moduleDetails {
   ModuleName: string;
@@ -12,8 +13,9 @@ interface moduleDetails {
 }
 
 const AddUserModal: React.FC<{ show: boolean; handleClose: () => void, editUserData:any }> = ({ show, handleClose, editUserData }) => {
-  console.log(" editUserData :: ", editUserData)
+  
   const { showSuccess, showError } = useToast();
+  const [showLoader, setShowLoader] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [dropdownOptions, setDropdownOptions] = useState<{ value: number; label: string }[]>([]);
   const [selectedOption, setSelectedOption] = useState<any>(null);
@@ -32,6 +34,7 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void, editUserD
 
     try {
       if (value) {
+        setShowLoader(true);
         const response = await axiosInstance.get(`search-users?query=${value}`);
         const newOptions: [] = response.data;
         const transformedArray = newOptions.map((item: any) => ({
@@ -40,9 +43,12 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void, editUserD
         }));
         setDropdownOptions(transformedArray);
       }
+      setShowLoader(false);
     } catch (error) {
+      setShowLoader(false);
       console.error("Error fetching new options:", error);
     } finally {
+      setShowLoader(false);
       setIsLoading(false);
     }
   };
@@ -57,9 +63,10 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void, editUserD
 
   useEffect(() => {
     (show) && getModules();
-  }, [])
+  }, [show])
 
   const getModules = () => {
+    setShowLoader(true);
     axiosInstance.get(`/modules/`)
       .then((res) => {
         if (res) {
@@ -73,47 +80,53 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void, editUserD
               return acc;
             }, {});
           });
-          setModuleList(updatedArray)
+          setModuleList(updatedArray);
+          setShowLoader(false);
         }
       }).catch((e) => {
-        console.error(e)
+        console.error(e);
+        setShowLoader(false);
       })
   }
 
   const createUser = (e: React.FormEvent) => {
     if (Object.keys(selectedOption).length !== 0) {
       const selectedModule = selectedOptions.map(item => item.value);
+      setShowLoader(true);
       if (isAdmin) {
         const apiUrl = (editUserData) ? `/users/${editUserData?.ID}` : '/users/';
         const reqBody = (editUserData) ? { RoleID:1, ModuleIDs:(isAdmin) ? [] : selectedModule,IsAdmin:isAdmin } : { ModuleIDs: [], MSILUserEmail: selectedOption?.label, IsAdmin:isAdmin } ;
         axiosInstance.post(`${apiUrl}`, reqBody).then((res) => {
-          console.log(res)
-          showSuccess('User created successfully');
+          showSuccess(res.data.message);
           setSelectedOptions([]);
           setSelectedOption(null);
           setIsAdmin(false);
           handleClose();
+          setShowLoader(false);
         }).catch((e) => {
           console.error(e);
           showError(e?.response?.data?.detail);
+          setShowLoader(false);
         })
       } else {
         if(selectedOptions.length > 0) {
           const apiUrl = (editUserData) ? `/users/${editUserData?.ID}` : '/users/';
           const reqBody = (editUserData) ? { RoleID:2, ModuleIDs:selectedModule,IsAdmin:false } : { ModuleIDs: selectedModule, MSILUserEmail: selectedOption?.label, IsAdmin:isAdmin };
           axiosInstance.post(`${apiUrl}`, reqBody).then((res) => {
-            console.log(res)
-            showSuccess('User created successfully');
+            showSuccess(res.data.message);
             setSelectedOptions([]);
             setSelectedOption(null);
             setIsAdmin(false);
             handleClose();
+            setShowLoader(false);
           }).catch((e) => {
             console.error(e);
             showError(e?.response?.data?.detail);
+            setShowLoader(false);
           })
         } else {
           showError('Please select atleast one module to the selected user');
+          setShowLoader(false);
         }
       }
     } else {
@@ -140,6 +153,8 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void, editUserD
 
 
   return (
+    <>
+    {showLoader && <Loader />}
     <Modal show={show} onHide={() => {
       setSelectedOptions([]);
       setSelectedOption(null);
@@ -203,6 +218,7 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void, editUserD
         </Form>
       </Modal.Body>
     </Modal>
+    </>
   );
 };
 

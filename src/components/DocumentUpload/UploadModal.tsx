@@ -260,6 +260,8 @@ useEffect(() => {
                           value={selectedOptions[index] || null}
                           onChange={(options) => handleChange(index,options)}
                           placeholder="Modules"
+                          menuPosition="fixed"
+                          menuPlacement="auto"
                         />
                         </td>
                         <td><img src={DeleteIcon} alt="Delete Icon" onClick={() => handleDelete(index)} /></td>

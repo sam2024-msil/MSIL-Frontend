@@ -4,11 +4,11 @@ import Markdown from 'react-markdown';
 import rehypeRaw from "rehype-raw";
 // import { Modal } from 'react-bootstrap';
 import Feedback from '../../Feedback/Feedback';
-// import pdfIcon from '../../../assets/pdfIcon.svg';
+import pdfIcon from '../../../assets/pdfIcon.svg';
 import msilLogo from '../../../assets/MSIL-icon.png';
 import styles from './Chatbot.module.scss';
 import DotLoader from "../../../lib/DotLoader";
-// import PDFFile from '../../../assets/sample.pdf';
+import FeedbackViewerIcon from '../../../assets/ViewFeedbackIcon.svg';
 import { isAppreciationOrgratitudeMessage, isGreetingMessage, isOutofScopeMessage } from "../../../utils/MessageUtil";
 import Loader from '../../Spinner/Spinner';
 import { TypeReview } from '../../../type/CustomTypes';
@@ -31,15 +31,15 @@ interface InteractionViewerProps {
 }
  
 const Chatbot = ({ userMessage,index, assistantMessage, botResponseLoadingStatus, isOffline, conversations, isStreaming, review, interactionId }: InteractionViewerProps) => {
-
+  
   const { showSuccess, showError } = useToast();  
 
   const [displayReview, setDisplayReview] = useState(review);
   const [showGivenFeedback, setShowGivenFeedback] = useState(false);
   const [loader, setLoader] = useState<boolean>(false);
-  // const [showModal, setShowModal] = useState(false);
   
   const hadleHideFeedbackButtonClick = () => setShowGivenFeedback(false);
+  const hadleShowFeedbackButtonClick = () => setShowGivenFeedback(true);
   const onFeedbackSubmit = (rating: number, options: Array<number>, message: string, currentInteractionId: string, showModal: (param: boolean) => void) => {
     setLoader(true);
     axiosInstance.post(`/feedback/`, { rating: rating, feedback: message, options: options,interaction_id: currentInteractionId,user_mail:'sam@gmail.com'})
@@ -57,6 +57,21 @@ const Chatbot = ({ userMessage,index, assistantMessage, botResponseLoadingStatus
         })
 }
 
+const previewDoc = (docName:string) => {
+  if(docName) {
+    setLoader(true);
+    axiosInstance.get(`/preview-citation?doc_name=${docName}&page_num=1`)
+    .then((res) => {
+      if(res.data) {
+        setLoader(false);
+      }
+    }).catch((e) =>{
+      console.error(e);
+      setLoader(false);
+    })
+  }
+}
+
   return (
             <>
               <div key={index}>
@@ -72,7 +87,6 @@ const Chatbot = ({ userMessage,index, assistantMessage, botResponseLoadingStatus
                       <div className={`${styles.message} ${styles.question}`}>
                         <div>{userMessage?.content?.text}</div>
                       </div>
-                      <small className={`${styles['text-muted']}`}>{DateUtil.formatDateAndTime()}</small>
                     </div>
 
                     {/* Assistant response */}
@@ -93,11 +107,20 @@ const Chatbot = ({ userMessage,index, assistantMessage, botResponseLoadingStatus
                           <div>
                           <Markdown rehypePlugins={[rehypeRaw]}>{assistantMessage.content.text}</Markdown>
                           </div>
-                          {/* <div className="d-flex justify-content-start mt-2">
-                            <button className={`${styles['pdf-btn']} btn btn-outline-primary`} onClick={() => console.log('t')}>
-                              <img src={pdfIcon} alt="PDF Icon" /><span className='ms-2'>SwiftDzire_OwnerManual_Volt.pdf</span>
+                          <div className="d-flex justify-content-start mt-2">
+                          {(assistantMessage?.images?.length > 0) && assistantMessage?.images.map((image:string,index:number) => {
+                            return(
+                              <img src={image} key={index} className={'img-fluid'} />
+                            )
+                          })}
+                          </div>
+                          {(assistantMessage?.document_name) &&
+                          <div className="d-flex justify-content-start mt-2">
+                            <button className={`${styles['pdf-btn']} btn btn-outline-primary`} onClick={() => previewDoc(assistantMessage?.document_name)}>
+                              <img src={pdfIcon} alt="PDF Icon" /><span className='ms-2'>{assistantMessage?.document_name}</span>
                             </button>
-                          </div> */}
+                          </div>
+                          }
                         </div>
                         <div className="d-flex justify-content-between align-items-center">
                         {!isStreaming &&
@@ -106,7 +129,14 @@ const Chatbot = ({ userMessage,index, assistantMessage, botResponseLoadingStatus
                                     !isAppreciationOrgratitudeMessage(assistantMessage?.intent) &&
                                     assistantMessage.content.text && (
                                       <Feedback onFeedbackSubmit={onFeedbackSubmit} interactionId={interactionId} givenRating={displayReview?.rating} />
-                            )}
+                        )}
+                        {/* Feedback viewer icon */}
+                        {!!displayReview?.rating && (
+                                    <div className={styles.feedbackViewer}>
+                                        <img src={FeedbackViewerIcon} onClick={hadleShowFeedbackButtonClick} title='Feedback viewer'/>
+                                    </div>
+                                )}
+
                             {displayReview && (<FeedbackViewer isOpen={showGivenFeedback} data={displayReview} onClose={hadleHideFeedbackButtonClick} />)}
                           <small className={`${styles['text-muted']} w-100 text-end`}> 
                           {(assistantMessage?.timestamp) && DateUtil.formatChatResponseDate(assistantMessage?.timestamp)}

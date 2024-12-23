@@ -11,6 +11,8 @@ const STREAM_ITEM_TYPE = {
     references: 'references',
     search_query: 'search_query',
     dateTime: 'dateTime',
+    images: 'images',
+    document_name: 'document_name',
 };
 
 const INTENT_TYPES = {

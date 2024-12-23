@@ -16,6 +16,8 @@ export type TypeChatMessage = {
     references?: Array<TypeReference>;
     role?: string;
     timestamp?: number;
+    images?: string;
+    document_name?: string;
 };
 
 export type TypeReview = {

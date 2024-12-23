@@ -49,22 +49,24 @@ const DocumentListing: React.FC = () => {
     }
     
 
-    const downloadPDF = (rowData:any) => {
-        console.log(rowData)
-        axiosInstance.get(`/view-document?doc_id=${rowData?.doc_id}`)
-        .then((res) => {
-            if(res) {
-                const fileBlob = new Blob([res?.data?.sas_url], {type: 'application/pdf'})
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(fileBlob);
-                link.setAttribute('download', rowData?.doc_name);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
-        }).catch((e) => {
-            console.error(e)
-        })
+    const downloadPDF = async (rowData:any) => {
+        try {
+            setShowLoader(true);
+            const response = await axiosInstance.get(`/download?doc_id=${rowData?.doc_id}`, {
+              responseType: 'blob',
+            });
+            const fileBlob = new Blob([response.data], { type: 'application/pdf' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(fileBlob);
+            link.setAttribute('download', rowData?.doc_name);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setShowLoader(false);
+          } catch (error) {
+            setShowLoader(false);
+            console.error('Error downloading file:', error);
+          }
       
     }
 
@@ -153,14 +155,17 @@ const DocumentListing: React.FC = () => {
     );
 
     const viewPdf = (pdfParam:any) => {
+        setShowLoader(true);
         axiosInstance.get(`/view-document?doc_id=${pdfParam?.doc_id}`)
         .then((res) => {
             if(res) {
                 setShowPDFModal(true);
-                setPdfLink(res?.data?.sas_url)
+                setPdfLink(res?.data?.sas_url);
+                setShowLoader(false);
             }
         }).catch((e) => {
             console.error(e)
+            setShowLoader(false);
         })
     }
     const handleEdit = (rowData:any) => {

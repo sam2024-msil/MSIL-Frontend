@@ -3,6 +3,8 @@ import styles from './Chatbot/Chatbot.module.scss';
 import SendIcon from '../../assets/send-icon.svg';
 // import StopCircleIcon from '../../assets/stop-circle.svg';
 import { useEffect, useRef, useState } from "react";
+import newChatIcon from '../../assets/new-chat-icon.svg';
+import chatToggleIcon from '../../assets/menu_icon.svg'
 import { isMobileDevice } from "../../utils/BroswerUtil";
 
 
@@ -10,8 +12,9 @@ interface InputPros {
     getInput: (query:string) => void;
     showStopButton?: boolean;
     onStop: () => void;
+    clearChatWindow: () => void;
 }
-const ChatInput = ({ getInput, showStopButton, onStop }:InputPros) => {
+const ChatInput = ({ getInput, showStopButton, onStop, clearChatWindow }:InputPros) => {
 
     const [query, setQuery] = useState<string>('');
     const inputElem = useRef<HTMLInputElement>(null);
@@ -32,9 +35,23 @@ const ChatInput = ({ getInput, showStopButton, onStop }:InputPros) => {
       }
     }
 
+    const clearChat = () => {
+      clearChatWindow();
+    }
+
     return(
         <Form className="mt-3" onSubmit={(e) => { e.preventDefault(); handleSend(); }}>
-            <Form.Group controlId="chatInput" className={`${styles.chatInput}`}>
+            <Form.Group controlId="chatInput" className={`${styles.chatInput} d-flex`}>
+            <div className="btn-group dropup">
+                <button type="button" className={`${styles.chatToggleButton} btn btn-outline-primary dropdown-toggle`} data-bs-toggle="dropdown" aria-expanded="false">
+                  <img src={chatToggleIcon} alt="Chat Toggle Icon" />
+                </button>
+                <ul className="dropdown-menu">
+                  <li onClick={clearChat}><a className="dropdown-item"><span className="me-2"><img src={newChatIcon} alt="New Chat Icon" /></span>New Chat</a></li>
+                  {/* <li><hr className="dropdown-divider" /></li>
+                  <li><a className="dropdown-item"><span className="me-2"><img src={HistoryIcon} alt="History Icon" /></span>History</a></li> */}
+                </ul>
+              </div>
               <Form.Control
                 ref={inputElem}
                 type="text"

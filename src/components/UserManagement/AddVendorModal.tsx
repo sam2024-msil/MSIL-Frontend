@@ -4,6 +4,7 @@ import Select from "react-select";
 import styles from './UserList.module.scss';
 import axiosInstance from '../../api/axios';
 import { useToast } from '../../context/ToastContext';
+import Loader from '../Spinner/Spinner';
 
 interface moduleDetails {
   ModuleName: string;
@@ -22,6 +23,7 @@ type FormValues = {
 const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUserData:any }> = ({ show, handleClose, editUserData }) => {
 
   const { showSuccess, showError } = useToast();
+  const [showLoader, setShowLoader] = useState<boolean>(false);
   const [moduleList, setModuleList] = useState<{ value: number; label: string }[]>([]);
   const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
 
@@ -57,6 +59,7 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
     setSelectedOptions([]);
   }
   const getModules = () => {
+    setShowLoader(true);
     axiosInstance.get(`/modules/`)
       .then((res) => {
         if (res) {
@@ -70,10 +73,12 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
               return acc;
             }, {});
           });
-          setModuleList(updatedArray)
+          setModuleList(updatedArray);
+          setShowLoader(false);
         }
       }).catch((e) => {
-        console.error(e)
+        console.error(e);
+        setShowLoader(false);
       })
   }
 
@@ -86,8 +91,8 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
     setSelectedOptions(selected); 
   };
   useEffect(() => {
-    getModules();
-  }, [])
+    (show) && getModules();
+  }, [show])
 
   const createVendormHandler = () => {
     if (formValues.firstName) {
@@ -98,6 +103,7 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
         VendorCode: formValues.vendorCode,
         ModuleIDs: formValues.module
       }
+      setShowLoader(true);
       const apiUrl = (editUserData) ? `/users/${editUserData?.ID}` : '/vendoruser/';
       axiosInstance.post(`${apiUrl}`, reqPayload)
         .then((res) => {
@@ -106,9 +112,11 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
             resetFormData();
             handleClose();
           }
+          setShowLoader(false);
         }).catch((e) => {
           console.log(e);
-          showError(e.response.data.detail)
+          showError(e.response.data.detail);
+          setShowLoader(false);
         })
     }
   }
@@ -160,6 +168,8 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
   };
 
   return (
+    <>
+    {showLoader && <Loader />}
     <Modal show={show} onHide={() => {
       resetFormData();
       handleClose();
@@ -216,6 +226,7 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
         </Form>
       </Modal.Body>
     </Modal>
+    </>
   );
 };
 

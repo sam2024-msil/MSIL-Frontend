@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20.5" height="21.625" viewBox="0 0 20.5 21.625">
+  <g id="Group_16187" data-name="Group 16187" transform="translate(-1107.5 -476.375)">
+    <g id="file-text_3_" data-name="file-text (3)" transform="translate(1104 474.875)">
+      <path
+        id="Path_11222"
+        data-name="Path 11222"
+        d="M13.375,2h-7.5A1.875,1.875,0,0,0,4,3.875v15A1.875,1.875,0,0,0,5.875,20.75h11.25A1.875,1.875,0,0,0,19,18.875V7.625Z"
+        fill="none"
+        stroke="#171C8F"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1"
+      />
+      <path
+        id="Path_11223"
+        data-name="Path 11223"
+        d="M14,2V8h6"
+        transform="translate(-1)"
+        fill="none"
+        stroke="#171C8F"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1"
+      />
+      <line
+        id="Line_179"
+        data-name="Line 179"
+        x1="6"
+        transform="translate(8.5 12.312)"
+        fill="none"
+        stroke="#171C8F"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1"
+      />
+      <line
+        id="Line_180"
+        data-name="Line 180"
+        x1="6"
+        transform="translate(8.5 16.062)"
+        fill="none"
+        stroke="#171C8F"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1"
+      />
+      <path
+        id="Path_11224"
+        data-name="Path 11224"
+        d="M10,9H8"
+        transform="translate(-0.286 -0.438)"
+        fill="none"
+        stroke="#171C8F"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1"
+      />
+    </g>
+    <path
+      id="Ellipse_177_-_Outline"
+      data-name="Ellipse 177 - Outline"
+      d="M6.5,2A4.5,4.5,0,1,0,11,6.5,4.505,4.505,0,0,0,6.5,2m0-2A6.5,6.5,0,1,1,0,6.5,6.5,6.5,0,0,1,6.5,0Z"
+      transform="translate(1115 485)"
+      fill="#fff"
+    />
+    <path
+      id="Path_11231"
+      data-name="Path 11231"
+      d="M2.25,6.9A4.645,4.645,0,1,1,6.9,11.54,4.645,4.645,0,0,1,2.25,6.9ZM6.4,6.208a.715.715,0,0,1,1.013.813L7.073,8.372l.02-.01A.357.357,0,0,1,7.412,9l-.019.01A.715.715,0,0,1,6.38,8.2l.338-1.351-.02.01a.357.357,0,1,1-.32-.638l.02-.01Zm.5-.742a.357.357,0,1,0-.357-.357A.357.357,0,0,0,6.9,5.466Z"
+      transform="translate(1114.75 484.75)"
+      fill="#171C8F"
+      fillRule="evenodd"
+    />
+  </g>
+</svg>
