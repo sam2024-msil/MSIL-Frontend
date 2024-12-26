@@ -10,7 +10,7 @@ class ChatApi {
 
     constructor() {
         this.interactionId = '';
-        this.accessToken = AppStateUtil.getAuthToken()
+        this.accessToken = (AppStateUtil.isVendorLoggedIn()) ? AppStateUtil.getVendorAuthToken() : AppStateUtil.getAuthToken()
     }
 
     async askQuestion(

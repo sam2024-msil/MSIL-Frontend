@@ -26,7 +26,7 @@ const Listing: React.FC = () => {
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [triggerTableApi, setTriggerTableApi] = useState<number>(0);
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
-  const [docDeleteId, setDocDeleteId] = useState<number>(0);
+  const [docDeleteId, setDocDeleteId] = useState<any>(0);
 
   const [showUserModal, setUserShowModal] = useState(false);
   const [showVendorModal, setVendorShowModal] = useState(false);
@@ -85,7 +85,7 @@ const Listing: React.FC = () => {
             <div style={{width: '22px', marginRight: '12px'}}></div>}
             
             <img src={editIcon} title='Edit User' alt='Edit Icon' onClick={() => handleEdit(row?.original)} />
-            <img src={deleteIcon}  title='Delete Document' alt='Delete Icon' onClick={() => { setShowDeleteModal(true); setDocDeleteId(row.original.ID)}} /> 
+            <img src={deleteIcon}  title='Delete User' alt='Delete Icon' onClick={() => { setShowDeleteModal(true); setDocDeleteId(row.original)}} /> 
           </button>
         ),
         accessor: '',
@@ -147,11 +147,12 @@ const Listing: React.FC = () => {
   const closeConfirmModal = (decision:string) => {
     if(decision == 'proceed') {
       setShowLoader(true);
-      axiosInstance.delete(`/users/${docDeleteId}`)
+      if(docDeleteId?.IsVendorUser) {
+        axiosInstance.delete(`/vendoruser/${docDeleteId?.ID}`)
       .then((res) => {
         if(res) {
           setShowLoader(false);
-          showSuccess('Document deleted successfully');
+          showSuccess(res.data.message);
           setShowDeleteModal(false);
           setTriggerTableApi(triggerTableApi + 1);
         }
@@ -160,6 +161,21 @@ const Listing: React.FC = () => {
         console.error(e)
         showError(e.response.data.detail)
       })
+      } else {
+      axiosInstance.delete(`/users/${docDeleteId?.ID}`)
+      .then((res) => {
+        if(res) {
+          setShowLoader(false);
+          showSuccess(res.data.message);
+          setShowDeleteModal(false);
+          setTriggerTableApi(triggerTableApi + 1);
+        }
+      }).catch((e) => {
+        setShowLoader(false);
+        console.error(e)
+        showError(e.response.data.detail)
+      })
+    }
     } else {
       setShowDeleteModal(false);
     }

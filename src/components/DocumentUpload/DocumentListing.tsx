@@ -218,7 +218,7 @@ const DocumentListing: React.FC = () => {
     const closeConfirmModal = (decision:string) => {
         if(decision == 'proceed') {
           setShowLoader(true);
-          axiosInstance.post(`/delet-doc?doc_id=${docDeleteId}`)
+          axiosInstance.post(`/delete-doc?doc_id=${docDeleteId}`)
           .then((res) => {
             if(res) {
               setShowLoader(false);

@@ -18,6 +18,7 @@ export type TypeChatMessage = {
     timestamp?: number;
     images?: string;
     document_name?: string;
+    pageNum?: string;
 };
 
 export type TypeReview = {

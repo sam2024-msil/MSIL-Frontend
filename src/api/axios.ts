@@ -1,5 +1,5 @@
-// axiosInstance.js  
-import axios from 'axios';  
+import axios from 'axios'; 
+import { getAccessToken } from '../utils/tokenManager'; 
   
 const axiosInstance = axios.create({  
   baseURL: import.meta.env.VITE_SKAN_APP_API_BASE_URL, 
@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
 // Request Interceptor  
 axiosInstance.interceptors.request.use(  
   (config) => {  
-    const token = localStorage.getItem('token'); 
+    const token = getAccessToken();
     if (token) {  
       config.headers['Authorization'] = `Bearer ${token}`; 
     }  

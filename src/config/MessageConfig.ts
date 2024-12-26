@@ -13,6 +13,7 @@ const STREAM_ITEM_TYPE = {
     dateTime: 'dateTime',
     images: 'images',
     document_name: 'document_name',
+    pageNum: 'pageNum',
 };
 
 const INTENT_TYPES = {

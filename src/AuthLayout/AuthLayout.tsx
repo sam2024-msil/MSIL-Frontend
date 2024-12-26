@@ -13,6 +13,7 @@ import { isMobileDevice } from "../utils/BroswerUtil";
 import { useToast } from '../context/ToastContext';
 import axiosInstance from "../api/axios";
 import menuIcon from '../assets/menu_icon.svg';
+import Loader from "../components/Spinner/Spinner";
 
 
 type Props = {
@@ -29,6 +30,8 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const isMobile = isMobileDevice() || false;
     const [isVendorLoggedIn, setIsVendorLoggedIn] = useState<boolean>(false);
+    const [showLoader, setShowLoader] = useState<boolean>(false);
+    const [isAuthorized, setIsAuthorized] = useState(false);
 
     const toggleMenuClose = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -37,6 +40,14 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
     const toggleMenuOpen = () => {
         setIsMenuOpen(!isMenuOpen);
     };
+
+    const handleLogout = (logoutType: string) => {
+
+        if (logoutType === "redirect") {
+            AppStateUtil.removeAuthToken();
+            instance.logoutRedirect();
+        }
+    }
 
     useEffect(() => {
 
@@ -59,6 +70,8 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
     useEffect(() => {
         setIsVendorLoggedIn(AppStateUtil.isVendorLoggedIn())
     },[])
+
+
     const getAccessToken = async (): Promise<void> => {
         const account = accounts[0];
 
@@ -67,13 +80,51 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
                 account: account,
                 scopes: loginRequest.scopes,
             });
-            AppStateUtil.storeAuthToken(response.idToken)
-            navigate("/document-management");
+            getAuthRoleToken(response.idToken);
         } catch (error) {
             console.error("Error acquiring token:", error);
         }
     };
 
+    const getAuthRoleToken = async (accessToken: string): Promise<void> => {
+        setShowLoader(true);
+        axiosInstance.get(`/authentication`, {
+            headers: {
+                'authentication': `${accessToken}`
+            }
+        }).then((response) => {
+            setShowLoader(false);
+            if (response.data && response?.data?.code === 200) {
+                const roleToken = response?.data?.token;
+                AppStateUtil.storeAuthToken(roleToken);
+                setIsAuthorized(true)
+                navigateuInToApp();
+            } else if(response?.data?.code === 404) {
+                setIsAuthorized(false);
+                showError(response?.data?.message);
+                setTimeout(() => {
+                    handleLogout('redirect');
+                },10000) //10 seconds
+            }
+        }).catch((e) => {
+            console.log(e);
+            showError(e?.response?.data?.detail);
+            setShowLoader(false);
+        })
+    }
+
+    const navigateuInToApp = () => {
+        setShowLoader(true);
+        setTimeout(() => {
+            if (
+                AppStateUtil.getAuthToken() !== undefined &&
+                AppStateUtil.getAuthToken() !== "Token Expired"
+            ) {
+                setShowLoader(false);
+                navigate("/document-management");
+            }
+        }, 200);
+    };
 
     const handleResponse = async (response: any) => {
 
@@ -113,7 +164,8 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
             }
             </UnauthenticatedTemplate>
             <AuthenticatedTemplate>
-
+            {(showLoader) && <Loader />}
+            {isAuthorized &&
                 <Container fluid>
                     <Row>
                         <Col xs={isMobile ? 12 : 1} className={`p-0 ${styles.sideMenuSection} ${isMenuOpen ? styles.menuOpen : styles.menuClosed}`}>
@@ -130,7 +182,7 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
                         </Col>
                     </Row>
                 </Container>
-
+            }
             </AuthenticatedTemplate>
 
             {(isVendorLoggedIn) && 

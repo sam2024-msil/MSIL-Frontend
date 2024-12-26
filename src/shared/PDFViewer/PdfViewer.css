@@ -1,0 +1,24 @@
+#pdf-viewer {
+    position: relative;
+    margin-top: 20px;
+    border: 1px solid #ccc;
+    width: 100%;
+    height: 80vh;
+    overflow: hidden;
+}
+
+#pdf-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+#overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 97%;
+    height: 100%;
+    background: transparent;
+    z-index: 10;
+}

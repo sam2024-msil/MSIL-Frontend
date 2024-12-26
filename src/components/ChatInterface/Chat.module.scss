@@ -30,6 +30,26 @@
     margin: auto;
 }
 
+.modal-heading {
+    font: normal normal 500 20px / 26px Roboto;
+    color: #3C3C3C;
+    opacity: 1;
+}
+ 
+.newChatContent {
+    font: normal normal 1rem Roboto;
+    color: #5E6061;
+}
+ 
+.disclaimer-message {
+    text-align: center;
+    margin-top: 10px;
+    letter-spacing: 1.08px;
+    color: #5E6061;
+    margin-bottom: 0;
+    font: normal normal 13px Roboto;
+}
+
 .chatWindow {
     height: 76vh;
     overflow-y: auto;
