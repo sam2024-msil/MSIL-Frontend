@@ -1,5 +1,4 @@
 import { Modal, Button } from 'react-bootstrap';
-import styles from './DeleteConfirmModal.module.scss';
 
 
 interface DeleteConfirmModalProps {
@@ -22,20 +21,16 @@ const DeleteConfimationModal = ({ show, onClose, msg }: DeleteConfirmModalProps)
                 </Modal.Header>
                 <Modal.Body>
                     {(msg) ? msg : 'Are you sure you want to delete this item?' }
-                </Modal.Body>
-                <Modal.Footer className={styles['footer']}>
-                    <div className={styles['button-group']}>
 
-                        <Button variant="light" className={styles.cancelBtn} onClick={() => onClose('cancel')}>No</Button>{' '}
-                        <Button
-                            variant="danger"
-                            className={styles.addBtn}
-                            onClick={() => onClose('proceed')}
-                        >
+                    <div className="text-end">
+                        <button type="button" className='mt-3 me-2 btn btn-outline-primary' onClick={() => onClose('cancel')}>
+                            No
+                        </button>
+                        <Button variant="danger" type='submit' className='mt-3' onClick={() => onClose('proceed')}>
                             Yes
                         </Button>
                     </div>
-                </Modal.Footer>
+                </Modal.Body>
             </Modal>
       );
 }

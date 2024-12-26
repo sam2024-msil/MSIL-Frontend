@@ -90,28 +90,28 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void, editUserD
   }
 
   const createUser = (e: React.FormEvent) => {
-    if (Object.keys(selectedOption).length !== 0) {
+    if (selectedOption && Object.keys(selectedOption).length !== 0) {
       const selectedModule = selectedOptions.map(item => item.value);
       setShowLoader(true);
       if (isAdmin) {
-        const apiUrl = (editUserData) ? `/users/${editUserData?.ID}` : '/users/';
-        const reqBody = (editUserData) ? { RoleID:1, ModuleIDs:(isAdmin) ? [] : selectedModule,IsAdmin:isAdmin } : { ModuleIDs: [], MSILUserEmail: selectedOption?.label, IsAdmin:isAdmin } ;
-        axiosInstance.post(`${apiUrl}`, reqBody).then((res) => {
-          showSuccess(res.data.message);
-          setSelectedOptions([]);
-          setSelectedOption(null);
-          setIsAdmin(false);
-          handleClose();
-          setShowLoader(false);
-        }).catch((e) => {
-          console.error(e);
-          showError(e?.response?.data?.detail);
-          setShowLoader(false);
-        })
+          const apiUrl = (editUserData) ? `/users/${editUserData?.ID}` : '/users/';
+          const reqBody = (editUserData) ? { RoleID:(editUserData?.IsAdmin) ? 1 : (editUserData?.IsVendorUser) ? 3 : 2 , ModuleIDs:(isAdmin) ? [] : selectedModule,IsAdmin:isAdmin } : { ModuleIDs: [], MSILUserEmail: selectedOption?.label, IsAdmin:isAdmin } ;
+          axiosInstance.post(`${apiUrl}`, reqBody).then((res) => {
+            showSuccess(res.data.message);
+            setSelectedOptions([]);
+            setSelectedOption(null);
+            setIsAdmin(false);
+            handleClose();
+            setShowLoader(false);
+          }).catch((e) => {
+            console.error(e);
+            showError(e?.response?.data?.detail);
+            setShowLoader(false);
+          })
       } else {
         if(selectedOptions.length > 0) {
           const apiUrl = (editUserData) ? `/users/${editUserData?.ID}` : '/users/';
-          const reqBody = (editUserData) ? { RoleID:2, ModuleIDs:selectedModule,IsAdmin:false } : { ModuleIDs: selectedModule, MSILUserEmail: selectedOption?.label, IsAdmin:isAdmin };
+          const reqBody = (editUserData) ? {  RoleID:(editUserData?.IsAdmin) ? 1 : (editUserData?.IsVendorUser) ? 3 : 2 , ModuleIDs:selectedModule,IsAdmin:false } : { ModuleIDs: selectedModule, MSILUserEmail: selectedOption?.label, IsAdmin:isAdmin };
           axiosInstance.post(`${apiUrl}`, reqBody).then((res) => {
             showSuccess(res.data.message);
             setSelectedOptions([]);
@@ -151,7 +151,17 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void, editUserD
     }
   }, [editUserData]);
 
-
+  useEffect(() => {
+    if(!isAdmin) {
+      if(!selectedOptions.length) {
+      setSelectedOptions([{
+        label: "Common",
+        value: 17}]);
+      }
+    } else {
+      setSelectedOptions([]);
+    }
+  },[isAdmin, moduleList])
   return (
     <>
     {showLoader && <Loader />}
@@ -179,7 +189,7 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void, editUserD
               inputValue={inputValue}
               isLoading={isLoading}
               placeholder="Type to select the user.."
-              className={`${editUserData !==null ? styles['select-disabled'] : ''}`}
+              className={ `${styles.userSelectBox} ${editUserData !==null ? styles['select-disabled'] : ''}`}
             />
           </div>
           <div className="mb-3">
@@ -199,6 +209,7 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void, editUserD
                 value={selectedOptions}
                 onChange={(options) => handleModuleChange(options)}
                 placeholder="Modules"
+                className={`${styles.userSelectBox}`}
               />
             </div>
           }

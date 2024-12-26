@@ -71,10 +71,9 @@ const ModuleList: React.FC = () => {
         Cell: ({ row }: any) => (
           <button
             className={styles.editButton}
-            title='Edit Project'
           >
-            <img src={editIcon} onClick={() => handleEdit(row.original)} />
-            <img src={deleteIcon} onClick={() => { setShowDeleteModal(true); setModuleDeleteId(row.original.ModuleID)}} /> 
+            <img src={editIcon} title='Edit module' onClick={() => handleEdit(row.original)} />
+            <img src={deleteIcon} title='Delete module' onClick={() => { setShowDeleteModal(true); setModuleDeleteId(row.original.ModuleID)}} /> 
           </button>
         ),
         accessor: '',

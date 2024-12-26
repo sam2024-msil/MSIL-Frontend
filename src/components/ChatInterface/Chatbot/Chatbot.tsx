@@ -16,6 +16,7 @@ import { API_STATUS } from '../../../constants/ApiConstants';
 import DateUtil from '../../../utils/DateUtil';
 import axiosInstance from '../../../api/axios';
 import FeedbackViewer from '../../Feedback/FeedbackViewer/FeedbackViewer';
+import PdfViewer from '../../../shared/PDFViewer/PdfViewer';
  
 
 interface InteractionViewerProps {
@@ -37,6 +38,8 @@ const Chatbot = ({ userMessage,index, assistantMessage, botResponseLoadingStatus
   const [displayReview, setDisplayReview] = useState(review);
   const [showGivenFeedback, setShowGivenFeedback] = useState(false);
   const [loader, setLoader] = useState<boolean>(false);
+  const [showPreviewDocument, setShowPreviewDocument] = useState<boolean>(false);
+  const [previewSasURL, setPreviewSasURL] = useState<string>('');
   
   const hadleHideFeedbackButtonClick = () => setShowGivenFeedback(false);
   const hadleShowFeedbackButtonClick = () => setShowGivenFeedback(true);
@@ -57,12 +60,15 @@ const Chatbot = ({ userMessage,index, assistantMessage, botResponseLoadingStatus
         })
 }
 
-const previewDoc = (docName:string) => {
+const previewDoc = (docName:any,page_num:string) => {
   if(docName) {
     setLoader(true);
-    axiosInstance.get(`/preview-citation?doc_name=${docName}&page_num=1`)
+    axiosInstance.get(`/preview-citation?doc_name=${docName}&page_num=${page_num}`)
     .then((res) => {
       if(res.data) {
+        console.log(res.data.sas_url, " res.data")
+        setShowPreviewDocument(true);
+        setPreviewSasURL(res.data.sas_url);
         setLoader(false);
       }
     }).catch((e) =>{
@@ -107,7 +113,7 @@ const previewDoc = (docName:string) => {
                           <div>
                           <Markdown rehypePlugins={[rehypeRaw]}>{assistantMessage.content.text}</Markdown>
                           </div>
-                          <div className="d-flex justify-content-start mt-2">
+                          <div className="d-flex justify-content-start mt-2 flex-column">
                           {(assistantMessage?.images?.length > 0) && assistantMessage?.images.map((image:string,index:number) => {
                             return(
                               <img src={image} key={index} className={'img-fluid'} />
@@ -116,9 +122,12 @@ const previewDoc = (docName:string) => {
                           </div>
                           {(assistantMessage?.document_name) &&
                           <div className="d-flex justify-content-start mt-2">
-                            <button className={`${styles['pdf-btn']} btn btn-outline-primary`} onClick={() => previewDoc(assistantMessage?.document_name)}>
+                            <div className='me-2'>
+                            <button className={`${styles['pdf-btn']} btn btn-outline-primary`} onClick={() => previewDoc(assistantMessage?.document_name, assistantMessage?.pageNum)}>
                               <img src={pdfIcon} alt="PDF Icon" /><span className='ms-2'>{assistantMessage?.document_name}</span>
                             </button>
+                            </div>
+                            <p className='my-2'>Page number(s) : {assistantMessage?.pageNum}</p>
                           </div>
                           }
                         </div>
@@ -149,8 +158,8 @@ const previewDoc = (docName:string) => {
                 </div>
               </div>
             
-
-        {/* <Modal show={showModal} onHide={() => setShowModal(false)} size="xl">
+              <PdfViewer showModal={showPreviewDocument} setShowModal={setShowPreviewDocument} srcLink={previewSasURL} />
+        {/* <Modal show={showPreviewDocument} onHide={() => setShowPreviewDocument(false)} size="xl">
                 <Modal.Header closeButton>
                   <Modal.Title></Modal.Title>
                 </Modal.Header>

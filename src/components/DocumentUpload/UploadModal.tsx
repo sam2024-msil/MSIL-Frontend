@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import Select from "react-select";
-import { Modal, Button, Table, Form } from 'react-bootstrap';
+import { Modal, Button, Table } from 'react-bootstrap';
 import uploadIcon from '../../assets/upload-icon.svg'
 import styles from './DocumentListing.module.scss';
 import DeleteIcon from '../../assets/delete-icon.svg';
@@ -24,6 +24,7 @@ const UploadModal: React.FC<{ show: boolean; handleClose: () => void,editData:an
   const [showFileReuploadConfirm, setShowFileReuploadConfirm] = useState<boolean>(false);
   const [msgToDuplicateUpload, setMsgToDuplicateUpload] = useState<string>('');
   const [selectedOptionsInEditmode, setSelectedOptionsInEditmode] = useState<{ value: number; label: string }[] | null>(null);
+  const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
   
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
@@ -55,10 +56,13 @@ const UploadModal: React.FC<{ show: boolean; handleClose: () => void,editData:an
 
   const handleDelete = (index: number) => {
     setFiles(files.filter((_, i) => i !== index));
+    
+    setSelectedOptions((prevState) => {
+      const newState = { ...prevState }; 
+      delete newState[index]; 
+      return newState; 
+    });
   };
-
-
-  const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
 
   const handleChange = (id: number=1,selected: any) => {
     if(Object.keys(editData).length === 0 && editData.constructor === Object) {
@@ -113,6 +117,7 @@ useEffect(() => {
     return selectedModues;
   }
   const uploadDocument = () => {
+    if((files.length === Object.keys(selectedOptions).length)) {
     let bodyFormData = new FormData();
     files.forEach((file: any) => {
       bodyFormData.append('files', file);
@@ -141,6 +146,9 @@ useEffect(() => {
       console.error(e)
       showError(e?.response?.data?.detail)
     })
+  } else {
+    showError('Please select the atleast one module for each document');
+  }
   }
 
   const duplicateUpload = () => {
@@ -206,6 +214,24 @@ useEffect(() => {
     })
   }
 
+  useEffect(() => {
+    if(files.length > 0) {
+      // const lastIndex = files.length - 1;
+      // setSelectedOptions((prevOptions) => [...prevOptions, [{
+      //   label: "Common",
+      //   value: 17}]]);
+      
+      files.map((file, index:any) => {
+        if(index in selectedOptions) {
+          console.log("value is there for the index position",file)
+        } else {
+          const defaultValue = { label: "Common", value: 17}
+          handleChange(index,[defaultValue])
+        }
+      })
+    }
+  },[files])
+  
   return (
     <Modal show={show} onHide={() => { setFiles([]); setSelectedOptions([]); handleClose()}} size="xl">
       <Modal.Header closeButton>
@@ -251,7 +277,7 @@ useEffect(() => {
                     files.map((file, index:number) => {
                       return (
                       <tr key={index}>
-                        <td><Form.Check type="checkbox" /></td>
+                        <td></td>
                         <td><img src={pdfIcon} /> &nbsp; {file.name}</td>
                         <td>
                         <Select
@@ -310,7 +336,7 @@ useEffect(() => {
         </div>
         {(Object.keys(editData).length === 0 && editData.constructor === Object) ?
         <>
-        {(files.length > 0 && (files.length === Object.keys(selectedOptions).length)) && 
+        {(files.length > 0) && 
         <Button variant="primary" className='mt-3 float-end' onClick={uploadDocument}>
           Upload
         </Button>

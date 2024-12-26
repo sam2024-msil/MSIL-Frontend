@@ -45,11 +45,13 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
 
   useEffect(() => {
     if(editUserData !=null ) {
-      const moduleNames = editUserData?.Modules.join(', ');
+      const moduleNames = editUserData?.Modules?.join(', ');
       const labels = moduleNames?.split(',')?.map((label:string) => label.trim().toLowerCase());
       const result:any = moduleList?.filter(item => labels.includes(item.label.toLowerCase())).map(item => ({ value: item.value, label: item.label }));
       setSelectedOptions(result);
       setFormValues({firstName:editUserData?.FirstName,lastName:editUserData?.LastName,userName:editUserData?.Email})
+    } else {
+      resetFormData();
     }
   },[editUserData])
 
@@ -167,6 +169,14 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
     e.preventDefault();
   };
 
+  useEffect(() => {
+      if(!selectedOptions.length) {
+      setSelectedOptions([{
+        label: "Common",
+        value: 17}]);
+      }
+  },[moduleList])
+
   return (
     <>
     {showLoader && <Loader />}
@@ -211,7 +221,7 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
               onChange={(options) => handleModuleSelectChange(options)}
               placeholder="Modules"
               name='module'
-              className={`form-control ${errors.module ? 'is-invalid' : ''}`}
+              className={`${styles.selectBox} ${errors.module ? 'is-invalid' : ''}`}
             />
             {errors.module && <div className="invalid-feedback">{errors.module}</div>}
           </div>

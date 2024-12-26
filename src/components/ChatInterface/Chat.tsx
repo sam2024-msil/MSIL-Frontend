@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './chat.module.scss';
 import Chatbot from './Chatbot/Chatbot';
+import disclaimerIcon from '../../assets/disclaimer-icon.svg';
 import { useToast } from '../../context/ToastContext';
 import AppStateUtil from '../../utils/AppStateUtil';
 import { Col, Container, Row } from 'react-bootstrap';
@@ -108,10 +109,16 @@ const Chat: React.FC = () => {
     )
 
     const clearChatWindow = () => {
-        // setShowClearChatPopup(true);
-        setConversations([]);
+        setShowClearChatPopup(true);
     }
     console.log(" responseErrorData :: ", responseErrorData)
+
+    const closeClearModal = (decision:boolean) => {
+        if(decision) {
+            setConversations([]);
+        }
+        setShowClearChatPopup(false)
+    }
     return (
         <div className={`${styles['right-content-section']}`}>
             <div className='row'>
@@ -168,9 +175,10 @@ const Chat: React.FC = () => {
                             </Row>
                         </Container>
                     </div>
+                    <p className={`${styles['disclaimer-message']}`}> <span className='me-2'><img src={disclaimerIcon} alt='Disclimer'/> </span>The information provided in this chat is for general informational purposes</p>
                 </div>
             </div>
-            <ChatClearPopup showModal={showClearChatPopup} setShowModal={setShowClearChatPopup} />
+            <ChatClearPopup show={showClearChatPopup} handleClose={closeClearModal} />
         </div>
     );
 };

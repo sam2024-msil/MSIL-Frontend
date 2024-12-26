@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { Navbar } from 'react-bootstrap';
 import styles from './Header.module.scss';
+import { useMsal, useAccount } from "@azure/msal-react";
 import headerLogo from '../../assets/MSIL-Logo.png';
 import avatarimg from '../../assets/person_icon.svg';
 import vendorLogo from '../../assets/vendorGPT-Logo.svg';
@@ -16,8 +17,11 @@ interface HeaderPropTypes {
 const Header = ({ vendorLoggedOut }:HeaderPropTypes) => {
 
     const navigate = useNavigate();
+    const { accounts } = useMsal();
+    const account = useAccount(accounts[0] || {});
     const [isVendorLoggedIn, setIsVendorLoggedIn] = useState<boolean>(false);
     const [vendorAuthToken, setVendorAuthToken] = useState<any>('');
+    const [name, setName] = useState("");
 
     useEffect(() => {
         setIsVendorLoggedIn(AppStateUtil.isVendorLoggedIn())
@@ -30,6 +34,14 @@ const Header = ({ vendorLoggedOut }:HeaderPropTypes) => {
             setVendorAuthToken('');
         }
     },[isVendorLoggedIn])
+
+    useEffect(() => {
+        if (account && account.name) {
+            setName(account.name.split(" ")[0]);
+        } else {
+            setName("");
+        }
+    }, [account]);
     
     useEffect(() => {
         const style = document.createElement('style');
@@ -88,7 +100,7 @@ const Header = ({ vendorLoggedOut }:HeaderPropTypes) => {
                                 <div className={`${styles['avatarProfileSection']}`}>
                                     <img src={avatarimg} className={`${styles['avatarImg']}`} alt="Avatar image" />
                                     <span className={`${styles['avatarText']}`}>
-                                        {(isVendorLoggedIn) ? vendorAuthToken?.userId : 'John Doe'}
+                                        {(isVendorLoggedIn) ? vendorAuthToken?.userId : name}
                                     </span>
                                 </div>
                             }
