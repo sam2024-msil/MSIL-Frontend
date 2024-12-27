@@ -78,6 +78,7 @@ const SideMenu: React.FC<{ isMobile: boolean; isMenuOpen: boolean; toggleMenu: (
 
     if (logoutType === "redirect") {
         AppStateUtil.removeAuthToken();
+        AppStateUtil.removeRoleDetails();
         instance.logoutRedirect();
     }
 }

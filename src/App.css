@@ -20,7 +20,11 @@ body {
     background: #171C8F 0% 0% no-repeat padding-box;
     color: #FFFFFF;
 }
- 
+
+.btn-primary:disabled {
+    border: none;
+}
+
 .btn-outline-primary {
     border: 1px solid #171C8F;
     color: #171C8F;
@@ -54,8 +58,20 @@ body {
     color: #171C8F;
     text-transform: capitalize;
 }
- 
+
 .btn-secondary:hover {
     background: #fff 0% 0% no-repeat padding-box;
     color: #171C8F;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+.form-check-input:checked {
+    background-color: #fff;
+    border-color: #171C8F;
+}
+.form-switch .form-check-input:checked {
+    background-position: right center;
+    --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23171C8F'/%3e%3c/svg%3e");
 }

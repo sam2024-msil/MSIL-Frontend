@@ -9,6 +9,7 @@ import pdfIcon from '../../assets/pdfIcon.svg';
 import axiosInstance from '../../api/axios';
 import { useToast } from '../../context/ToastContext';
 import DeleteConfimationModal from '../../shared/DeleteConfirmationModal/DeleteConfirmationModal';
+import Loader from '../Spinner/Spinner';
 
 
 interface moduleDetails {
@@ -20,6 +21,7 @@ const UploadModal: React.FC<{ show: boolean; handleClose: () => void,editData:an
   
   const { showSuccess, showError } = useToast();
   const [files, setFiles] = useState<File[]>([]);
+  const [showLoader, setShowLoader] = useState<boolean>(false);
   const [moduleList, setModuleList] = useState<{ value: number; label: string }[]>([]);
   const [showFileReuploadConfirm, setShowFileReuploadConfirm] = useState<boolean>(false);
   const [msgToDuplicateUpload, setMsgToDuplicateUpload] = useState<string>('');
@@ -123,8 +125,8 @@ useEffect(() => {
       bodyFormData.append('files', file);
     });
     const selectedModues = getSelectedOptions();
-    bodyFormData.append('file_catagory', JSON.stringify(selectedModues));
-
+    bodyFormData.append('file_category', JSON.stringify(selectedModues));
+    setShowLoader(true);
     axiosInstance.post(`/upload`,bodyFormData,{
       headers: {
         'Content-Type': `multipart/form-data`
@@ -141,9 +143,11 @@ useEffect(() => {
           setSelectedOptions([]);
           handleClose();
         }
+        setShowLoader(false);
       }
     }).catch((e) => {
-      console.error(e)
+      console.error(e);
+      setShowLoader(false);
       showError(e?.response?.data?.detail)
     })
   } else {
@@ -158,7 +162,8 @@ useEffect(() => {
       bodyFormData.append('files', file);
     });
     const selectedModues = getSelectedOptions();
-    bodyFormData.append('file_catagory', JSON.stringify(selectedModues));
+    bodyFormData.append('file_category', JSON.stringify(selectedModues));
+    setShowLoader(true);
     axiosInstance.post(`/re-upload`,bodyFormData,{
       headers: {
         'Content-Type': `multipart/form-data`
@@ -169,9 +174,11 @@ useEffect(() => {
       setFiles([]);
       setSelectedOptions([]);
       handleClose();
+      setShowLoader(false);
     }).catch((e) => {
       console.error(e)
-      showError(e?.response?.data?.detail)
+      showError(e?.response?.data?.detail);
+      setShowLoader(false);
     })
   }
   const onClose = (useAction:string) => {
@@ -200,17 +207,20 @@ useEffect(() => {
   const editMappingModule = () => {
 
     let categoryValueArray:any = selectedOptionsInEditmode;
-    categoryValueArray = categoryValueArray.map((item:any) => item.value)
-    axiosInstance.post(`/update-doc-model-mapping`,{doc_id: editData?.doc_id,file_catagory:categoryValueArray})
+    categoryValueArray = categoryValueArray.map((item:any) => item.value);
+    setShowLoader(true);
+    axiosInstance.post(`/update-doc-model-mapping`,{doc_id: editData?.doc_id,file_category:categoryValueArray})
     .then((res) => {
       if(res) {
         showSuccess(res?.data.message);
         setSelectedOptionsInEditmode(null);
         handleClose();
+        setShowLoader(false);
       }
     }).catch((e) => {
       console.error(e);
-      showError(e?.response?.data?.detail)
+      showError(e?.response?.data?.detail);
+      setShowLoader(false);
     })
   }
 
@@ -233,6 +243,8 @@ useEffect(() => {
   },[files])
   
   return (
+    <>
+    {(showLoader) && <Loader />}
     <Modal show={show} onHide={() => { setFiles([]); setSelectedOptions([]); handleClose()}} size="xl">
       <Modal.Header closeButton>
       {(Object.keys(editData).length === 0 && editData.constructor === Object) ?
@@ -246,7 +258,7 @@ useEffect(() => {
           {(Object.keys(editData).length === 0 && editData.constructor === Object) ?
           <>
           <div className="col-md-4">
-            <div {...getRootProps({ className: `${styles['drag-drop-section']} p-3` })}>
+            <div {...getRootProps({ className: `${styles['drag-drop-section']} p-3 cursor-pointer` })}>
               <input {...getInputProps()} />
               <div className='text-center'>
                 <img src={uploadIcon} width="50" alt="upload icon" className={`${styles['modal-upload-icon']}`} />
@@ -278,7 +290,13 @@ useEffect(() => {
                       return (
                       <tr key={index}>
                         <td></td>
-                        <td><img src={pdfIcon} /> &nbsp; {file.name}</td>
+                        {/* <td><img src={pdfIcon} /> &nbsp; {file.name}</td> */}
+                        <td>
+                          <div className='d-flex'>
+                            <img src={pdfIcon} alt="PDF Icon" />
+                            <p className={`ms-3 ${styles.fileName}`} title={file.name}>{file.name}</p>
+                          </div>
+                        </td>
                         <td>
                         <Select
                           options={moduleList}
@@ -290,7 +308,7 @@ useEffect(() => {
                           menuPlacement="auto"
                         />
                         </td>
-                        <td><img src={DeleteIcon} alt="Delete Icon" onClick={() => handleDelete(index)} /></td>
+                        <td><img src={DeleteIcon} className='cursor-pointer' alt="Delete Icon" onClick={() => handleDelete(index)} /></td>
                       </tr>
                     ) }
                     )
@@ -314,7 +332,13 @@ useEffect(() => {
               <tbody>
                     <tr>
                       <td></td>
-                      <td><img src={pdfIcon} /> &nbsp; {editData?.doc_name}</td>
+                      {/* <td><img src={pdfIcon} /> &nbsp; {editData?.doc_name}</td> */}
+                      <td>
+                          <div className='d-flex'>
+                            <img src={pdfIcon} alt="PDF Icon" />
+                            <p className={`ms-3 ${styles.fileName}`} title={editData.name}>{editData.name}</p>
+                          </div>
+                        </td>
                       <td>
                       <Select
                         options={moduleList}
@@ -353,6 +377,7 @@ useEffect(() => {
       </Modal.Body>
       {showFileReuploadConfirm && <DeleteConfimationModal show={showFileReuploadConfirm} onClose={onClose} msg={msgToDuplicateUpload} />}
     </Modal>
+    </>
   );
 };
 

@@ -126,14 +126,24 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
   const validate = () => {
     let valid = true;
     const newErrors = { firstName: '', lastName: '', userName: '', vendorCode: '', module: '' };
+    const specialCharPattern = /[!@#$%^&*(),.?":{}|<>-_]/;
+
     if (!formValues.firstName.trim()) {
       newErrors.firstName = 'First name is required';
       valid = false;
+    } else if (specialCharPattern.test(formValues.firstName)) {
+      newErrors.firstName = 'First name should not contain special characters';
+      valid = false;
     }
+
     if (!formValues.lastName.trim()) {
       newErrors.lastName = 'Last name is required';
       valid = false;
+    } else if (specialCharPattern.test(formValues.lastName)) {
+      newErrors.lastName = 'Last name should not contain special characters';
+      valid = false;
     }
+
     if (!formValues.userName.trim()) {
       newErrors.userName = 'Username is required';
       valid = false;
@@ -147,7 +157,11 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
     if (formValues?.vendorCode && !formValues?.vendorCode.trim()) {
       newErrors.vendorCode = 'Vendor code is required';
       valid = false;
+    }else if ( formValues?.vendorCode && specialCharPattern.test(formValues.vendorCode)) {
+      newErrors.vendorCode = 'Vendor code should not contain special characters';
+      valid = false;
     }
+
     if (!selectedOptions.length) {
       newErrors.module = 'Module selection is required';
       valid = false;

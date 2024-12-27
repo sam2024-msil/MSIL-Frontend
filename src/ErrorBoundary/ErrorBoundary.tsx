@@ -1,4 +1,5 @@
 import React, { ReactNode, useState, useEffect } from 'react';
+import styles from './ErrorBoundary.module.scss';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -31,10 +32,10 @@ const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({ children }) => {
 
   if (hasError) {
     return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
-        <h1>Oops! Something went wrong.</h1>
-        <p>{error?.message || 'An unexpected error occurred.'}</p>
-        <button onClick={resetError} style={{ marginTop: '10px' }}>
+      <div className='p-3 text-center'>
+        <h1 className={`${styles.heading}`}>Oops! Something went wrong.</h1>
+        <p className={`${styles.message}`}>{error?.message || 'An unexpected error occurred.'}</p>
+        <button className='mt-2 btn btn-primary' onClick={resetError}>
           Try Again
         </button>
       </div>

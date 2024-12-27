@@ -12,11 +12,15 @@ import { API_STATUS } from '../../constants/ApiConstants';
 import { CHAT_CONSTANTS } from '../../constants/ChatConstants';
 import ChatApi from '../../ChatApi/ChatApi';
 import ChatClearPopup from './ChatClearPopup/ChatClearPopup';
+import Markdown from 'react-markdown';
+import rehypeRaw from "rehype-raw";
+import axiosInstance from '../../api/axios';
 
 const Chat: React.FC = () => {
 
     const { showSuccess, showError } = useToast();
     const [isVendorLoggedIn, setIsVendorLoggedIn] = useState<boolean>(false);
+    const [userRole, setUserRole] = useState<number>(0);
     const [prompt, setPrompt] = React.useState<string>('');
     const [conversations, setConversations] = React.useState<Array<TypeConversation>>([]);
     const [messagesCount, setMessagesCount] = React.useState<number>(0);
@@ -26,6 +30,7 @@ const Chat: React.FC = () => {
     const [isOffline, setIsOffline] = useState<boolean>();
     const [responseErrorData, setResponseErrorData] = React.useState<TypeResponseErrorMessage | null>(null);
     const [showClearChatPopup, setShowClearChatPopup] = useState<boolean>(false);
+    const [welcomeMsg, setWelcomeMsg] = useState<string>('');
 
     const chatApi = useMemo(() => new ChatApi(), []);
 
@@ -39,6 +44,7 @@ const Chat: React.FC = () => {
 
     useEffect(() => {
         setIsVendorLoggedIn(AppStateUtil.isVendorLoggedIn());
+        setUserRole(AppStateUtil.getRoleDetails());
     }, [])
 
     const handleNetworkConnectionStatusChange = (e: Event) => {
@@ -119,21 +125,42 @@ const Chat: React.FC = () => {
         }
         setShowClearChatPopup(false)
     }
+
+    const getFeedbackCategory = () => {
+        axiosInstance.get(`/feedback-categories`)
+        .then((res) => {
+          if(res) {
+            setWelcomeMsg(res?.data?.chatWelcomeMessage);
+          }
+        }).catch((e) => {
+          console.log(e)
+        })
+    }
+
+    useEffect(() => {
+        getFeedbackCategory();
+    },[])
+
     return (
         <div className={`${styles['right-content-section']}`}>
             <div className='row'>
-                {(!isVendorLoggedIn) &&
-                    <div className={`col-md-2`}>   {/*  nned to write the condition if the vendor  is logged in nee to remove this div and chat header*/}
+                {(!isVendorLoggedIn && userRole === 1) &&
+                    <div className={`col-md-2`}>   
                         <div className={`${styles['right-main-heading']}`}>
                             <h5>Chat</h5>
                         </div>
                     </div>
                 }
-                <div className={(!isVendorLoggedIn) ? `col-md-8` : 'col-md-12'}> {/* here too write the condition to change from col-md-8 to col-md-12 */}
-                    <div className={(isVendorLoggedIn) ? styles['vendor-chat-window-bg'] : ''}>  {/** Need to add condition for this class name */}
+                <div className={(!isVendorLoggedIn && userRole === 1) ? `col-md-8` : 'col-md-12'}> 
+                    <div className={(isVendorLoggedIn || userRole === 2) ? styles['vendor-chat-window-bg'] : ''}> 
                         <Container className="mt-4">
                             <Row>
                                 <Col>
+                                <div className="card mb-2 border-0">
+                                    <div className="card-body">
+                                    <Markdown rehypePlugins={[rehypeRaw]}>{welcomeMsg}</Markdown>
+                                    </div>
+                                </div>
                                     <div ref={chatWindowRef} className={`${styles.chatWindow}`}>
                                         {conversations.map((conversation: TypeConversation, index: number) => {
 
