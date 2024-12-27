@@ -49,7 +49,7 @@ class SSEClient {
         };
 
         if (this.accessToken) {
-            defaultHeaders['Authorization'] = `Bearer ${this.accessToken}`;
+            defaultHeaders['authentication'] = `Bearer ${this.accessToken}`;
         }
 
         const _self = this;

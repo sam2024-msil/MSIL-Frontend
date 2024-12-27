@@ -1,6 +1,7 @@
 import { TOKEN_EXPIRED, USER_MESSAGES } from "../constants/AuthConstants";
 
 const APP_AUTH_TOKEN = 'msilAppToken';
+const USER_ROLE = 'role';
 
 class AppStateUtil {
 
@@ -52,6 +53,34 @@ class AppStateUtil {
             return ''
         }
         return '';
+    }
+
+    static storeUserRoleDetails(role:string) {
+        if (typeof localStorage !== 'undefined') {
+            localStorage.setItem(USER_ROLE, role);
+        }
+    }
+
+    static getRoleDetails(): number {
+        try {
+            if (typeof localStorage !== 'undefined') {
+                const value: any = localStorage.getItem(USER_ROLE);
+                return parseInt(value, 10);
+            }
+        } catch (e) {
+            return 0
+        }
+        return 0;
+    }
+
+    static removeRoleDetails() {
+        try {
+            if (typeof localStorage !== 'undefined') {
+                localStorage.removeItem(USER_ROLE);
+            }
+        } catch (e) {
+            return USER_MESSAGES.something_wrong;
+        }
     }
 }
 

@@ -14,6 +14,11 @@ const UploadModuleModal: React.FC<{ show: boolean; handleClose: () => void; modu
       setError('Module name is required');
       return;
     }
+    const specialCharPattern = /[!@#$%^&*(),.?":{}|<>-_]/;
+    if (specialCharPattern.test(moduleName)) {
+      setError('Module name should not contain special characters');
+      return;
+    }
  
     if (!moduleId) {
       axiosInstance.post(`/modules/?module_name=${moduleName}`)

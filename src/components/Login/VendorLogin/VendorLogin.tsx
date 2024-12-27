@@ -81,7 +81,7 @@ const VendoreLogin = ({ vendorLogin }:VendorLoginPropTypes) => {
                                 />
                             </Form.Group>
                             <Form.Group className="mb-3" controlId="formCheckbox">
-                                <Form.Check type="checkbox" label="Remember Me" defaultChecked />
+                                <Form.Check type="checkbox" label="Remember Me" defaultChecked style={{visibility:'hidden'}} />
                             </Form.Group>
                             <Button type="submit" className={`${styles['login-btn']} w-100 text-center`} disabled={!isFormValid ? true : false} onClick={(e) => {loginHandler(); e.preventDefault()}}>
                                 LOGIN

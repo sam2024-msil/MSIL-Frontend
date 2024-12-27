@@ -17,14 +17,16 @@ interface HeaderPropTypes {
 const Header = ({ vendorLoggedOut }:HeaderPropTypes) => {
 
     const navigate = useNavigate();
-    const { accounts } = useMsal();
+    const { accounts, instance } = useMsal();
     const account = useAccount(accounts[0] || {});
     const [isVendorLoggedIn, setIsVendorLoggedIn] = useState<boolean>(false);
     const [vendorAuthToken, setVendorAuthToken] = useState<any>('');
     const [name, setName] = useState("");
+    const [loggedInUserRole, setLoggedInUserRole] = useState<number>(0);
 
     useEffect(() => {
-        setIsVendorLoggedIn(AppStateUtil.isVendorLoggedIn())
+        setIsVendorLoggedIn(AppStateUtil.isVendorLoggedIn());
+        setLoggedInUserRole(AppStateUtil.getRoleDetails());
     },[])
 
     useEffect(() => {
@@ -56,11 +58,24 @@ const Header = ({ vendorLoggedOut }:HeaderPropTypes) => {
         document.head.appendChild(style);
     }, []);
     
+    const handleLogout = (logoutType: string) => {
+
+        if (logoutType === "redirect") {
+            AppStateUtil.removeAuthToken();
+            instance.logoutRedirect();
+        }
+    }
+
     const vendorLogout = () => {
         localStorage.clear();
-        vendorLoggedOut();
-        navigate('/');
+        if(loggedInUserRole === 3) {
+            vendorLoggedOut();
+            navigate('/');
+        } else {
+            handleLogout('redirect');
+        }
     }
+    console.log(" loggedInUserRole :: ", loggedInUserRole, " type ", typeof(loggedInUserRole));
     return (
         <Navbar variant="dark" expand="lg" className={`${styles['navbarBg']}`}>
             <div className='container-fluid'>
@@ -79,16 +94,16 @@ const Header = ({ vendorLoggedOut }:HeaderPropTypes) => {
                             </div>
                         </div>
                         <div className='col-3'>
-                            {(isVendorLoggedIn) ? 
+                            {(isVendorLoggedIn || loggedInUserRole === 2) ? 
                             <div className='dropdown'>
                                 <div className={`${styles['avatarProfileSection']}`}>
                                     <div className={`${styles.avatarDropdown} dropdown-toggle`} id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                         <img src={avatarimg} className={`${styles['avatarImg']}`} alt="Avatar image" />
                                         <span className={`${styles['avatarText']}`}>
-                                            {(isVendorLoggedIn) ? vendorAuthToken?.userId : 'John Doe'}
+                                            {(isVendorLoggedIn) ? vendorAuthToken?.userId : (loggedInUserRole===2) ? name : 'John Doe'}
                                         </span>
                                     </div>
-                                    {(isVendorLoggedIn) &&
+                                    {(isVendorLoggedIn || loggedInUserRole === 2) &&
                                     <ul className={`${styles['avatar-dropdown-menu']} dropdown-menu end-0`} aria-labelledby="dropdownMenuButton1">
                                         <li onClick={vendorLogout}><a className="dropdown-item">Logout</a></li>
                                     </ul>

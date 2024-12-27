@@ -77,7 +77,6 @@ const previewDoc = (docName:any,page_num:string) => {
     })
   }
 }
-
   return (
             <>
               <div key={index}>
@@ -107,6 +106,7 @@ const previewDoc = (docName:any,page_num:string) => {
                         Uh oh! I'm experiencing connectivity issues at moment. Can you please try again after a while?
                     </div>
                     }
+                    
                     {assistantMessage?.content && (
                       <>
                         <div className={`${styles.message} ${styles.answer} w-100`}>

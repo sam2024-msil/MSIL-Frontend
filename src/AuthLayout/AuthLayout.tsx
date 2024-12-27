@@ -32,6 +32,7 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
     const [isVendorLoggedIn, setIsVendorLoggedIn] = useState<boolean>(false);
     const [showLoader, setShowLoader] = useState<boolean>(false);
     const [isAuthorized, setIsAuthorized] = useState(false);
+    const [loggedUserRole, setLoggedUserRole] = useState<number>(0);
 
     const toggleMenuClose = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -68,7 +69,8 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
     }, [instance, accounts]);
 
     useEffect(() => {
-        setIsVendorLoggedIn(AppStateUtil.isVendorLoggedIn())
+        setIsVendorLoggedIn(AppStateUtil.isVendorLoggedIn());
+        setLoggedUserRole(AppStateUtil.getRoleDetails());
     },[])
 
 
@@ -96,9 +98,11 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
             setShowLoader(false);
             if (response.data && response?.data?.code === 200) {
                 const roleToken = response?.data?.token;
+                setLoggedUserRole(parseInt(response?.data?.role, 10))
                 AppStateUtil.storeAuthToken(roleToken);
-                setIsAuthorized(true)
-                navigateuInToApp();
+                AppStateUtil.storeUserRoleDetails(response?.data?.role)
+                setIsAuthorized(true);
+                navigateuInToApp(parseInt(response?.data?.role, 10));
             } else if(response?.data?.code === 404) {
                 setIsAuthorized(false);
                 showError(response?.data?.message);
@@ -113,7 +117,7 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
         })
     }
 
-    const navigateuInToApp = () => {
+    const navigateuInToApp = (role:number) => {
         setShowLoader(true);
         setTimeout(() => {
             if (
@@ -121,7 +125,11 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
                 AppStateUtil.getAuthToken() !== "Token Expired"
             ) {
                 setShowLoader(false);
-                navigate("/document-management");
+                if(role === 1) {
+                    navigate("/document-management");
+                } else {
+                    navigate("/chat");
+                }
             }
         }, 200);
     };
@@ -141,6 +149,7 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
                     showError(res?.data?.message);
                 } else {
                     setIsVendorLoggedIn(true);
+                    AppStateUtil.storeUserRoleDetails('3')
                     localStorage.setItem('IsVendoreLoggedIn','true');
                     localStorage.setItem('VendorAccessToken',res?.data?.token)
                     navigate("/chat");
@@ -165,7 +174,7 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
             </UnauthenticatedTemplate>
             <AuthenticatedTemplate>
             {(showLoader) && <Loader />}
-            {isAuthorized &&
+            {(isAuthorized && loggedUserRole === 1) &&
                 <Container fluid>
                     <Row>
                         <Col xs={isMobile ? 12 : 1} className={`p-0 ${styles.sideMenuSection} ${isMenuOpen ? styles.menuOpen : styles.menuClosed}`}>
@@ -183,9 +192,22 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
                     </Row>
                 </Container>
             }
+
+            {(loggedUserRole === 2) && // Msil Users Auth pages
+                <Container fluid>
+                    <Row>
+                        <Col xs={12} className={`p-0 ${isMenuOpen ? styles.menuClosed : styles.menuOpen}`}>
+                            <div className={`${styles['vendor-authrozed-content']}`}>
+                                <Header vendorLoggedOut={vendorLoggedOut} />
+                                {children}
+                            </div>
+                        </Col>
+                    </Row>
+                </Container>
+            }
             </AuthenticatedTemplate>
 
-            {(isVendorLoggedIn) && 
+            {(isVendorLoggedIn) &&  // Vwndor Users Auth pages
             <Container fluid>
                 <Row>
                 <Col xs={12} className={`p-0 ${isMenuOpen ? styles.menuClosed : styles.menuOpen}`}>
