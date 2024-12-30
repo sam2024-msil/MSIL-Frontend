@@ -165,6 +165,7 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
     const vendorLoggedOut = () => {
         setIsVendorLoggedIn(false);
     }
+    console.log(" isAuthorized :: ", isAuthorized)
     return (
         <>
             <UnauthenticatedTemplate>
@@ -174,7 +175,7 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
             </UnauthenticatedTemplate>
             <AuthenticatedTemplate>
             {(showLoader) && <Loader />}
-            {(isAuthorized && loggedUserRole === 1) &&
+            {(loggedUserRole === 1) &&
                 <Container fluid>
                     <Row>
                         <Col xs={isMobile ? 12 : 1} className={`p-0 ${styles.sideMenuSection} ${isMenuOpen ? styles.menuOpen : styles.menuClosed}`}>

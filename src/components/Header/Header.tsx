@@ -75,7 +75,7 @@ const Header = ({ vendorLoggedOut }:HeaderPropTypes) => {
             handleLogout('redirect');
         }
     }
-    console.log(" loggedInUserRole :: ", loggedInUserRole, " type ", typeof(loggedInUserRole));
+    
     return (
         <Navbar variant="dark" expand="lg" className={`${styles['navbarBg']}`}>
             <div className='container-fluid'>
