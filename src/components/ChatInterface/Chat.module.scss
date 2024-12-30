@@ -40,6 +40,16 @@
     font: normal normal 1rem Roboto;
     color: #5E6061;
 }
+
+.welcomeMsg {
+    font: normal normal 14px/20px Roboto;
+    color: #32325D;
+    margin-bottom: 0;
+
+    p {
+        margin-bottom: 0;
+    }
+}
  
 .disclaimer-message {
     text-align: center;
@@ -51,30 +61,30 @@
 }
 
 .chatWindow {
-    height: 76vh;
+    height: 70vh;
     overflow-y: auto;
 }
 
 @media only screen and (min-width: 1280px) and (max-width: 1599px) {
     .chatWindow {
-        height: calc(76vh - 50px);
+        height: calc(70vh - 50px);
     }
 }
  
 @media only screen and (min-width: 1600px) and (max-width: 1919px) {
     .chatWindow {
-        height: calc(76vh - 100px);
+        height: calc(70vh - 100px);
     }
 }
  
 @media only screen and (min-width: 1920px) and (max-width: 2559px) {
     .chatWindow {
-        height: calc(76vh - 150px);
+        height: calc(70vh - 150px);
     }
 }
  
 @media only screen and (min-width: 2560px) {
     .chatWindow {
-        height: calc(76vh - 200px);
+        height: calc(70vh - 200px);
     }
 }

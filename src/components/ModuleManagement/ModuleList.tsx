@@ -41,7 +41,7 @@ const ModuleList: React.FC = () => {
     setModuleNameForEdit('');
     setTriggerTableApi(triggerTableApi + 1);
   }
-  console.log(showLoader)
+  
   const columns: any = useMemo(
     () => [
       {

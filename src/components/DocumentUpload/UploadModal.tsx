@@ -28,14 +28,22 @@ const UploadModal: React.FC<{ show: boolean; handleClose: () => void,editData:an
   const [selectedOptionsInEditmode, setSelectedOptionsInEditmode] = useState<{ value: number; label: string }[] | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
   
+  
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
       if ((acceptedFiles.length)+files.length <= 5) {
-        let validFile:any [] = []
+        let validFile:any [] = [];
+        let currentFileSize = Array.from(acceptedFiles).reduce((sum, file) => {
+          if (file && typeof file.size === 'number') {
+            return sum + file.size;
+          }
+          return sum;
+        }, 0);
+        const totalFileSize = files.reduce((sum, totalFile) => sum + totalFile.size, 0) + currentFileSize;
         acceptedFiles.forEach(async (file: any) => {
           if (file?.type === "application/pdf") {
-            const totalSize = files.reduce((sum, totalFile) => sum + totalFile.size, 0) + file.size;
-            const fileSizeInMB = totalSize / (1024 * 1024);
+            //const totalSize = files.reduce((sum, totalFile) => sum + totalFile.size, 0) + file.size;
+            const fileSizeInMB = totalFileSize / (1024 * 1024);
             if (fileSizeInMB > 250) {
               showError('The total file size exceeds 250 MB. Please upload smaller files.');
               return;
@@ -226,16 +234,13 @@ useEffect(() => {
 
   useEffect(() => {
     if(files.length > 0) {
-      // const lastIndex = files.length - 1;
-      // setSelectedOptions((prevOptions) => [...prevOptions, [{
-      //   label: "Common",
-      //   value: 17}]]);
       
+      const defaultCommon = Object.values(moduleList).find(item => item.label.toLowerCase() === 'common');
       files.map((file, index:any) => {
         if(index in selectedOptions) {
           console.log("value is there for the index position",file)
         } else {
-          const defaultValue = { label: "Common", value: 17}
+          const defaultValue = { label: defaultCommon?.label, value: defaultCommon?.value}
           handleChange(index,[defaultValue])
         }
       })

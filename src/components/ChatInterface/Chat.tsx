@@ -156,12 +156,15 @@ const Chat: React.FC = () => {
                         <Container className="mt-4">
                             <Row>
                                 <Col>
-                                <div className="card mb-2 border-0">
+                                <div className={`${styles.chatWindow}`}>
+                                    <div className='px-3'>
+                                    <div className="card mb-2 border-0">
                                     <div className="card-body">
-                                    <Markdown rehypePlugins={[rehypeRaw]}>{welcomeMsg}</Markdown>
+                                        <p className={`${styles.welcomeMsg}`}><Markdown rehypePlugins={[rehypeRaw]}>{welcomeMsg}</Markdown></p>
                                     </div>
                                 </div>
-                                    <div ref={chatWindowRef} className={`${styles.chatWindow}`}>
+                                    </div>
+                                    <div ref={chatWindowRef}>
                                         {conversations.map((conversation: TypeConversation, index: number) => {
 
                                             const { messages = [], interactionId } = conversation;
@@ -188,6 +191,7 @@ const Chat: React.FC = () => {
                                                 </>
                                             )
                                         })}
+                                    </div>
                                     </div>
                                     <ChatInput 
                                     getInput={getInput}

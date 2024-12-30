@@ -16,8 +16,9 @@ type FormValues = {
   firstName: string;
   lastName: string;
   userName: string;
-  vendorCode?: string; // Optional
+  vendorCode: string; // Optional
   module?: string[];
+  vendorName: string;
 };
 
 const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUserData:any }> = ({ show, handleClose, editUserData }) => {
@@ -33,6 +34,7 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
     userName: '',
     vendorCode: '',
     module: [],
+    vendorName:''
   });
 
   const [errors, setErrors] = useState({
@@ -40,7 +42,8 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
     lastName: '',
     userName: '',
     vendorCode: '',
-    module: ''
+    module: '',
+    vendorName:''
   });
 
   useEffect(() => {
@@ -49,15 +52,15 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
       const labels = moduleNames?.split(',')?.map((label:string) => label.trim().toLowerCase());
       const result:any = moduleList?.filter(item => labels.includes(item.label.toLowerCase())).map(item => ({ value: item.value, label: item.label }));
       setSelectedOptions(result);
-      setFormValues({firstName:editUserData?.FirstName,lastName:editUserData?.LastName,userName:editUserData?.Email})
+      setFormValues({firstName:editUserData?.FirstName,lastName:editUserData?.LastName,userName:editUserData?.Email,vendorCode:editUserData?.VendorCode,vendorName:editUserData?.VendorName})
     } else {
       resetFormData();
     }
   },[editUserData])
 
   const resetFormData = () => {
-    setErrors({firstName: '',lastName: '',userName: '',vendorCode: '',module: ''});
-    setFormValues({firstName: '',lastName: '',userName: '',vendorCode: '',module: []});
+    setErrors({firstName: '',lastName: '',userName: '',vendorCode: '',module: '', vendorName: ''});
+    setFormValues({firstName: '',lastName: '',userName: '',vendorCode: '',module: [], vendorName: ''});
     setSelectedOptions([]);
   }
   const getModules = () => {
@@ -103,7 +106,8 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
         LastName: formValues.lastName,
         UserEmailId: formValues.userName,
         VendorCode: formValues.vendorCode,
-        ModuleIDs: formValues.module
+        ModuleIDs: formValues.module,
+        VendorName: formValues.vendorName
       }
       setShowLoader(true);
       const apiUrl = (editUserData) ? `/users/${editUserData?.ID}` : '/vendoruser/';
@@ -125,8 +129,8 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
 
   const validate = () => {
     let valid = true;
-    const newErrors = { firstName: '', lastName: '', userName: '', vendorCode: '', module: '' };
-    const specialCharPattern = /[!@#$%^&*(),.?":{}|<>-_]/;
+    const newErrors = { firstName: '', lastName: '', userName: '', vendorCode: '', module: '', vendorName:'' };
+    const specialCharPattern = /[^a-zA-Z0-9 ]/;
 
     if (!formValues.firstName.trim()) {
       newErrors.firstName = 'First name is required';
@@ -154,14 +158,24 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
         valid = false;
       }
     }
-    if (formValues?.vendorCode && !formValues?.vendorCode.trim()) {
-      newErrors.vendorCode = 'Vendor code is required';
-      valid = false;
-    }else if ( formValues?.vendorCode && specialCharPattern.test(formValues.vendorCode)) {
-      newErrors.vendorCode = 'Vendor code should not contain special characters';
-      valid = false;
-    }
 
+    
+      if (!formValues?.vendorName.trim()) {
+        newErrors.vendorName = 'Vendor name is required';
+        valid = false;
+      }else if ( formValues?.vendorName && specialCharPattern.test(formValues.vendorName)) {
+        newErrors.vendorName = 'Vendor name should not contain special characters';
+        valid = false;
+      }
+
+      if (!formValues?.vendorCode.trim()) {
+        newErrors.vendorCode = 'Vendor code is required';
+        valid = false;
+      }else if ( formValues?.vendorCode && specialCharPattern.test(formValues.vendorCode)) {
+        newErrors.vendorCode = 'Vendor code should not contain special characters';
+        valid = false;
+      }
+    
     if (!selectedOptions.length) {
       newErrors.module = 'Module selection is required';
       valid = false;
@@ -185,12 +199,15 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
 
   useEffect(() => {
       if(!selectedOptions.length) {
-      setSelectedOptions([{
-        label: "Common",
-        value: 17}]);
+        if(moduleList.length > 0) {
+          const defaultCommon = Object.values(moduleList).find(item => item.label.toLowerCase() === 'common');
+          setSelectedOptions([{
+            label: defaultCommon?.label,
+            value: defaultCommon?.value}]);
+        }
       }
   },[moduleList])
-
+  
   return (
     <>
     {showLoader && <Loader />}
@@ -207,25 +224,32 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
         <Form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="userNameInput" className="form-label">First Name</label>
-            <input type="text" name='firstName' disabled={(editUserData) ? true : false} value={formValues.firstName} className={`form-control ${errors.firstName ? 'is-invalid' : ''}`} onChange={handleChange} id="firstNameInput" placeholder="" />
+            <input type="text" autoComplete='off' name='firstName' disabled={(editUserData) ? true : false} value={formValues.firstName} className={`form-control ${errors.firstName ? 'is-invalid' : ''}`} onChange={handleChange} id="firstNameInput" placeholder="" />
             {errors.firstName && <div className="invalid-feedback">{errors.firstName}</div>}
           </div>
           <div className="mb-3">
             <label htmlFor="userNameInput" className="form-label">Last Name</label>
-            <input type="text" name="lastName" disabled={(editUserData) ? true : false} value={formValues.lastName} className={`form-control ${errors.lastName ? 'is-invalid' : ''}`} onChange={handleChange} id="lastNameInput" placeholder="" />
+            <input type="text" name="lastName" autoComplete='off' disabled={(editUserData) ? true : false} value={formValues.lastName} className={`form-control ${errors.lastName ? 'is-invalid' : ''}`} onChange={handleChange} id="lastNameInput" placeholder="" />
             {errors.lastName && <div className="invalid-feedback">{errors.lastName}</div>}
           </div>
           <div className="mb-3">
-            <label htmlFor="emailInput" className="form-label">Username</label>
-            <input type="text" name='userName' disabled={(editUserData) ? true : false} value={formValues.userName} className={`form-control ${errors.userName ? 'is-invalid' : ''}`} onChange={handleChange} id="userNameInput" placeholder="" />
+            <label htmlFor="emailInput" className="form-label">Username(Email)</label>
+            <input type="text" name='userName' autoComplete='off' disabled={(editUserData) ? true : false} value={formValues.userName} className={`form-control ${errors.userName ? 'is-invalid' : ''}`} onChange={handleChange} id="userNameInput" placeholder="" />
             {errors.userName && <div className="invalid-feedback">{errors.userName}</div>}
           </div>
-          {!editUserData &&
+          
+          <div className="mb-3">
+            <label htmlFor="vendorNameInput" className="form-label">Vendor Name</label>
+            <input type="text" name="vendorName" autoComplete='off' disabled={(editUserData) ? true : false} value={formValues.vendorName} className={`form-control ${errors.lastName ? 'is-invalid' : ''}`} onChange={handleChange} id="lastNameInput" placeholder="" />
+            {errors.vendorName && <div className="invalid-feedback">{errors.vendorName}</div>}
+          </div>
+          
+          
           <div className="mb-3">
             <label htmlFor="vendorCodeInput" className="form-label">Vendor Code</label>
-            <input type="text" name='vendorCode' disabled={(editUserData) ? true : false} value={formValues.vendorCode} className={`form-control ${errors.vendorCode ? 'is-invalid' : ''}`} onChange={handleChange} id="vendorCodeInput" placeholder="" />
+            <input type="text" name='vendorCode' autoComplete='off' disabled={(editUserData) ? true : false} value={formValues.vendorCode} className={`form-control ${errors.vendorCode ? 'is-invalid' : ''}`} onChange={handleChange} id="vendorCodeInput" placeholder="" />
             {errors.vendorCode && <div className="invalid-feedback">{errors.vendorCode}</div>}
-          </div> }
+          </div> 
           <div className="mb-3">
             <label htmlFor="selectModule" className="form-label">Module</label>
             <Select

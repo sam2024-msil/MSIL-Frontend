@@ -66,7 +66,6 @@ const previewDoc = (docName:any,page_num:string) => {
     axiosInstance.get(`/preview-citation?doc_name=${docName}&page_num=${page_num}`)
     .then((res) => {
       if(res.data) {
-        console.log(res.data.sas_url, " res.data")
         setShowPreviewDocument(true);
         setPreviewSasURL(res.data.sas_url);
         setLoader(false);
@@ -113,13 +112,15 @@ const previewDoc = (docName:any,page_num:string) => {
                           <div>
                           <Markdown rehypePlugins={[rehypeRaw]}>{assistantMessage.content.text}</Markdown>
                           </div>
-                          <div className="d-flex justify-content-start mt-2 flex-column">
+                          
                           {(assistantMessage?.images?.length > 0) && assistantMessage?.images.map((image:string,index:number) => {
                             return(
-                              <img src={image} key={index} className={'img-fluid'} />
+                              <div className="d-flex justify-content-start mt-2 flex-column">
+                                <img src={image} key={index} className={'img-fluid'} />
+                              </div>
                             )
                           })}
-                          </div>
+                          
                           {(assistantMessage?.document_name) &&
                           <div className="d-flex justify-content-start mt-2">
                             <div className='me-2'>

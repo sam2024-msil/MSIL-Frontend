@@ -154,10 +154,13 @@ const AddUserModal: React.FC<{ show: boolean; handleClose: () => void, editUserD
   useEffect(() => {
     if(!isAdmin) {
       if(!selectedOptions.length) {
-      setSelectedOptions([{
-        label: "Common",
-        value: 17}]);
+        if(moduleList.length > 0) {
+          const defaultCommon = Object.values(moduleList).find(item => item.label.toLowerCase() === 'common');
+          setSelectedOptions([{
+          label: defaultCommon?.label,
+          value: defaultCommon?.value}]);
       }
+    }
     } else {
       setSelectedOptions([]);
     }

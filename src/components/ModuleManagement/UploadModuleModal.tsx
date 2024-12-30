@@ -14,7 +14,7 @@ const UploadModuleModal: React.FC<{ show: boolean; handleClose: () => void; modu
       setError('Module name is required');
       return;
     }
-    const specialCharPattern = /[!@#$%^&*(),.?":{}|<>-_]/;
+    const specialCharPattern = /[^a-zA-Z0-9 ]/;
     if (specialCharPattern.test(moduleName)) {
       setError('Module name should not contain special characters');
       return;
