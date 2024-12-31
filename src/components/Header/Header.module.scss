@@ -11,11 +11,45 @@
 
 .header-logo-section {
     display: flex;
-    width: 30%;
-
+    width: 100%;
+ 
     .headerLogo {
+        line-height: 42px;
+        .headerLogoDesktop {
+            width: 200px;
+            @media screen and (max-width: 992px) {
+                margin-left: 0;
+                width: 250px;
+            }
+            @media screen and (max-width: 576px) {
+                display: none;
+            }
+        }
+ 
+        .headerLogoMobile {
+            display: none;
+ 
+            @media screen and (max-width: 576px) {
+                display: block;
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+    }
+ 
+    .header-vendor-logo {
+        margin-left: 12px;
+        border-left: 1px solid #eaeaea;
+        padding: 12px 0;
+        @media screen and (max-width: 992px) {
+            padding: 6px 0;
+        }
+        @media screen and (max-width: 576px) {
+            padding: 0;
+        }
         img {
-            width: 100%;
+            width: 140px;
+            margin-left: 10px;
         }
     }
 }
@@ -44,6 +78,10 @@
             margin-left: 30%;
         }
     }
+}
+
+.headerLogoMobile {
+    display: none;
 }
 
 .header-vendor-logo {

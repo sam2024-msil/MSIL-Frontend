@@ -163,10 +163,11 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
       if (!formValues?.vendorName.trim()) {
         newErrors.vendorName = 'Vendor name is required';
         valid = false;
-      }else if ( formValues?.vendorName && specialCharPattern.test(formValues.vendorName)) {
-        newErrors.vendorName = 'Vendor name should not contain special characters';
-        valid = false;
       }
+      // else if ( formValues?.vendorName && specialCharPattern.test(formValues.vendorName)) {
+      //   newErrors.vendorName = 'Vendor name should not contain special characters';
+      //   valid = false;
+      // }
 
       if (!formValues?.vendorCode.trim()) {
         newErrors.vendorCode = 'Vendor code is required';

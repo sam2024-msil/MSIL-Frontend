@@ -1,7 +1,7 @@
 import { Form } from "react-bootstrap";
 import styles from './Chatbot/Chatbot.module.scss';
 import SendIcon from '../../assets/send-icon.svg';
-// import StopCircleIcon from '../../assets/stop-circle.svg';
+import StopCircleIcon from '../../assets/stop-circle.svg';
 import { useEffect, useRef, useState } from "react";
 import newChatIcon from '../../assets/new-chat-icon.svg';
 import chatToggleIcon from '../../assets/menu_icon.svg'
@@ -10,7 +10,7 @@ import { isMobileDevice } from "../../utils/BroswerUtil";
 
 interface InputPros {
     getInput: (query:string) => void;
-    showStopButton?: boolean;
+    showStopButton: boolean;
     onStop: () => void;
     clearChatWindow: () => void;
 }
@@ -18,16 +18,24 @@ const ChatInput = ({ getInput, showStopButton, onStop, clearChatWindow }:InputPr
 
     const [query, setQuery] = useState<string>('');
     const inputElem = useRef<HTMLInputElement>(null);
+    const [disableAsk, setDiableAsk] = useState<boolean>(false)
 
     useEffect(() => {
       if (!isMobileDevice() && (!showStopButton)) {
         inputElem.current?.focus();
       }
-  
+      
     }, [showStopButton]);
 
+    useEffect(() => {
+      if(query || showStopButton) {
+        setDiableAsk(false);
+      } else {
+        setDiableAsk(true)
+      }
+    },[query, showStopButton])
     const handleSend = () => {
-      if(true) {
+      if(!showStopButton) {
         getInput(query);
         setQuery('');
       } else {
@@ -63,10 +71,10 @@ const ChatInput = ({ getInput, showStopButton, onStop, clearChatWindow }:InputPr
                 maxLength={250}
               />
               <button type="submit" className={`${styles.chatInputButton} btn-primary float-end`}
-              disabled={showStopButton}
+              disabled={disableAsk}
               >
-                {/* {(!showStopButton) ? <img src={SendIcon} alt="Send Icon" width='20' /> : <img src={StopCircleIcon} alt="Stop Icon" width='20' /> } */}
-                <img src={SendIcon} alt="Send Icon" width="20" />
+                {(!showStopButton) ? <img src={SendIcon} alt="Send Icon" width='20' /> : <img src={StopCircleIcon} alt="Stop Icon" width='20' /> }
+                {/* <img src={SendIcon} alt="Send Icon" width="20" /> */}
               </button>
             </Form.Group>
           </Form>

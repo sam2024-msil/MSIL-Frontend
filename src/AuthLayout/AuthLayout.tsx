@@ -73,6 +73,13 @@ export const AuthLayout: React.FC<Props> = ({ children }) => {
         setLoggedUserRole(AppStateUtil.getRoleDetails());
     },[])
 
+    useEffect(() => {
+        if (loggedUserRole === 1 && location.pathname === '/') {
+            navigate("/document-management");
+        } else if((loggedUserRole === 2 || loggedUserRole === 3) && location.pathname === '/'){
+            navigate("/chat");
+        }
+    }, [loggedUserRole])
 
     const getAccessToken = async (): Promise<void> => {
         const account = accounts[0];

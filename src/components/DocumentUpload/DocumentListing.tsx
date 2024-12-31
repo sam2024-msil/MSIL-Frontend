@@ -130,7 +130,7 @@ const DocumentListing: React.FC = () => {
                     ? 'rgb(48,63,160)'
                     : 'rgb(0,200,81)';
                     return (
-                        <span className={styles[row?.values?.doc_status.toLowerCase()]} style={{color:colurCode}}>
+                        <span className={'fw-bold'} style={{color:colurCode}}>
                             {row?.values?.doc_status}
                         </span>
                     );
