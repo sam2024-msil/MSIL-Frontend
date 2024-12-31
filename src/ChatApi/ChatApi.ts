@@ -33,7 +33,7 @@ class ChatApi {
         ask: string,
         callback: (data: string) => void
     ) {
-        this.sseController = new AbortController();
+            this.sseController = new AbortController();
 
         try {
             const sseClient = new SSEClient(this.sseController, this.accessToken);
@@ -46,13 +46,15 @@ class ChatApi {
                 callback,
                 options: { retryCount: 3 },
             });
-        } catch (e) {
-            throw new Error('Failed to get response stream');
+        } catch (e:any) {
+            if (e.name !== 'AbortError') {  // don't throw errors because of aborting
+                throw new Error('Failed to get response stream');
+              }
         }
     }
 
     async terminateStreaming() {
-        this.sseController?.abort();
+        //this.sseController?.abort();
         // const { api } = new ApiClient(this.apiUrl, (!this.accessToken) && HHAuthUtil.getHHAccessToken() || DynUserUtil.getUserId());
         // try {
         //   await api.post(`${import.meta.env.VITE_SKAN_APP_API_BASE_URL}/chat`, {
@@ -61,6 +63,7 @@ class ChatApi {
         // } catch (e) {
         //   throw new Error('Failed to terminate response stream');
         // }
+        this.sseController.abort();
     }
 }
 

@@ -8,6 +8,7 @@ import headerLogo from '../../assets/MSIL-Logo.png';
 import avatarimg from '../../assets/person_icon.svg';
 import vendorLogo from '../../assets/vendorGPT-Logo.svg';
 import AppStateUtil from '../../utils/AppStateUtil';
+import headerLogoIcon from '../../assets/MSIL-Header-Icon.png';
 
 
 interface HeaderPropTypes {
@@ -84,7 +85,8 @@ const Header = ({ vendorLoggedOut }:HeaderPropTypes) => {
                         <div className='col-9'>
                             <div className={isVendorLoggedIn ? `${styles['header-logo-section']}` : ''}>
                             <div className={`${styles['headerLogo']}`}>
-                                <img src={headerLogo} alt="header logo" />
+                                <img src={headerLogo} alt="header logo" className={`${styles.headerLogoDesktop}`}/>
+                                <img src={headerLogoIcon} alt="header logo" className={`${styles.headerLogoMobile}`}/>
                             </div>
                             {(isVendorLoggedIn) && 
                                 <div className={`${styles['header-vendor-logo']}`}>
