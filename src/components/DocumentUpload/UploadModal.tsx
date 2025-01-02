@@ -39,13 +39,15 @@ const UploadModal: React.FC<{ show: boolean; handleClose: () => void,editData:an
           }
           return sum;
         }, 0);
+        let showFileSizeError=false;
         const totalFileSize = files.reduce((sum, totalFile) => sum + totalFile.size, 0) + currentFileSize;
         acceptedFiles.forEach(async (file: any) => {
           if (file?.type === "application/pdf") {
             //const totalSize = files.reduce((sum, totalFile) => sum + totalFile.size, 0) + file.size;
             const fileSizeInMB = totalFileSize / (1024 * 1024);
             if (fileSizeInMB > 250) {
-              showError('The total file size exceeds 250 MB. Please upload smaller files.');
+              showFileSizeError = true;
+              // showError('The total file size exceeds 250 MB. Please upload smaller files.');
               return;
             } else {
               validFile.push(file);
@@ -54,6 +56,11 @@ const UploadModal: React.FC<{ show: boolean; handleClose: () => void,editData:an
             showError('The file you are trying to upload appears to be infected or has an unsupported file extension. Please ensure that your file is safe and has the correct format before uploading.');
           }
         })
+        if(showFileSizeError)
+          { 
+            showError('The total file size exceeds 250 MB. Please upload smaller files.');
+            showFileSizeError = false;
+          }
         setFiles((prevFiles) => [...prevFiles, ...validFile]);
       } else {
         showError('Please note that you can upload up to 5 files at a time with a maximum total size of 250 MB.');
@@ -341,7 +348,7 @@ useEffect(() => {
                       <td>
                           <div className='d-flex'>
                             <img src={pdfIcon} alt="PDF Icon" />
-                            <p className={`ms-3 ${styles.fileName}`} title={editData.name}>{editData.name}</p>
+                            <p className={`ms-3 ${styles.fileName}`} title={editData.doc_name}>{editData.doc_name}</p>
                           </div>
                         </td>
                       <td>
