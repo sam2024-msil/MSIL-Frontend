@@ -15,9 +15,9 @@ import UploadModal from './UploadModal';
 import DateUtil from '../../utils/DateUtil';
 import { useToast } from '../../context/ToastContext';
 import DeleteConfimationModal from '../../shared/DeleteConfirmationModal/DeleteConfirmationModal';
-import PdfViewer from '../../shared/PDFViewer/PdfViewer';
 import { FileStatus } from '../../enums/FileProcessStatus';
 import Loader from '../Spinner/Spinner';
+import { Modal } from 'react-bootstrap';
 
 
 interface DataItem {
@@ -47,27 +47,33 @@ const DocumentListing: React.FC = () => {
         setEditData({});
         setTriggerTableApi(triggerTableApi + 1);
     }
-    
 
-    const downloadPDF = async (rowData:any) => {
-        try {
-            setShowLoader(true);
-            const response = await axiosInstance.get(`/download?doc_id=${rowData?.doc_id}`, {
-              responseType: 'blob',
-            });
-            const fileBlob = new Blob([response.data], { type: 'application/pdf' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(fileBlob);
-            link.setAttribute('download', rowData?.doc_name);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            setShowLoader(false);
-          } catch (error) {
-            setShowLoader(false);
-            console.error('Error downloading file:', error);
-          }
-      
+
+    const downloadPDF = async (rowData: any) => {
+        if(rowData?.doc_status.toLowerCase() === FileStatus.processed) {
+            try {
+                setShowLoader(true);
+                const response = await axiosInstance.get(`/download?doc_id=${rowData?.doc_id}`, {
+                    responseType: 'blob',
+                    timeout: 60000   // 60 seconds
+                });
+                const fileBlob = new Blob([response.data], { type: 'application/pdf' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(fileBlob);
+                link.setAttribute('download', rowData?.doc_name);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setShowLoader(false);
+            } catch (e:any) {
+                setShowLoader(false);
+                showError(e?.response?.data?.detail);
+                console.error('Error downloading file:', e);
+            }
+        } else {
+            showError('The document can only be downloaded when it is in the processed status.')
+        }
+
     }
 
     const columns: any = useMemo(
@@ -76,14 +82,14 @@ const DocumentListing: React.FC = () => {
                 Header: 'Document Name',
                 Cell: ({ row }: any) => {
                     return (
-                      <span
-                        className={styles.docName}
-                        onClick={() => downloadPDF(row?.original)}
-                      >
-                        {row?.values.doc_name}
-                      </span>
+                        <span
+                            className={styles.docName}
+                            onClick={() => downloadPDF(row?.original)}
+                        >
+                            {row?.values.doc_name}
+                        </span>
                     )
-                  },
+                },
                 accessor: 'doc_name',
                 disableSortBy: true,
             },
@@ -121,23 +127,23 @@ const DocumentListing: React.FC = () => {
                 Header: 'Status',
                 Cell: ({ row }: any) => {
                     let colurCode = (row?.values?.doc_status.toLowerCase() === FileStatus.failed)
-                    ? 'rgb(244,67,54)':
-                    (row?.values?.doc_status.toLowerCase() === FileStatus.uploaded)
-                    ? 'rgb(249,167,37)':
-                    (row?.values?.doc_status.toLowerCase() === FileStatus.processing)
-                    ? 'rgb(0,150,136)':
-                    (row?.values?.doc_status.toLowerCase() === FileStatus.processed)
-                    ? 'rgb(48,63,160)'
-                    : 'rgb(0,200,81)';
+                        ? 'rgb(244,67,54)' :
+                        (row?.values?.doc_status.toLowerCase() === FileStatus.uploaded)
+                            ? 'rgb(249,167,37)' :
+                            (row?.values?.doc_status.toLowerCase() === FileStatus.processing)
+                                ? 'rgb(0,150,136)' :
+                                (row?.values?.doc_status.toLowerCase() === FileStatus.processed)
+                                    ? 'rgb(48,63,160)'
+                                    : 'rgb(0,200,81)';
                     return (
-                        <span className={'fw-bold'} style={{color:colurCode}}>
+                        <span className={'fw-bold'} style={{ color: colurCode }}>
                             {row?.values?.doc_status}
                         </span>
                     );
                 },
                 sortType: 'basic',
                 disableSortBy: false,
-                accessor:'doc_status'
+                accessor: 'doc_status'
             },
             {
                 Header: 'Action',
@@ -145,7 +151,7 @@ const DocumentListing: React.FC = () => {
                     <button>
                         <img src={editIcon} title='Edit Document' alt='Edit Icon' onClick={() => handleEdit(row?.original)} />
                         <img src={eyeIcon} title='Preview Document' alt='Preview Icon' onClick={() => viewPdf(row?.original)} />
-                        <img src={deleteIcon} title='Delete Document' alt='Delete Icon' onClick={() => { setShowDeleteModal(true); setDocDeleteId(row.original.doc_id)}} /> 
+                        <img src={deleteIcon} title='Delete Document' alt='Delete Icon' onClick={() => { setShowDeleteModal(true); setDocDeleteId(row.original.doc_id) }} />
                     </button>
                 ),
                 disableSortBy: true,
@@ -154,25 +160,31 @@ const DocumentListing: React.FC = () => {
         []
     );
 
-    const viewPdf = (pdfParam:any) => {
+    const viewPdf = (pdfParam: any) => {
+        if(pdfParam?.doc_status.toLowerCase() === FileStatus.processed) {
         setShowLoader(true);
-        axiosInstance.get(`/view-document?doc_id=${pdfParam?.doc_id}`)
-        .then((res) => {
-            if(res) {
-                setShowPDFModal(true);
-                setPdfLink(res?.data?.sas_url);
+        axiosInstance.get(`/view-document?doc_id=${pdfParam?.doc_id}`,{
+            timeout: 60000   // 60 seconds
+            })
+            .then((res) => {
+                if (res) {
+                    setShowPDFModal(true);
+                    setPdfLink(res?.data?.sas_url);
+                    setShowLoader(false);
+                }
+            }).catch((e) => {
+                console.error(e)
                 setShowLoader(false);
-            }
-        }).catch((e) => {
-            console.error(e)
-            setShowLoader(false);
-        })
+            })
+        } else {
+            showError('The document can only be viewed when it is in the processed status.')
+        }
     }
-    const handleEdit = (rowData:any) => {
+    const handleEdit = (rowData: any) => {
         setShowModal(true);
         setEditData(rowData);
     }
-    const fetchData = useCallback(async ({ pageIndex, pageSize, sortBy, searchString,  startDate, endDate }: {
+    const fetchData = useCallback(async ({ pageIndex, pageSize, sortBy, searchString, startDate, endDate }: {
         pageIndex: number;
         pageSize: number;
         sortBy: { id: string; desc: boolean }[];
@@ -196,7 +208,7 @@ const DocumentListing: React.FC = () => {
         try {
             const response = await axiosInstance.get(`/listOfDocs?${queryParams.toString()}`, {
                 timeout: 200000,
-              });
+            });
             const data = response.data;
             setShowLoader(false);
             return {
@@ -215,24 +227,24 @@ const DocumentListing: React.FC = () => {
         return { rows: [], totalPages: 0, totalRecords: 0 };
     }, []);
 
-    const closeConfirmModal = (decision:string) => {
-        if(decision == 'proceed') {
-          setShowLoader(true);
-          axiosInstance.post(`/delete-doc?doc_id=${docDeleteId}`)
-          .then((res) => {
-            if(res) {
-              setShowLoader(false);
-              showSuccess('Document deleted successfully');
-              setShowDeleteModal(false);
-              setTriggerTableApi(triggerTableApi + 1);
-            }
-          }).catch((e) => {
-            setShowLoader(false);
-            console.error(e)
-            showError('Something went wrong');
-          })
+    const closeConfirmModal = (decision: string) => {
+        if (decision == 'proceed') {
+            setShowLoader(true);
+            axiosInstance.post(`/delete-doc?doc_id=${docDeleteId}`)
+                .then((res) => {
+                    if (res) {
+                        setShowLoader(false);
+                        showSuccess('Document deleted successfully');
+                        setShowDeleteModal(false);
+                        setTriggerTableApi(triggerTableApi + 1);
+                    }
+                }).catch((e) => {
+                    setShowLoader(false);
+                    console.error(e)
+                    showError('Something went wrong');
+                })
         } else {
-          setShowDeleteModal(false);
+            setShowDeleteModal(false);
         }
     }
 
@@ -240,12 +252,12 @@ const DocumentListing: React.FC = () => {
         <>
             {showLoader && <Loader />}
             <div className={`${styles['right-content-section']}`}>
-            <div className={`${styles['right-main-heading']}`}>
-                <h5>Document Listing</h5>
-            </div>
+                <div className={`${styles['right-main-heading']}`}>
+                    <h5>Document Listing</h5>
+                </div>
                 <div className='row mb-3'>
                     <div className='col-md-9 col-sm-12'>
-                        <div className={`${styles.searchContainer}`}>   
+                        <div className={`${styles.searchContainer}`}>
                             <div className={`${styles['search-section']}`}>
                                 <div className={styles.formGroup}>
                                     <span className={`${styles.formControlFeedback}`}>
@@ -283,14 +295,32 @@ const DocumentListing: React.FC = () => {
                 <div className='row'>
                     <div className='col-md-12'>
                         <div>
-                            <DataTable columns={columns} tableType={'documentList'} fetchData={fetchData} searchString={searchKeyword} triggerTableApi={triggerTableApi} startDate={startDate} endDate={endDate}  />
+                            <DataTable columns={columns} tableType={'documentList'} fetchData={fetchData} searchString={searchKeyword} triggerTableApi={triggerTableApi} startDate={startDate} endDate={endDate} />
                         </div>
                     </div>
                 </div>
             </div>
             <UploadModal show={showModal} handleClose={handleClose} editData={editData} />
             <DeleteConfimationModal show={showDeleteModal} onClose={closeConfirmModal} />
-            <PdfViewer showModal={showPDFModal} setShowModal={setShowPDFModal} srcLink={pdfLink} />
+            
+            {/* PDF preview viewer */}
+            <Modal show={showPDFModal} onHide={() => setShowPDFModal(false)} size="xl">
+                <Modal.Header closeButton>
+                    <Modal.Title></Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className='pdf' style={{ height: '500px' }}>
+                        <iframe
+                            src={`${pdfLink}`}
+                            width="100%"
+                            height="100%"
+                            title="PDF Viewer"
+                            style={{ border: '1px solid #ccc' }}
+                        >
+                        </iframe>
+                    </div>
+                </Modal.Body>
+            </Modal>
         </>
     );
 };

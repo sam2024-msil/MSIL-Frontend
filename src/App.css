@@ -21,6 +21,19 @@ body {
     color: #FFFFFF;
 }
 
+.btn-primary:focus-visible {
+    background: #171C8F 0% 0% no-repeat padding-box;
+    color: #FFFFFF;
+    box-shadow: none;
+    border-color: #171C8F;
+}
+ 
+.btn-primary:active {
+    background-color: #171C8F !important;
+    color: #FFFFFF !important;
+    border-color: #171C8F !important;
+}
+
 .btn-primary:disabled {
     border: none;
 }
@@ -46,6 +59,19 @@ body {
     opacity: 1;
     color: #171C8F;
     background-color: #FFFFFF;
+}
+
+.btn-outline-primary:focus-visible {
+    background-color: #FFFFFF;
+    color: #171C8F;
+    box-shadow: none;
+    border-color: #171C8F;
+}
+ 
+.btn-outline-primary:active {
+    background-color: #FFFFFF !important;
+    color: #171C8F !important;
+    border-color: #171C8F !important;
 }
  
 .btn-secondary {

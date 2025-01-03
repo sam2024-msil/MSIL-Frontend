@@ -200,12 +200,19 @@ const AddVendorModal: React.FC<{ show: boolean; handleClose: () => void,editUser
 
   useEffect(() => {
       if(!selectedOptions.length) {
+        if(editUserData === null){
         if(moduleList.length > 0) {
           const defaultCommon = Object.values(moduleList).find(item => item.label.toLowerCase() === 'common');
           setSelectedOptions([{
             label: defaultCommon?.label,
             value: defaultCommon?.value}]);
         }
+      } else {
+        const moduleNames = editUserData?.Modules?.join(', ');
+        const labels = moduleNames?.split(',')?.map((label:string) => label.trim().toLowerCase());
+        const result:any = moduleList?.filter(item => labels.includes(item.label.toLowerCase())).map(item => ({ value: item.value, label: item.label }));
+        setSelectedOptions(result);
+      }
       }
   },[moduleList])
   
