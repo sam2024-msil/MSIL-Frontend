@@ -70,7 +70,7 @@ const UploadModuleModal: React.FC<{ show: boolean; handleClose: () => void; modu
           {error && <div className="invalid-feedback">{error}</div>}
         </div>
         <div className='text-end'>
-          <button type="button" onClick={() => { setModuleName(''); setError(''); handleClose(); }} className='mt-3 me-3 btn btn-outline-primary'>
+          <button type="button" onClick={() => { setModuleName(''); setError(''); handleClose(); }} className='mt-3 me-2 btn btn-outline-primary'>
             Cancel
           </button>
           <Button variant="primary" className='mt-3' onClick={addModule}>

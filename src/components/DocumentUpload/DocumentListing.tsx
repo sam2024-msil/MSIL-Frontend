@@ -50,24 +50,28 @@ const DocumentListing: React.FC = () => {
 
 
     const downloadPDF = async (rowData: any) => {
-        try {
-            setShowLoader(true);
-            const response = await axiosInstance.get(`/download?doc_id=${rowData?.doc_id}`, {
-                responseType: 'blob',
-                timeout: 60000   // 60 seconds
-            });
-            const fileBlob = new Blob([response.data], { type: 'application/pdf' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(fileBlob);
-            link.setAttribute('download', rowData?.doc_name);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            setShowLoader(false);
-        } catch (e:any) {
-            setShowLoader(false);
-            showError(e?.response?.data?.detail);
-            console.error('Error downloading file:', e);
+        if(rowData?.doc_status.toLowerCase() === FileStatus.processed) {
+            try {
+                setShowLoader(true);
+                const response = await axiosInstance.get(`/download?doc_id=${rowData?.doc_id}`, {
+                    responseType: 'blob',
+                    timeout: 60000   // 60 seconds
+                });
+                const fileBlob = new Blob([response.data], { type: 'application/pdf' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(fileBlob);
+                link.setAttribute('download', rowData?.doc_name);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setShowLoader(false);
+            } catch (e:any) {
+                setShowLoader(false);
+                showError(e?.response?.data?.detail);
+                console.error('Error downloading file:', e);
+            }
+        } else {
+            showError('The document can only be downloaded when it is in the processed status.')
         }
 
     }
@@ -157,6 +161,7 @@ const DocumentListing: React.FC = () => {
     );
 
     const viewPdf = (pdfParam: any) => {
+        if(pdfParam?.doc_status.toLowerCase() === FileStatus.processed) {
         setShowLoader(true);
         axiosInstance.get(`/view-document?doc_id=${pdfParam?.doc_id}`,{
             timeout: 60000   // 60 seconds
@@ -171,6 +176,9 @@ const DocumentListing: React.FC = () => {
                 console.error(e)
                 setShowLoader(false);
             })
+        } else {
+            showError('The document can only be viewed when it is in the processed status.')
+        }
     }
     const handleEdit = (rowData: any) => {
         setShowModal(true);
